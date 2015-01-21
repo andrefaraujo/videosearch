@@ -14,21 +14,15 @@ This project currently contains code for
 Clone repository
 
     > cd $mypath
-
     > git clone https://github.com/andrefaraujo/videosearch.git
-
     > cd videosearch # the code repository
 
 Creating executables
 
     > cd common/vlfeat-0.9.18/
-
     > make # Making vlfeat
-
     > sudo ln -s bin/glnxa64/libvl.so /usr/lib/libvl.so #sym-link it to your library
-
     > cd ../../indexer/extract_features/
-
     > make # Making programs for extracting, reading and writing features
 
 At this point, you can test SIFT extraction on a single image by running:
@@ -46,7 +40,6 @@ A larger scale extraction of features can be done with:
 Test keyframe extraction
 
     > cd ../
-
     > python extract_keyframes.py test_video.mp4 test_video_out 1 scale=-1:480
 
 Extracting keyframes and features from entire Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203))
