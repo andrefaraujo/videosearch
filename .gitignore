@@ -1,0 +1,5 @@
+*~
+*.o
+indexer/extract_features/extract
+indexer/extract_features/test_read
+indexer/extract_features/test_extract
