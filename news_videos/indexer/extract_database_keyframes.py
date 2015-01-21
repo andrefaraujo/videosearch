@@ -32,7 +32,7 @@ def parallelCommands(cmds, numThreads):
             time.sleep(0.05)
 
 currFolder = os.path.dirname(os.path.realpath(__file__));
-rootFolder = "../../../../videos/"; #Change this path if necessary
+rootFolder = "%s/../../../../videos/" % currFolder; #Change this path if necessary
 overwriteExtractKeyframes = False;
 overwriteExtractFeatures = False;
 keyframeRate = 1;

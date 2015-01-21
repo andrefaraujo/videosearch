@@ -1,6 +1,6 @@
 /*
  *
- * This program extracts features from a list of images.
+ * This program extracts features from one image.
  * This tests the sift_extractor library
  *
  *  Created on: May 22, 2014

@@ -3,3 +3,5 @@
 indexer/extract_features/extract
 indexer/extract_features/test_read
 indexer/extract_features/test_extract
+test_video_out.txt
+test_video_out/
