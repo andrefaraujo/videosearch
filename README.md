@@ -42,12 +42,12 @@ Test keyframe extraction
     > cd ../
     > python extract_keyframes.py test_video.mp4 test_video_out 1 scale=-1:480
 
-Extracting keyframes and features from entire Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203))
+Extracting keyframes and features from entire Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203)). Note: For this to work, you need to download the dataset beforehand and follow the instructions for setting it up.
 
     > cd ../news_videos/indexer/
     > python extract_database_keyframes.py # Look at script for more details and for changing parameters
 
-Scoring the dataset
+Scoring results obtained with the dataset. In this case, your system should output a file with a specific format (TODO). Here, we provide an example file for scoring, which serves as an example of file your system should generate.
 
     > TODO
 
