@@ -1,8 +1,11 @@
 # videosearch: Large-Scale Video Retrieval Using Images
 
 Andre Araujo
+
 Image, Video and Multimedia Systems Group
+
 Stanford University
+
 afaraujo@stanford.edu
 
 This project currently contains code for 
@@ -13,33 +16,49 @@ This project currently contains code for
 ## Quick start
 
 Clone repository
-      > cd $mypath
-      > git clone https://github.com/andrefaraujo/videosearch.git
-      > cd videosearch # the code repository
+
+    > cd $mypath
+
+    > git clone https://github.com/andrefaraujo/videosearch.git
+
+    > cd videosearch # the code repository
 
 Creating executables
-	 > cd common/vlfeat-0.9.18/
-	 > make # Making vlfeat
-	 > sudo ln -s bin/glnxa64/libvl.so /usr/lib/libvl.so #sym-link it to your library
-	 > cd ../../indexer/extract_features/
-	 > make # Making programs for extracting, reading and writing features
+
+    > cd common/vlfeat-0.9.18/
+
+    > make # Making vlfeat
+
+    > sudo ln -s bin/glnxa64/libvl.so /usr/lib/libvl.so #sym-link it to your library
+
+    > cd ../../indexer/extract_features/
+
+    > make # Making programs for extracting, reading and writing features
 
 At this point, you can test SIFT extraction on a single image by running:
-   > ./test_extract
+
+    > ./test_extract
+
 You can also test reading a ".siftb" file:
+
     > ./test_read
+
 A larger scale extraction of features can be done with:
-  > ./run_sift_extraction.sh # Look at the code of the shell script for more details
+
+    > ./run_sift_extraction.sh # Look at the code of the shell script for more details
+
 Test keyframe extraction
-     > cd ../
-     > python extract_keyframes.py test_video.mp4 test_video_out 1 scale=-1:480
+
+    > cd ../
+
+    > python extract_keyframes.py test_video.mp4 test_video_out 1 scale=-1:480
 
 Extracting keyframes and features from entire Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203))
-  > cd ../news_videos/indexer/
-  > python extract_database_keyframes.py # Look at script for more details and for changing parameters
+    > cd ../news_videos/indexer/
+    > python extract_database_keyframes.py # Look at script for more details and for changing parameters
 
 Scoring the dataset
-	> TODO
+    > TODO
 
 ## Citation
 If you use the Stanford I2V dataset, please cite:
