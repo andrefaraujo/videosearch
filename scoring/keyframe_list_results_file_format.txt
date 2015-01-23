@@ -1,0 +1,39 @@
+This is a file format that may be more natural for one to use when having their 
+retrieval system write results to file, instead of writing results following the
+scene_retrieval_results_file_format.txt rules or the temporal_refinement_results_file_format.txt
+rules.
+
+File format conversion scripts have been provided to take a results file following
+this keyframe-list format and produce a new results file following the file format
+for scene retrieval/temporal refinement that can be used as input to the 
+evaluation scripts.
+
+The keyframe-list file format is as follows:
+Query <#>
+<Keyframe Path>
+<Keyframe Path>
+<Keyframe Path>
+<Keyframe Path>
+<Keyframe Path>
+..etc..
+Query <#>
+<Keyframe Path>
+<Keyframe Path>
+<Keyframe Path>
+<Keyframe Path>
+<Keyframe Path>
+..etc..
+...repeat...
+
+
+
+<Keyframe Path>'s follow the following format:
+<date>/<segment_title>/<scene>_keyframes/<keyframe number>.jpg
+e.g.: 20121002/PBS_News_Hour_20121002_1900_cc_segment/01.700k_keyframes/000001.jpg
+
+
+See example_keyframe_list_results_for_scene_retrieval.txt and 
+example_keyframe_list_results_for_temporal_refinement.txt, both of which were 
+used as input into the convertKeyframeResultsTo* scripts to create
+example_scene_retrieval_results_file.txt and example_temporal_refinement_results_file_frames.txt,
+respectively.
