@@ -23,6 +23,9 @@ The time segment is inclusive of the start and end time given
 For segments of length = 1 second, the segment should be written as <Start Time> <Start Time>
     e.g. "00:29 00:29" 
 
+For an example, look at example_temporal_refinement_results_file_times.txt (which is just a 
+    smaller, non-realistic example, compared to 
+    example_temporal_refinement_results_file_frames.txt)
 
 Note: The ordering of lines under each Query section is not significant, unlike for scene 
       retrieval. Also, the ordering of the time segments is not significant, since
@@ -46,6 +49,8 @@ Query <#>
 <Keyframe Number> is an integer, 1-indexed, corresponding to the specific frame from a 
     scene returned by the temporal refinement.  Ordering of <Keyframe Number>'s is
     not significant.
+
+For an example, look at example_temporal_refinement_results_file_frames.txt
 
 This format is less general due to peculiarities involved in converting from a keyframe
     number to a time in the scene
