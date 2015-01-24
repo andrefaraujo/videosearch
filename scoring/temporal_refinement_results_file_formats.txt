@@ -1,0 +1,63 @@
+There are two file formats for temporal refinement results:
+
+"Times" format:
+_________________________________________________________________________________________
+Query <#>
+<Video Path>,<Start Time> <End Time>,<Start Time> <End Time>,...,<Start Time> <End Time>
+<Video Path>,<Start Time> <End Time>,<Start Time> <End Time>,...,<Start Time> <End Time>
+<Video Path>,<Start Time> <End Time>,<Start Time> <End Time>,...,<Start Time> <End Time>
+Query <#>
+<Video Path>,<Start Time> <End Time>,<Start Time> <End Time>,...,<Start Time> <End Time>
+<Video Path>,<Start Time> <End Time>,<Start Time> <End Time>,...,<Start Time> <End Time>
+<Video Path>,<Start Time> <End Time>,<Start Time> <End Time>,...,<Start Time> <End Time>
+
+
+<Video Path>'s follow the following format:
+<date>/<segment_title>/<scene.mp4>
+e.g.: 20121002/PBS_News_Hour_20121002_1900_cc_segment/01.700k.mp4
+
+
+<Start Time> <End Time> define a time segment where the query is reported to be present
+Each follows a standard time-string format, e.g. hh:mm:ss or just mm:ss
+The time segment is inclusive of the start and end time given
+For segments of length = 1 second, the segment should be written as <Start Time> <Start Time>
+    e.g. "00:29 00:29" 
+
+
+Note: The ordering of lines under each Query section is not significant, unlike for scene 
+      retrieval. Also, the ordering of the time segments is not significant, since
+      temporal refinement is an unranked retrieval task.
+
+
+
+"Frames" format:
+_________________________________________________________________________________________
+Query <#>
+<Video Path>,<Keyframe Number>,<Keyframe Number>,...,<Keyframe Number>
+<Video Path>,<Keyframe Number>,<Keyframe Number>,...,<Keyframe Number>
+<Video Path>,<Keyframe Number>,<Keyframe Number>,...,<Keyframe Number>
+Query <#>
+<Video Path>,<Keyframe Number>,<Keyframe Number>,...,<Keyframe Number>
+<Video Path>,<Keyframe Number>,<Keyframe Number>,...,<Keyframe Number>
+<Video Path>,<Keyframe Number>,<Keyframe Number>,...,<Keyframe Number>
+...etc...
+
+
+<Keyframe Number> is an integer, 1-indexed, corresponding to the specific frame from a 
+    scene returned by the temporal refinement.  Ordering of <Keyframe Number>'s is
+    not significant.
+
+This format is less general due to peculiarities involved in converting from a keyframe
+    number to a time in the scene
+
+When running our keyframe extraction on our machines, we observe a 4 frame offset, i.e.
+    keyframes 1-4 all correspond to the first second of the scene. This systematic offset
+    seems to be an FFMPEG issue, and if you use our suggested keyframe extraction pipeline,
+    you're likely to experience this issue as well.
+    Therefore we use the conversion: 
+    time_in_seconds = max(keyframe_number - FRAME_NUMBER_TIME_DELAY, 0),
+    where FRAME_NUMBER_TIME_DELAY = 4
+
+Note: The ordering of lines under each Query section is not significant, unlike for scene 
+      retrieval. Also, the ordering of the time segments is not significant, since
+      temporal refinement is an unranked retrieval task.

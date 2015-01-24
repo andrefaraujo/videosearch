@@ -1,0 +1,5 @@
+Query 0
+20121002/PBS_News_Hour_20121002_1900_cc_segment/01.700k.mp4,1:40 1:44,1:50 2:00
+Query 1
+20121008/CBS_News_20121008_1200_cc_segment/12.700k.mp4,0:05 0:20
+(This is just a smaller, non-realistic example compared to example_temporal_refinement_results_file_frames.txt)

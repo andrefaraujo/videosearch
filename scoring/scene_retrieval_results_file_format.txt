@@ -1,0 +1,27 @@
+Query <#>
+<Rank 1 Video Path>
+<Rank 2 Video Path>
+..etc..
+Query <#>
+<Rank 1 Video Path>
+<Rank 2 Video Path>
+..etc..
+...repeat...
+
+
+<Video Path>'s follow the following format:
+<date>/<segment_title>/<scene.mp4>
+e.g.: 20121002/PBS_News_Hour_20121002_1900_cc_segment/01.700k.mp4
+
+Note: Since scene retrieval is a ranked retrieval task, the ordering
+      of <Video Path>'s under each Query section is significant.
+
+evaluate_scene_retrieval.py expects the list of <Video Path>'s for
+    each query to be without duplicates and to be at least 
+    short_list_size long, where short_list_size is an argument
+    given to the script to define the number of ranked results
+    used in scoring for each query.  However, the --force
+    optional argument can be used to ignore these requirements
+    and still score results.
+
+See example_scene_retrieval_results_file.txt for real example
