@@ -11,12 +11,12 @@ This project currently contains code for
 
 ## Quick start
 
-Clone repository
+Clone repository:
 
     > cd $mypath
     > git clone https://github.com/andrefaraujo/videosearch.git
 
-Creating executables
+Creating executables:
 
     > cd $mypath/videosearch/common/vlfeat-0.9.18/
     > make # Making vlfeat
@@ -36,17 +36,17 @@ A larger scale extraction of features can be done with (look at the code of the 
 
     > ./run_sift_extraction.sh # under $mypath/videosearch/indexer/extract_features/ 
 
-Test keyframe extraction
+Test keyframe extraction:
 
     > cd $mypath/videosearch/indexer/
     > python extract_keyframes.py test_video.mp4 test_video_out 1 scale=-1:480
 
 Extracting keyframes and features from entire Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203)). Note: For this to work, you need to download the dataset beforehand and follow the instructions (found [here](https://stacks.stanford.edu/file/druid:zx935qw7203/README.txt)) for setting it up.
 
-    > cd $mypath/news_videos/indexer/
+    > cd $mypath/videosearch/news_videos/indexer/
     > python extract_database_keyframes.py # Look at script for more details and for changing parameters
 
-Scoring results obtained with the Stanford I2V dataset. In this case, your should use a file with a specific format (as explained in the scoring/*_format*.txt files). We provide examples of such files (scoring/example_*) and even helper conversion scripts if your system outputs results based on keyframes (scoring/convert*). To score Scene Retrieval and Temporal Refinement results (refer to our [MMSys'15 paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v12.pdf) for explanation of this terminology), respectively, do:
+Scoring results obtained with the Stanford I2V dataset. In this case, your should use a file with a specific format (as explained in the scoring/\*_format\*.txt files). We provide examples of such files (scoring/example_\*) and even helper conversion scripts if your system outputs results based on keyframes (scoring/convert\*). To score Scene Retrieval and Temporal Refinement results (refer to our [MMSys'15 paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v12.pdf) for explanation of this terminology), respectively, do:
 
     > cd $mypath/videosearch/scoring
     > python evaluate_scene_retrieval.py example_scene_retrieval_results_file.txt light_dataset_public.txt 100
