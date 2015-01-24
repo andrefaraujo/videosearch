@@ -46,7 +46,7 @@ Extracting keyframes and features from entire Stanford I2V dataset ([Dataset pag
     > cd $mypath/videosearch/news_videos/indexer/
     > python extract_database_keyframes.py # Look at script for more details and for changing parameters
 
-Scoring results obtained with the Stanford I2V dataset. In this case, your should use a file with a specific format (as explained in the scoring/ * _format * .txt files). We provide examples of such files (scoring/example_ * ) and even helper conversion scripts if your system outputs results based on keyframes (scoring/convert * ). To score Scene Retrieval and Temporal Refinement results (refer to our [MMSys'15 paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v12.pdf) for explanation of this terminology), respectively, do:
+Scoring results obtained with the Stanford I2V dataset. In this case, your should use a file with a specific format (as explained in the scoring/ * format * .txt files). We provide examples of such files (scoring/example * ) and even helper conversion scripts if your system outputs results based on keyframes (scoring/convert * ). To score Scene Retrieval and Temporal Refinement results (refer to our [MMSys'15 paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v12.pdf) for explanation of this terminology), respectively, do:
 
     > cd $mypath/videosearch/scoring
     > python evaluate_scene_retrieval.py example_scene_retrieval_results_file.txt light_dataset_public.txt 100
