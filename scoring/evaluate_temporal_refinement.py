@@ -194,7 +194,7 @@ def score_results_frames(results_filename, ground_truth_filename, short_list_siz
 def printUsage():
     print "Usage: python " + sys.argv[0] + " results_filename ground_truth_filename mode [short_list_size]"
     print "results_filename: file following the temporal_refinement_results_file_format.txt rules"
-    print "ground_truth_filename: light_dataset.txt or full_dataset.txt"
+    print "ground_truth_filename: light_dataset_public.txt or full_dataset_public.txt"
     print "mode: \'times\' or \'frames\', specifies the results file format used, doesn't change scoring details"
     print "[Optional] short_list_size: Number of keyframes to include in scoring.  Typical value is 50."
     print "                            Without this option, all keyframes reported in results_filename "

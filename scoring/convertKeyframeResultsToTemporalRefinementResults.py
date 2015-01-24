@@ -65,7 +65,7 @@ def printUsage():
     print "Usage: python " + sys.argv[0] + " keyframe_results_filename temporal_refinement_results_filename ground_truth_filename"
     print "keyframe_results_filename: file following the keyframe_results_file_format.txt rules"
     print "temporal_refinement_results_filename: output filename for results in temporal refinement file format"
-    print "ground_truth_filename: light_dataset.txt or full_dataset.txt"
+    print "ground_truth_filename: light_dataset_public.txt or full_dataset_public.txt"
 
 
 if __name__ == "__main__":

@@ -99,7 +99,7 @@ def score_results(results_filename, ground_truth_filename, short_list_size, FORC
 def printUsage():
     print "Usage: python " + sys.argv[0] + " results_filename ground_truth_filename short_list_size [--force]"
     print "results_filename: file following the scene_retrieval_results_file_format.txt rules"
-    print "ground_truth_filename: light_dataset.txt or full_dataset.txt"
+    print "ground_truth_filename: light_dataset_public.txt or full_dataset_public.txt"
     print "short_list_size: Number of scene results to score. Typical value is 100"
     print "[Optional] --force: Optional argument used to ignore requirements regarding duplicates and"
     print "                       results list length relative to short_list_size."
