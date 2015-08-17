@@ -42,7 +42,7 @@ Test keyframe extraction:
     > cd $mypath/videosearch/indexer/keyframes
     > ./run_keyframe_extraction.sh
 
-Test shot boundary detection:
+Build and test shot boundary detection:
 
     > cd $mypath/videosearch/indexer/shot_detector
     > make
