@@ -9,7 +9,7 @@ for i in `cat $VIDEOS_LIST`; do
         mkdir -p $out_folder
     fi
     # Get command
-    cmd=$(echo python extract_keyframes.py ../$i $out_folder 1 scale=-1:480)
+    cmd=$(echo python extract_keyframes.py $in_video $out_folder 1 scale=-1:480)
     # Write out command
     echo $cmd
     # Execute
