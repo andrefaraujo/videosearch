@@ -38,8 +38,8 @@ A larger scale extraction of features can be done with (look at the code of the 
 
 Test keyframe extraction:
 
-    > cd $mypath/videosearch/indexer/
-    > python extract_keyframes.py test_video.mp4 test_video_out 1 scale=-1:480
+    > cd $mypath/videosearch/indexer/keyframes
+    > ./run_keyframe_extraction.sh
 
 Extracting keyframes and features from entire Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203)). Note: For this to work, you need to download the dataset beforehand and follow the instructions (found [here](https://stacks.stanford.edu/file/druid:zx935qw7203/README.txt)) for setting it up.
 
