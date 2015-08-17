@@ -6,7 +6,8 @@ Image, Video and Multimedia Systems Group, Stanford University
 
 This project currently contains code for 
 - Keyframe extraction from videos
-- SIFT descriptor extraction at large scale
+- Shot boundary detector for videos
+- SIFT descriptor extraction per frame
 - Scoring a retrieval system that uses the Stanford I2V dataset
 
 ## Quick start
@@ -16,17 +17,17 @@ Clone repository:
     > cd $mypath
     > git clone https://github.com/andrefaraujo/videosearch.git
 
-Creating executables:
+Creating VLFEAT library:
 
     > cd $mypath/videosearch/common/vlfeat-0.9.18/
     > make # Making vlfeat
     > sudo ln -s bin/glnxa64/libvl.so /usr/lib/libvl.so #sym-link it to your library
-    > cd ../../indexer/local_features/
+
+Build and test SIFT extraction:
+
+    > cd $mypath/videosearch/indexer/local_features/
     > make # Making programs for extracting, reading and writing features
-
-At this point, you can test SIFT extraction on a single image by running:
-
-    > ./test_extract # under $mypath/videosearch/indexer/local_features/
+    > ./test_extract
 
 You can also test reading a ".siftb" file (you can look at test_read.cc code for an example on how to read SIFT features binary files):
 
@@ -40,6 +41,12 @@ Test keyframe extraction:
 
     > cd $mypath/videosearch/indexer/keyframes
     > ./run_keyframe_extraction.sh
+
+Test shot boundary detection:
+
+    > cd $mypath/videosearch/indexer/shot_detector
+    > make
+    > ./run_shot_detector.sh
 
 Extracting keyframes and features from entire Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203)). Note: For this to work, you need to download the dataset beforehand and follow the instructions (found [here](https://stacks.stanford.edu/file/druid:zx935qw7203/README.txt)) for setting it up.
 
