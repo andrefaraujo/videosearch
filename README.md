@@ -21,20 +21,20 @@ Creating executables:
     > cd $mypath/videosearch/common/vlfeat-0.9.18/
     > make # Making vlfeat
     > sudo ln -s bin/glnxa64/libvl.so /usr/lib/libvl.so #sym-link it to your library
-    > cd ../../indexer/extract_features/
+    > cd ../../indexer/local_features/
     > make # Making programs for extracting, reading and writing features
 
 At this point, you can test SIFT extraction on a single image by running:
 
-    > ./test_extract # under $mypath/videosearch/indexer/extract_features/
+    > ./test_extract # under $mypath/videosearch/indexer/local_features/
 
 You can also test reading a ".siftb" file (you can look at test_read.cc code for an example on how to read SIFT features binary files):
 
-    > ./test_read # under $mypath/videosearch/indexer/extract_features/
+    > ./test_read # under $mypath/videosearch/indexer/local_features/
 
 A larger scale extraction of features can be done with (look at the code of the shell script for more details):
 
-    > ./run_sift_extraction.sh # under $mypath/videosearch/indexer/extract_features/ 
+    > ./run_sift_extraction.sh # under $mypath/videosearch/indexer/local_features/ 
 
 Test keyframe extraction:
 
