@@ -19,10 +19,10 @@ void usage() {
 	cout << "Detect shots from a list of video frames" << endl;
 	cout << "Usage:" << endl;
 	cout << "./shot_detector [options] --list[-l] database_list_file --output[-o] output_file_path" << endl;
-	cout << "For example:" << endl;
-	cout << "./shot_detector -l ../extract_features/all_cnn12h.txt -o results_cnn12h/test_shot_detector.txt" << endl;
-	cout << "The system will output a text file, containing one number per line" << endl;
-	cout << "The number corresponds to the frame number of the shot (starting at 0)" << endl;
+	cout << "Command-line example (be sure to extract keyframes beforehand for this example to work):" << endl;
+    cout << "./shot_detector -l ../test_db/test_video_0_keyframes.txt -t 0.8 -o ../test_db/test_video_0_keyframes.shot_t0.8 -v 0"<< endl;
+	cout << "The program will output a text file, containing one number per line" << endl;
+	cout << "The number corresponds to the first frame number of the shot (starting at 0)" << endl;
 	cout << "Options:" << endl;
 	cout << "--verbose_level[-v] ARG: (default: 1)" << endl;
 	cout << "--threshold[-t] ARG: a number between 0 and 1; the higher, the less strict (more shots are found), and vice-versa (default: 0.7)" << endl;
