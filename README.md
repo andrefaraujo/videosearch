@@ -25,17 +25,17 @@ Creating VLFEAT library:
 
 Build and test SIFT extraction:
 
-    > cd $mypath/videosearch/indexer/local_features/
+    > cd $mypath/videosearch/indexer/local_descriptors/
     > make # Making programs for extracting, reading and writing features
     > ./test_extract
 
 You can also test reading a ".siftb" file (you can look at test_read.cc code for an example on how to read SIFT features binary files):
 
-    > ./test_read # under $mypath/videosearch/indexer/local_features/
+    > ./test_read # under $mypath/videosearch/indexer/local_descriptors/
 
 A larger scale extraction of features can be done with (look at the code of the shell script for more details):
 
-    > ./run_sift_extraction.sh # under $mypath/videosearch/indexer/local_features/ 
+    > ./run_sift_extraction.sh # under $mypath/videosearch/indexer/local_descriptors/ 
 
 Test keyframe extraction:
 

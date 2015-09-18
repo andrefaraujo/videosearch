@@ -1,8 +1,8 @@
 *~
 *.o
-indexer/local_features/extract
-indexer/local_features/test_read
-indexer/local_features/test_extract
+indexer/local_descriptors/extract
+indexer/local_descriptors/test_read
+indexer/local_descriptors/test_extract
 test_video_out.txt
 test_video_out/
 indexer/shot_detector/shot_detector
