@@ -1,14 +1,16 @@
 VLROOT = ../../common/vlfeat-0.9.18
+FEATURESET_DIR = ../../common/feature_set
+FILEIO_DIR = ../../common/file_io
 
 CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0 -Wl,-rpath,$(VLROOT)/bin/glnxa64
 
 LIBS_EXTRACTOR = -L$(VLROOT)/bin/glnxa64/ -lvl `pkg-config --cflags --libs opencv`
 
-OBJS_FEATURE_EXTRACTOR = extract.o sift_extractor.o ../../common/feature_set/feature_set.o
+OBJS_FEATURE_EXTRACTOR = sift_extractor.o $(FEATURESET_DIR)/feature_set.o
 
-OBJS_TEST_FEATURE_EXTRACTOR = test_extract.o sift_extractor.o ../../common/feature_set/feature_set.o
+OBJS_TEST_FEATURE_EXTRACTOR = sift_extractor.o $(FEATURESET_DIR)/feature_set.o
 
-OBJS_TEST_READ = test_read.o ../../common/feature_set/feature_set.o ../../common/file_io/file_io.o
+OBJS_TEST_READ = $(FEATURESET_DIR)/feature_set.o $(FILEIO_DIR)/file_io.o
 
 FEATURE_EXTRACTOR = extract
 
@@ -18,45 +20,50 @@ TEST_READ = test_read
 
 all: $(FEATURE_EXTRACTOR) $(TEST_FEATURE_EXTRACTOR) $(TEST_READ)
 
-../../common/file_io/file_io.o: ../../common/file_io/file_io.cc ../../common/file_io/file_io.h
-	$(CXX) $(CXXFLAGS) -c ../../common/file_io/file_io.cc \
+$(FILEIO_DIR)/file_io.o: $(FILEIO_DIR)/file_io.cc $(FILEIO_DIR)/file_io.h
+	$(CXX) $(CXXFLAGS) -c $(FILEIO_DIR)/file_io.cc \
 	-I$(VLROOT) \
-	-o ../../common/file_io/file_io.o
+	-o $(FILEIO_DIR)/file_io.o
 
-../../common/feature_set/feature_set.o: ../../common/feature_set/feature_set.cc ../../common/feature_set/feature_set.h
-	$(CXX) $(CXXFLAGS) -c ../../common/feature_set/feature_set.cc \
+$(FEATURESET_DIR)/feature_set.o: $(FEATURESET_DIR)/feature_set.cc $(FEATURESET_DIR)/feature_set.h
+	$(CXX) $(CXXFLAGS) -c $(FEATURESET_DIR)/feature_set.cc \
 	-I$(VLROOT) \
-	-o ../../common/feature_set/feature_set.o
+	-o $(FEATURESET_DIR)/feature_set.o
 
 sift_extractor.o: sift_extractor.cc sift_extractor.h
 	$(CXX) $(CXXFLAGS) -c sift_extractor.cc -I$(VLROOT) \
 	-o sift_extractor.o $(LIBS_EXTRACTOR)
 
-extract.o: extract.cc sift_extractor.o ../../common/feature_set/feature_set.o
+extract.o: extract.cc $(OBJS_FEATURE_EXTRACTOR)
 	$(CXX) $(CXXFLAGS) -c extract.cc \
 	-I$(VLROOT) \
 	-o extract.o $(LIBS_EXTRACTOR)
 
-test_extract.o: test_extract.cc sift_extractor.o ../../common/feature_set/feature_set.o
+test_extract.o: test_extract.cc $(OBJS_TEST_FEATURE_EXTRACTOR)
 	$(CXX) $(CXXFLAGS) -c test_extract.cc \
 	-I$(VLROOT) \
 	-o test_extract.o $(LIBS_EXTRACTOR)
 
-$(FEATURE_EXTRACTOR): $(OBJS_FEATURE_EXTRACTOR)
-	$(CXX) $(CXXFLAGS) $(OBJS_FEATURE_EXTRACTOR) \
+test_read.o: test_read.cc $(OBJS_TEST_READ)
+	$(CXX) $(CXXFLAGS) -c test_read.cc \
+	-I$(VLROOT) \
+	-o test_read.o
+
+$(FEATURE_EXTRACTOR): $(FEATURE_EXTRACTOR).o
+	$(CXX) $(CXXFLAGS) $(FEATURE_EXTRACTOR).o $(OBJS_FEATURE_EXTRACTOR) \
 	-I$(VLROOT) \
 	-o $(FEATURE_EXTRACTOR)	$(LIBS_EXTRACTOR)
 
-$(TEST_FEATURE_EXTRACTOR): $(OBJS_TEST_FEATURE_EXTRACTOR)
-	$(CXX) $(CXXFLAGS) $(OBJS_TEST_FEATURE_EXTRACTOR) -I$(VLROOT) \
+$(TEST_FEATURE_EXTRACTOR): $(TEST_FEATURE_EXTRACTOR).o
+	$(CXX) $(CXXFLAGS) $(TEST_FEATURE_EXTRACTOR).o $(OBJS_TEST_FEATURE_EXTRACTOR) -I$(VLROOT) \
 	-o $(TEST_FEATURE_EXTRACTOR) $(LIBS_EXTRACTOR)
 
-$(TEST_READ): $(OBJS_TEST_READ)
-	$(CXX) $(CXXFLAGS) $(OBJS_TEST_READ) -I$(VLROOT) \
+$(TEST_READ): $(TEST_READ).o
+	$(CXX) $(CXXFLAGS) $(TEST_READ).o $(OBJS_TEST_READ) -I$(VLROOT) \
 	-o $(TEST_READ)
 
 clean:
-	rm -f $(FEATURE_EXTRACTOR) $(OBJS_FEATURE_EXTRACTOR) \
-	$(TEST_FEATURE_EXTRACTOR) $(OBJS_TEST_FEATURE_EXTRACTOR) \
-	$(TEST_READ) $(OBJS_TEST_READ) \
+	rm -f $(FEATURE_EXTRACTOR) $(FEATURE_EXTRACTOR).o $(OBJS_FEATURE_EXTRACTOR) \
+	$(TEST_FEATURE_EXTRACTOR) $(TEST_FEATURE_EXTRACTOR).o $(OBJS_TEST_FEATURE_EXTRACTOR) \
+	$(TEST_READ) $(TEST_READ).o $(OBJS_TEST_READ) \
 	sift_extractor.o
