@@ -1,6 +1,6 @@
 VLROOT = ../../common/vlfeat-0.9.18
 
-CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0
+CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0 -Wl,-rpath,$(VLROOT)/bin/glnxa64
 
 LIBS_EXTRACTOR = -L$(VLROOT)/bin/glnxa64/ -lvl `pkg-config --cflags --libs opencv`
 
