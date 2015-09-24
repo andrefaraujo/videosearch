@@ -44,7 +44,11 @@ class GDIndex
 {
  public:
 
+  // Constructor
   GDIndex();
+
+  // Destructor
+  ~GDIndex();
 
   // Index I/O
   void write(const string index_path);
