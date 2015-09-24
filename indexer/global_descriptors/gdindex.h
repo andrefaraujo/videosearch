@@ -200,12 +200,6 @@ class GDIndex
   // PCA projection for local descriptors
   void project_local_descriptor_pca(const float* desc, float* pca_desc);
 
-  // Helper function to compare pairs
-  static bool cmp_float_uint_ascend(const pair<float,uint> pair1, 
-                                    const pair<float,uint> pair2) {
-      return pair1.first < pair2.first;
-  }
-
   // This function samples the number_frames_out from the shot that begins at
   // frame first_frame and contains number_frames_this_shot, and returns the frame
   // indices in a sorted vector.
@@ -231,6 +225,12 @@ class GDIndex
 
   // Functions to load trained parameters from query_parameters_
   void load_corr_weights(string path);
+
+  // Helper function to compare pairs
+  static bool cmp_float_uint_ascend(const pair<float,uint> pair1, 
+                                    const pair<float,uint> pair2) {
+      return pair1.first < pair2.first;
+  }
   /************ End of Functions *************/
 
 

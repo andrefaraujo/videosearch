@@ -15,6 +15,10 @@ extern "C" {
 #include "../../common/yael_v438_modif/yael/matrix.h"
 }
 
+/********************************
+PUBLIC FUNCTIONS
+********************************/
+
 GDIndex::GDIndex() {
     // Initializing member variables to default values
     // -- Index
@@ -371,6 +375,10 @@ void GDIndex::set_query_parameters(const uint min_number_words_selected,
         query_parameters_.pop_count[i] = query_parameters_.pop_count[i>>1] + (i&1);
     }
 }
+
+/********************************
+PRIVATE FUNCTIONS
+********************************/
 
 void GDIndex::update_index() {
     // Update number of global descriptors stored
