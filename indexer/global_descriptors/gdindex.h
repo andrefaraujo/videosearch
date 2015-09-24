@@ -130,17 +130,20 @@ class GDIndex
       vector < vector < uint > > word_descriptor;
       vector < vector < float > > word_l1_norms;
       vector < vector < float > > word_total_soft_assignment;
+
+      // Vector that keeps frame numbers that are actually indexed in the db,
+      // used only when SHOT_MODE_INDEP_KEYF mode is used
+      vector<uint> frame_numbers_in_db;
+
+      // Number of global descriptors in database;
+      // this variable is always updated in function update_index
       uint number_global_descriptors;
 
       // Variables that are used when scoring; these hold values
-      // for each database item
+      // for each database item; these are always updated in
+      // function update_index
       vector < uint > number_words_selected;
       vector < float > norm_factors;
-
-      // Vector that keeps frame numbers that are actually indexed in the db.
-      // This is used basically when using shots with indep. keyf. indexing,
-      // ie, SHOT_MODE_INDEP_KEYF mode
-      vector<uint> frame_numbers_in_db;
   };
   struct_index index_;
 

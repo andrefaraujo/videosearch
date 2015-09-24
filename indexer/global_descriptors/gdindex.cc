@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <fstream>
 #include <iostream>
 #include <stdio.h>
 #include <string>
@@ -241,11 +242,22 @@ void GDIndex::read(const string index_path) {
 }
 
 void GDIndex::write_frame_list(const string file_path) {
-    
+    ofstream out_file;
+    out_file.open(file_path.c_str());
+    uint number_frames_in_db = index_.frame_numbers_in_db.size();
+    for (uint count_line = 0; count_line < number_frames_in_db; count_line++) {
+        out_file << index_.frame_numbers_in_db.at(count_line) << endl;
+    }
+    out_file.close();
 }
 
 void GDIndex::clean_index() {
+    index_.word_descriptor.clear();
+    index_.word_l1_norms.clear();
+    index_.word_total_soft_assignment.clear();
+    index_.frame_numbers_in_db.clear();
 
+    update_index();
 }
 
 uint GDIndex::get_number_global_descriptors() {
