@@ -303,7 +303,45 @@ void GDIndex::set_index_parameters(const uint ld_length, const uint ld_frame_len
                                    const uint gd_number_gaussians, const float gd_power,
                                    const string trained_parameters_path,
                                    const int verbose_level) {
+    // Local descriptor information
+    index_parameters_.ld_length = ld_length;
+    index_parameters_.ld_frame_length = ld_frame_length;
+    index_parameters_.ld_extension = ld_extension;
+    index_parameters_.ld_name = ld_name;
 
+    // Parameters for PCA-ing local descriptors
+    index_parameters_.ld_pca_dim = ld_pca_dim;
+    index_parameters_.ld_pre_pca_power = ld_pre_pca_power;
+    // -- LD mean vector is stored in descriptor covariance file
+    char aux_mean_vector_path[1024];
+    sprintf(aux_mean_vector_path, "%s/%s.pre_alpha.%.2f.desc_covariance", 
+            trained_parameters_path.c_str(), 
+            index_parameters_.ld_name.c_str(), 
+            index_parameters_.ld_pre_pca_power);
+    string ld_mean_vector_path = aux_mean_vector_path;
+    load_ld_mean_vector(ld_mean_vector_path);
+
+    char aux_ld_pca_eigenvectors[1024];
+    sprintf(aux_ld_pca_eigenvectors, "%s/%s.pre_alpha.%.2f.desc_eigenvectors", 
+            trained_parameters_path.c_str(), 
+            index_parameters_.ld_name.c_str(), 
+            index_parameters_.ld_pre_pca_power);
+    string ld_pca_eigenvectors_path = aux_ld_pca_eigenvectors;
+    load_ld_pca_eigenvectors(ld_pca_eigenvectors_path);
+
+    // Parameters used for global descriptor computation
+    index_parameters_.gd_number_gaussians = gd_number_gaussians;
+    index_parameters_.gd_power = gd_power;
+
+    char aux_gd_gmm[1024];
+    sprintf(aux_gd_gmm, "%s/%s.pre_alpha.%.2f.pca.%d.gmm.%d",
+            trained_parameters_path.c_str(), 
+            index_parameters_.ld_name.c_str(), 
+            index_parameters_.ld_pre_pca_power,
+            index_parameters_.ld_pca_dim,
+            index_parameters_.gd_number_gaussians);
+    string gd_gmm_path = aux_gd_gmm;
+    load_gd_gmm(gd_gmm_path);
 }
 
 void GDIndex::set_query_parameters(const uint min_number_words_visited,
@@ -311,7 +349,26 @@ void GDIndex::set_query_parameters(const uint min_number_words_visited,
                                    const float word_selection_thresh,
                                    const string trained_parameters_path,
                                    const int verbose_level) {
+    query_parameters_.min_number_words_visited = min_number_words_visited;
+    query_parameters_.word_selection_mode = word_selection_mode;
+    query_parameters_.word_selection_thresh = word_selection_thresh;
 
+    char aux_corr_weights[1024];
+    sprintf(aux_corr_weights, "%s/%s.pre_alpha.%.2f.pca.%d.gmm.%d.pre_alpha.%.2f.corr_weights",
+            trained_parameters_path.c_str(), 
+            index_parameters_.ld_name.c_str(), 
+            index_parameters_.ld_pre_pca_power,
+            index_parameters_.ld_pca_dim,
+            index_parameters_.gd_number_gaussians,
+            index_parameters_.gd_power);
+    string corr_weights_path = aux_corr_weights;
+    load_corr_weights(corr_weights_path);
+
+    // Precompute pop-counts for fast executions
+    query_parameters_.pop_count[0] = 0;
+    for (int i = 1; i < 65536; i++) {
+        query_parameters_.pop_count[i] = query_parameters_.pop_count[i>>1] + (i&1);
+    }
 }
 
 void GDIndex::update_index() {
@@ -357,18 +414,76 @@ void GDIndex::query(const vector<uint>& query_word_descriptor,
 }
 
 void GDIndex::load_ld_mean_vector(string path) {
-
+    int n_read;
+    FILE* mv_file = fopen(path.c_str(), "rb");
+    if (mv_file == NULL) {
+        printf("GDIndex::load_ld_mean_vector: Error opening: \n%s \n", path.c_str());
+        exit(EXIT_FAILURE);
+    }
+    index_parameters_.ld_mean_vector = new float[index_parameters_.ld_length];
+    n_read = fread(index_parameters_.ld_mean_vector, sizeof(float),
+                   index_parameters_.ld_length, mv_file);
+    fclose(mv_file);
 }
 
 void GDIndex::load_ld_pca_eigenvectors(string path) {
-
+    int n_read;
+    FILE* eig_file = fopen(path.c_str(), "rb");
+    if (eig_file == NULL) {
+        printf("GDIndex::load_ld_pca_eigenvectors: Error opening: \n%s \n", path.c_str());
+        exit(EXIT_FAILURE);
+    }
+    index_parameters_.ld_pca_eigenvectors.resize(index_parameters_.ld_length, NULL);
+    for (uint n = 0; n < index_parameters_.ld_length; n++) {
+        index_parameters_.ld_pca_eigenvectors.at(n) 
+            = new float[index_parameters_.ld_length];
+        n_read = fread(index_parameters_.ld_pca_eigenvectors.at(n), sizeof(float),
+                       index_parameters_.ld_length, eig_file);
+    }
+    fclose(eig_file);
 }
 
 void GDIndex::load_gd_gmm(string path) {
-
+    FILE* gmm_file = fopen(path.c_str(), "rb");
+    if (gmm_file == NULL) {
+        printf("GDIndex::load_gd_gmm: Error opening: \n%s \n", path.c_str());
+        exit(EXIT_FAILURE);
+    }
+    index_parameters_.gd_gmm = gmm_read(gmm_file);
+    fclose(gmm_file);
 }
 
 void GDIndex::load_corr_weights(string path) {
+    int n_read;
+    FILE* cw_file = fopen(path.c_str(), "rb");
+    if (cw_file == NULL) {
+        printf("GDIndex::load_corr_weights: Error opening: \n%s \n", path.c_str());
+        exit(EXIT_FAILURE);
+	}
+	float* weights = new float[index_parameters_.ld_pca_dim + 1];
+	n_read = fread(weights, sizeof(float), index_parameters_.ld_pca_dim + 1, 
+                   cw_file);
+	fclose(cw_file);
+    
+    // Build fast_corr_weights
+    query_parameters_.fast_corr_weights = new float[index_parameters_.ld_pca_dim + 1];
+    // -- initialize them to zero
+    for (uint i = 0; i < index_parameters_.ld_pca_dim + 1; i++) {
+        query_parameters_.fast_corr_weights[i] = 0;
+    }
 
+    for (uint count_bin = 0; count_bin < index_parameters_.ld_pca_dim + 1; count_bin++) { 
+        float prob = weights[index_parameters_.ld_pca_dim - count_bin]/2.0; // normalize to 1
+        float corr = index_parameters_.ld_pca_dim - 2*count_bin;
+        if (count_bin < CORR_WEIGHTS_CLIPPING) {
+            query_parameters_.fast_corr_weights[count_bin] = prob * corr;
+        }
+	}
+
+    // Clean up
+    if (weights != NULL) {
+        delete [] weights;
+        weights = NULL;
+    }
 }
 
