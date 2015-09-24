@@ -51,10 +51,16 @@ class GDIndex
   ~GDIndex();
 
   // Index I/O
+  // -- write function that is used after indexing, writing 
+  //    descriptors, l1 norms and total soft assignment information
+  //    per Gaussian
   void write(const string index_path);
+  // -- read function that will load index into index_ variables
+  //    Note: this will load either L1 norms OR Total Soft Assignment
+  //    information, depending on query_parameters_.word_selection_mode
   void read(const string index_path);
   // -- This function writes a file useful in the case of using shots 
-  //      with independent keyframes indexing
+  //    with independent keyframes indexing
   void write_frame_list(const string file_path);
 
   // Clean variables in index_
@@ -114,8 +120,8 @@ class GDIndex
   /************ Constants *************/
   // Modes for shot detection
   enum {SHOT_MODE_INDEP_KEYF = 0, SHOT_MODE_SHOT_AGG = 1, SHOT_MODE_GLOBAL_AGG = 2, SHOT_MODE_TRACK_AGG = 3};
-  // Mode used in extra word information (extra_word_info_mode)
-  enum {EXTRA_WORD_INFO_L1_NORM = 0, EXTRA_WORD_INFO_SOFT_ASSGN = 1, EXTRA_WORD_INFO_BOTH = 2};
+  // Mode used in word selection for querying
+  enum {WORD_L1_NORM = 0, WORD_SOFT_ASSGN = 1};
   /************ End of Constants *************/
 
   /************ Variable  *************/  
@@ -125,6 +131,12 @@ class GDIndex
       vector < vector < float > > word_l1_norms;
       vector < vector < float > > word_total_soft_assignment;
       uint number_global_descriptors;
+
+      // Variables that are used when scoring; these hold values
+      // for each database item
+      vector < uint > number_words_selected;
+      vector < float > norm_factors;
+
       // Vector that keeps frame numbers that are actually indexed in the db.
       // This is used basically when using shots with indep. keyf. indexing,
       // ie, SHOT_MODE_INDEP_KEYF mode
@@ -157,12 +169,9 @@ class GDIndex
   struct struct_query_parameters {
       // -- Number of minimum words to require for matching
       uint min_number_words_visited;
-      // -- Type of extra word information currently in use
-      // Note: this is only used if use_extra_word_info is set to true
-      // EXTRA_WORD_INFO_L1_NORM: only globalWordL1Norm is used
-      // EXTRA_WORD_INFO_SOFT_ASSGN: only globalWordTotalSoftAssignment is used
-      // EXTRA_WORD_INFO_BOTH: both globalWordL1Norm and globalWordTotalSoftAssignment
-      //                       are used (default)
+      // -- Type of word selection mode in use
+      // WORD_L1_NORM: only globalWordL1Norm is used
+      // WORD_SOFT_ASSGN: only globalWordTotalSoftAssignment is used
       int word_selection_mode;
       // -- Threshold to use in visual word selection (used in asymmetric mode)
       float word_selection_thresh;
