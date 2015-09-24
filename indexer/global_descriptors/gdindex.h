@@ -19,8 +19,8 @@ using namespace std;
 #endif
 
 #ifndef POWER_LAW
-#define POWER_LAW(v, a) \
-  v = (v >= 0) ? pow(v,a) : -1 * pow(-v,a);
+#define POWER_LAW(v, a, w)                        \
+  w = (v >= 0) ? pow(v,a) : -1 * pow(-v,a);
 #endif
 
 typedef unsigned char uchar;
@@ -36,7 +36,7 @@ const uint LD_PCA_DIM_DEFAULT = 32;
 const float LD_PRE_PCA_POWER_DEFAULT = 0.5;
 const uint GD_NUMBER_GAUSSIANS_DEFAULT = 512;
 const float GD_POWER_DEFAULT = 0.5;
-const uint MIN_NUMBER_WORDS_VISITED_DEFAULT = 20;
+const uint MIN_NUMBER_WORDS_SELECTED_DEFAULT = 20;
 const int WORD_SELECTION_MODE_DEFAULT = 0;
 const float WORD_SELECTION_THRESH_DEFAULT = 7;
 
@@ -114,7 +114,7 @@ class GDIndex
   // -- Note that the correlation weights loaded here require that
   //    some of the index_parameters_ variables be set. So, ALWAYS
   //    load index_parameters_ BEFORE loading query_parameters_
-  void set_query_parameters(const uint min_number_words_visited,
+  void set_query_parameters(const uint min_number_words_selected,
                             const int word_selection_mode,
                             const float word_selection_thresh,
                             const string trained_parameters_path,
@@ -174,7 +174,7 @@ class GDIndex
   // Variables relevant for query time
   struct struct_query_parameters {
       // -- Number of minimum words to require for matching
-      uint min_number_words_visited;
+      uint min_number_words_selected;
       // -- Type of word selection mode in use
       // WORD_L1_NORM: only globalWordL1Norm is used
       // WORD_SOFT_ASSGN: only globalWordTotalSoftAssignment is used
@@ -198,7 +198,7 @@ class GDIndex
                      vector<uint>& gd_word_descriptor);
 
   // PCA projection for local descriptors
-  void project_local_descriptr_pca(const float* desc, float* pca_desc);
+  void project_local_descriptor_pca(const float* desc, float* pca_desc);
 
   // Helper function to compare pairs
   static bool cmp_float_uint_ascend(const pair<float,uint> pair1, 
@@ -212,10 +212,10 @@ class GDIndex
   // If one frame is requested (number_frames_out = 1), it will return the center one;
   // otherwise, it will try to take equally spaced frames; if this results in frames 
   // too concentrated at the beginning or the end, it will take only the center ones.
-  void sampleFramesFromShot(const uint number_frames_out, 
-                            const uint first_frame, 
-                            const uint number_frames_this_shot, 
-                            vector<uint>& out_frames);
+  void sample_frames_from_shot(const uint number_frames_out, 
+                               const uint first_frame, 
+                               const uint number_frames_this_shot, 
+                               vector<uint>& out_frames);
 
   // Query index with query global descriptor
   void query(const vector<uint>& query_word_descriptor,

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <float.h>
 #include <fstream>
 #include <iostream>
 #include <stdio.h>
@@ -35,7 +36,7 @@ GDIndex::GDIndex() {
     index_parameters_.gd_number_gaussians = GD_NUMBER_GAUSSIANS_DEFAULT;
     index_parameters_.gd_power = GD_POWER_DEFAULT;
     // -- Query parameters
-    query_parameters_.min_number_words_visited = MIN_NUMBER_WORDS_VISITED_DEFAULT;
+    query_parameters_.min_number_words_selected = MIN_NUMBER_WORDS_SELECTED_DEFAULT;
     query_parameters_.word_selection_mode = WORD_SELECTION_MODE_DEFAULT;
     query_parameters_.word_selection_thresh = WORD_SELECTION_THRESH_DEFAULT;
     query_parameters_.fast_corr_weights = NULL;
@@ -344,12 +345,12 @@ void GDIndex::set_index_parameters(const uint ld_length, const uint ld_frame_len
     load_gd_gmm(gd_gmm_path);
 }
 
-void GDIndex::set_query_parameters(const uint min_number_words_visited,
+void GDIndex::set_query_parameters(const uint min_number_words_selected,
                                    const int word_selection_mode,
                                    const float word_selection_thresh,
                                    const string trained_parameters_path,
                                    const int verbose_level) {
-    query_parameters_.min_number_words_visited = min_number_words_visited;
+    query_parameters_.min_number_words_selected = min_number_words_selected;
     query_parameters_.word_selection_mode = word_selection_mode;
     query_parameters_.word_selection_thresh = word_selection_thresh;
 
@@ -391,18 +392,113 @@ void GDIndex::update_index() {
 
 void GDIndex::sign_binarize(const vector<float>& gd_word_residuals, 
                             vector<uint>& gd_word_descriptor) {
-
+    gd_word_descriptor.resize(index_parameters_.gd_number_gaussians);
+    for (uint count_gaussian = 0; 
+         count_gaussian < index_parameters_.gd_number_gaussians;
+         count_gaussian++) {
+        uint packed_block = 0;
+        uint start = count_gaussian*index_parameters_.ld_pca_dim;
+        uint end = (count_gaussian + 1)*index_parameters_.ld_pca_dim;
+        // Sign binarize
+        for (uint count_dim = start; count_dim < end; count_dim++) {
+            uint bit = (gd_word_residuals.at(count_dim) > 0) ? 1 : 0;
+            PUSH_BIT(packed_block, bit);
+        }
+        gd_word_descriptor.at(count_gaussian) = packed_block;
+    }
 }
 
-void GDIndex::project_local_descriptr_pca(const float* desc, float* pca_desc) {
+void GDIndex::project_local_descriptor_pca(const float* desc, float* pca_desc) {
+    vector < float > desc_pow(index_parameters_.ld_length, 0);
+	// Pre power law and normalization
+    float l2_norm_sq = 0;
+    for (uint count_in_dim = 0; count_in_dim < index_parameters_.ld_length; count_in_dim++) {
+        POWER_LAW(desc[count_in_dim], index_parameters_.ld_pre_pca_power, 
+                  desc_pow.at(count_in_dim));
+        l2_norm_sq += desc_pow.at(count_in_dim) * desc_pow.at(count_in_dim);
+    }
+    float l2_norm = sqrt(l2_norm_sq);
+    for (uint count_in_dim = 0; count_in_dim < index_parameters_.ld_length; count_in_dim++) {
+        desc_pow.at(count_in_dim) /= l2_norm;
+    }
 
+	// Projection onto eigenvectors
+    for (uint count_out_dim = 0; count_out_dim < index_parameters_.ld_pca_dim; 
+         count_out_dim++) {
+        pca_desc[count_out_dim] = 0;
+        for (uint count_in_dim = 0; count_in_dim < index_parameters_.ld_length; 
+             count_in_dim++) {
+            pca_desc[count_out_dim] +=
+                (desc_pow.at(count_in_dim) - index_parameters_.ld_mean_vector[count_in_dim])
+                * index_parameters_.ld_pca_eigenvectors.at(count_out_dim)[count_in_dim];
+        }
+    }
 }
 
-void GDIndex::sampleFramesFromShot(const uint number_frames_out, 
-                                   const uint first_frame, 
-                                   const uint number_frames_this_shot, 
-                                   vector<uint>& out_frames) {
+void GDIndex::sample_frames_from_shot(const uint number_frames_out, 
+                                      const uint first_frame, 
+                                      const uint number_frames_this_shot, 
+                                      vector<uint>& out_frames) {
+    // Note: number_frames_this_shot must be bigger than number_frames_out
+    out_frames.clear();
+    if (number_frames_out == 1) {
+        uint middle_frame = first_frame 
+            + static_cast<uint>(floor(static_cast<float>(number_frames_this_shot)/2));
+        out_frames.push_back(middle_frame);
+    } else {
+        double rate_float = static_cast<double>(number_frames_this_shot)
+            /static_cast<double>(number_frames_out);
+        uint rate;
+        if ((number_frames_this_shot % number_frames_out) == 0) {
+            rate = static_cast<uint>(rate_float);
+            for (uint count_sample = 0; count_sample < number_frames_this_shot; 
+                 count_sample += rate) {
+                out_frames.push_back(first_frame + count_sample);
+            }
+        } else {
+            if ((number_frames_out - 1)*static_cast<uint>(ceil(rate_float))
+                < number_frames_this_shot) {
+                rate = static_cast<uint>(ceil(rate_float));
+                for (uint count_sample = 0; count_sample < number_frames_this_shot;
+                     count_sample += rate) {
+                    out_frames.push_back(first_frame + count_sample);
+                }
+            } else {
+                rate = static_cast<uint>(floor(rate_float));
+                vector<uint> out_frames_aux;
+                for (uint count_sample = 0; count_sample < number_frames_this_shot;
+                     count_sample += rate) {
+                    out_frames_aux.push_back(first_frame + count_sample);
+                }
+                uint start_ind, end_ind;
+                uint extra_frames = (out_frames_aux.size() - number_frames_out);
 
+                if (extra_frames) {
+                    // In this case, we'll keep the middle ones, in order not to unbalance
+                    // the selection too much
+                    if (extra_frames % 2) {
+                        // Odd: keep one more at the beginning
+                        start_ind = (extra_frames - 1)/2;
+                        end_ind = out_frames_aux.size() - 1 
+                            - static_cast<uint>(ceil((static_cast<double>(extra_frames)/2)));
+                    } else {
+                        // Even
+                        start_ind = extra_frames/2;
+                        end_ind = out_frames_aux.size() - 1 - extra_frames/2;
+                    }
+
+                    for (uint count_sample = start_ind; count_sample < end_ind + 1; 
+                         count_sample++) {
+                        out_frames.push_back(out_frames_aux.at(count_sample));
+                    }
+                } else {
+                    out_frames = out_frames_aux;
+                }
+            }
+        }
+    }
+    // Make sure we've collected the correct number
+    assert(number_frames_out == out_frames.size());
 }
 
 void GDIndex::query(const vector<uint>& query_word_descriptor,
@@ -410,7 +506,65 @@ void GDIndex::query(const vector<uint>& query_word_descriptor,
                     const vector<float>& query_word_total_soft_assignment,
                     const vector<uint>& database_indices,
                     vector< pair<float,uint> >& database_scores_indices) {
+    assert(index_.number_global_descriptors == database_indices.size());
+    // Resize vector that will be passed back
+    database_scores_indices.resize(index_.number_global_descriptors);
 
+    // Loop over database items and get their scores
+    for (uint count_elem = 0; count_elem < index_.number_global_descriptors; 
+         count_elem++) {
+        uint number_item = database_indices.at(count_elem);
+        database_scores_indices.at(count_elem).second = number_item;
+
+        // Check that the database item has at least the minimum number of
+        // selected words that we require; if not, just set it to FLT_MAX
+        if (index_.number_words_selected.at(count_elem) 
+            <= query_parameters_.min_number_words_selected) {
+            database_scores_indices.at(count_elem).first = FLT_MAX;
+            continue;
+        }
+
+        float query_norm = 0;
+        float total_correlation = 0;
+        uint query_number_words_selected = 0;
+        for (uint count_gaussian = 0; 
+             count_gaussian < index_parameters_.gd_number_gaussians;
+             count_gaussian++) {
+            float query_word_strength = 0;
+            if (query_parameters_.word_selection_mode == WORD_L1_NORM) {
+                query_word_strength = query_word_l1_norm.at(count_gaussian);
+            } else {
+                query_word_strength = query_word_total_soft_assignment.at(count_gaussian);
+            }
+
+            // Skip in case query word strength is not enough
+            if (query_word_strength <= query_parameters_.word_selection_thresh) {
+                continue;
+            } else {
+                query_number_words_selected++;
+                // Compute Hamming distance
+                uint aux = query_word_descriptor.at(count_gaussian)
+                    ^ index_.word_descriptor.at(count_elem).at(count_gaussian);
+                uint h = query_parameters_.pop_count[aux >> 16]
+                    + query_parameters_.pop_count[aux & 65535];
+                // Add to correlation
+                total_correlation += query_parameters_.fast_corr_weights[h];
+            }
+        }
+
+        // Figure out query norm to be used
+        query_norm = sqrt(query_number_words_selected
+                          * index_parameters_.ld_pca_dim);
+
+        // Compute final correlation for this item
+        total_correlation /= index_.norm_factors.at(count_elem) * query_norm;
+
+        // Change sign such that smaller is better
+        database_scores_indices.at(count_elem).first = -total_correlation;
+    }
+    // Sort scores
+    sort(database_scores_indices.begin(), database_scores_indices.end(), 
+         cmp_float_uint_ascend);
 }
 
 void GDIndex::load_ld_mean_vector(string path) {

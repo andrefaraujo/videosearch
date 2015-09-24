@@ -30,7 +30,7 @@ Retriever::Retriever() {
 	gdindex_ptr_rerank_ = NULL;
     local_descriptor_mode_ = SIFT_LOCAL_DESCRIPTOR;
     number_gaussians_global_descriptor_ = GD_NUMBER_GAUSSIANS_DEFAULT;
-    min_number_words_visited_ = MIN_NUMBER_WORDS_VISITED_DEFAULT;
+    min_number_words_visited_ = MIN_NUMBER_WORDS_SELECTED_DEFAULT;
     word_selection_mode_ = WORD_SELECTION_MODE_DEFAULT;
     word_selection_thresh_ = WORD_SELECTION_THRESH_DEFAULT;
 	gdindex_trained_parameters_path_ = "../indexer/global_descriptors/trained_parameters/";
