@@ -74,7 +74,6 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                              const vector < pair < string, pair < uint, uint > > >& shot_info,
                                              const float word_selection_thresh_rerank,
                                              const string gdindex_path_other,
-                                             const string results_filename,
                                              const bool avoid_redundant_scene_results) {
 	// Open files that will be written: log file and results file
 	string log_file_name = output_base_path + "_log.txt";

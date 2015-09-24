@@ -4,6 +4,7 @@ Class that performs retrieval given a dataset and index.
 #ifndef RETRIEVER_H
 #define RETRIEVER_H
 
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -49,7 +50,6 @@ public:
                                       const vector < pair < string, pair < uint, uint > > >& shot_info = vector < pair < string, pair < uint, uint > > >(), 
                                       const float word_selection_thresh_rerank = 6, 
                                       const string gdindex_path_other = "", 
-                                      const string results_filename = "",
                                       const bool avoid_redundant_scene_results = true);
 
 	/**********************************************************
