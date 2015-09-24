@@ -39,6 +39,35 @@ GDIndex::GDIndex() {
     query_parameters_.fast_corr_weights = NULL;
 }
 
+GDIndex::~GDIndex() {
+    // Clearing and deleting vectors/pointers
+    // -- Index
+    index_.word_descriptor.clear();
+    index_.word_l1_norms.clear();
+    index_.word_total_soft_assignment.clear();
+    index_.frame_numbers_in_db.clear();
+    // -- Index parameters
+    if (index_parameters_.ld_mean_vector != NULL) {
+        delete[] index_parameters_.ld_mean_vector;
+        index_parameters_.ld_mean_vector = NULL;
+    }
+    for (uint i = 0; i < index_parameters_.ld_pca_eigenvectors.size(); i++) {
+        if (index_parameters_.ld_pca_eigenvectors.at(i) != NULL) {
+            delete [] index_parameters_.ld_pca_eigenvectors.at(i);
+            index_parameters_.ld_pca_eigenvectors.at(i) = NULL;
+        }
+    }
+    index_parameters_.ld_pca_eigenvectors.clear();
+    if (index_parameters_.gd_gmm != NULL) {
+        gmm_delete(index_parameters_.gd_gmm);
+    }
+    // -- Query parameters
+    if (query_parameters_.fast_corr_weights != NULL) {
+        delete [] query_parameters_.fast_corr_weights;
+        query_parameters_.fast_corr_weights = NULL;
+    }
+}
+
 void GDIndex::write(const string index_path) {
 
 }
