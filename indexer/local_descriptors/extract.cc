@@ -142,7 +142,7 @@ int main(int argc, const char * argv[]) {
 	bool skip = false;
 
 	// Parse command-line
-	for (unsigned int i = 1; i < argc; i++) {
+	for (int i = 1; i < argc; i++) {
 	    if (strcmp(argv[i],"-h")==0) {
 	    	usage();
 	    	exit(EXIT_FAILURE);

@@ -22,12 +22,10 @@ all: $(FEATURE_EXTRACTOR) $(TEST_FEATURE_EXTRACTOR) $(TEST_READ)
 
 $(FILEIO_DIR)/file_io.o: $(FILEIO_DIR)/file_io.cc $(FILEIO_DIR)/file_io.h
 	$(CXX) $(CXXFLAGS) -c $(FILEIO_DIR)/file_io.cc \
-	-I$(VLROOT) \
 	-o $(FILEIO_DIR)/file_io.o
 
 $(FEATURESET_DIR)/feature_set.o: $(FEATURESET_DIR)/feature_set.cc $(FEATURESET_DIR)/feature_set.h
 	$(CXX) $(CXXFLAGS) -c $(FEATURESET_DIR)/feature_set.cc \
-	-I$(VLROOT) \
 	-o $(FEATURESET_DIR)/feature_set.o
 
 sift_extractor.o: sift_extractor.cc sift_extractor.h

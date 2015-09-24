@@ -23,7 +23,7 @@ FeatureSet::FeatureSet(FeatureSet* pOther)
   m_nDescriptorLength = pOther->m_nDescriptorLength;
   m_nFrameLength = pOther->m_nFrameLength;
   m_nNumFeatures = 0;
-  for (int nFeature = 0; nFeature < pOther->m_nNumFeatures; nFeature++)
+  for (unsigned int nFeature = 0; nFeature < pOther->m_nNumFeatures; nFeature++)
     {
       float* pDescCopy = new float[m_nDescriptorLength];
       float* pFrameCopy = new float[m_nFrameLength];
@@ -67,7 +67,7 @@ void FeatureSet::addFeature(float* pDescriptor, float* pFrame)
 
 void FeatureSet::print()
 {
-	for (int nElem = 0; nElem < m_vDescriptors.size(); nElem++) {
+	for (unsigned int nElem = 0; nElem < m_vDescriptors.size(); nElem++) {
 		if (m_nFrameLength > 3) {
 		  printf("(%d) frames [%.2f %.2f %.2f %.2f], descriptors [%.2f %.2f %.2f %.2f ... %.2f] \n",
 			 nElem+1, m_vFrames[nElem][0], m_vFrames[nElem][1], m_vFrames[nElem][2], m_vFrames[nElem][3],
