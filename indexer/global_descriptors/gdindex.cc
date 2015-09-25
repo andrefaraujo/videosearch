@@ -287,7 +287,62 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
                                          vector<uint>& gd_word_descriptor, 
                                          vector<float>& gd_word_l1_norm, 
                                          vector<float>& gd_word_total_soft_assignment) {
+    // Resize the vectors that will be returned
+    gd_word_descriptor.resize(index_parameters_.gd_number_gaussians);
+    gd_word_l1_norm.resize(index_parameters_.gd_number_gaussians);
+    gd_word_total_soft_assignment.resize(index_parameters_.gd_number_gaussians);
 
+    uint unbinarized_signature_length = index_parameters_.gd_number_gaussians
+        *index_parameters_.ld_pca_dim;
+    float* all_pca_desc = new float[feature_set->m_nNumFeatures 
+                                    * index_parameters_.ld_pca_dim];
+    // Project SIFT using PCA
+    for (uint count_feat = 0; count_feat < feature_set->m_nNumFeatures; count_feat++) {
+        project_local_descriptor_pca(feature_set->m_vDescriptors[count_feat], 
+                                     all_pca_desc + count_feat*index_parameters_.ld_pca_dim);
+    }
+
+    // Compute Fisher vector
+    int gmm_flags = GMM_FLAGS_MU;
+    uint fisher_output_length = gmm_fisher_sizeof(index_parameters_.gd_gmm, 
+                                                 gmm_flags);
+    vector<float> fisher_output(fisher_output_length, 0);
+    // This will extract the FV with only the mean component and using FV normalization
+    // but NOT the L2 normalization after the end nor the power normalization
+    gmm_fisher_save_soft_assgn(feature_set->m_nNumFeatures, all_pca_desc, 
+                               index_parameters_.gd_gmm, gmm_flags, fisher_output.data(), 
+                               gd_word_total_soft_assignment.data());
+
+    // Compute L1Norm info
+    for (uint count_gaussian = 0; 
+         count_gaussian < index_parameters_.gd_number_gaussians; 
+         count_gaussian++) {
+        double sum_abs = 0;
+        for (uint count_dim = count_gaussian*index_parameters_.ld_pca_dim; 
+             count_dim < (count_gaussian + 1)*index_parameters_.ld_pca_dim; 
+             count_dim++) {
+            sum_abs += fabs(fisher_output.at(count_dim));
+        }
+        gd_word_l1_norm.at(count_gaussian) = static_cast<float>(sum_abs);
+    }
+
+    // Apply power law
+    float l2_norm_sq = 0;
+    for (uint count_dim = 0; count_dim < unbinarized_signature_length; count_dim++) {
+        POWER_LAW_SAME(fisher_output.at(count_dim), 0.5);
+        l2_norm_sq += fisher_output.at(count_dim) * fisher_output.at(count_dim);
+    }
+
+    // L2 normalize
+    float l2_norm = sqrt(l2_norm_sq);
+    if (l2_norm > L2_NORM_SQ_THRESH) {
+        for (uint count_dim = 0; count_dim < unbinarized_signature_length; count_dim++) {
+            fisher_output.at(count_dim) /= l2_norm;
+        }
+    }
+    
+    // Sign binarize
+    sign_binarize(fisher_output, gd_word_descriptor);
 }
 
 void GDIndex::performQuery(const string local_descriptors_path, 

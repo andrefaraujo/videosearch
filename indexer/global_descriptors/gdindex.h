@@ -23,6 +23,11 @@ using namespace std;
   w = (v >= 0) ? pow(v,a) : -1 * pow(-v,a);
 #endif
 
+#ifndef POWER_LAW_SAME
+#define POWER_LAW_SAME(v, a)                        \
+  v = (v >= 0) ? pow(v,a) : -1 * pow(-v,a);
+#endif
+
 typedef unsigned char uchar;
 typedef unsigned int uint;
 typedef unsigned short ushort;
@@ -42,6 +47,9 @@ const float WORD_SELECTION_THRESH_DEFAULT = 7;
 
 // Hamming distance above which score is just set to zero
 const uint CORR_WEIGHTS_CLIPPING = 16;
+
+// L2 norm sq thresh
+const double L2_NORM_SQ_THRESH = 0.00001;
 
 class GDIndex
 {
