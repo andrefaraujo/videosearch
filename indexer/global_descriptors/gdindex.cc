@@ -7,12 +7,23 @@
 #include <string>
 #include <vector>
 
+#include "../../common/file_io/file_io.h"
 #include "../../common/feature_set/feature_set.h"
 #include "gdindex.h"
 
 extern "C" {
 #include "../../common/yael_v438_modif/yael/gmm.h"
 #include "../../common/yael_v438_modif/yael/matrix.h"
+}
+
+/********************************
+HELPER FUNCTIONS
+********************************/
+
+static bool file_exists(string filename)
+{
+  ifstream ifile(filename.c_str());
+  return bool(ifile);
 }
 
 /********************************
@@ -271,7 +282,58 @@ uint GDIndex::get_number_global_descriptors() {
 
 void GDIndex::generate_index(const vector<string>& feature_files, 
                              const int verbose_level) {
+    uint number_files_to_process = feature_files.size();
 
+    // Allocate space in index_
+    index_.word_l1_norms.resize(number_files_to_process);
+    index_.word_total_soft_assignment.resize(number_files_to_process);
+    index_.word_descriptor.resize(number_files_to_process);
+
+	uint number_files_processed = 0;
+#pragma omp parallel for
+    for (uint count_file = 0; count_file < feature_files.size(); count_file++) {
+        // Load feature set
+        if (!file_exists(feature_files.at(count_file))) {
+            fprintf(stderr, "Missing feature file: %s\n", 
+                    feature_files.at(count_file).c_str());
+            exit(EXIT_FAILURE);
+        }
+        FeatureSet* feature_set = NULL;
+        if (index_parameters_.ld_name == "sift") {
+            feature_set = readSIFTFile(feature_files.at(count_file), 
+                                       index_parameters_.ld_frame_length,
+                                       index_parameters_.ld_length);
+        } else {
+            cout << "Local feature " << index_parameters_.ld_name
+                 << " is not supported" << endl;
+        }
+
+        // Generate global signature, put in index_
+        index_.word_l1_norms.at(count_file).resize(index_parameters_.gd_number_gaussians);
+        index_.word_total_soft_assignment.at(count_file).resize(index_parameters_.gd_number_gaussians);
+        index_.word_descriptor.at(count_file).resize(index_parameters_.gd_number_gaussians);
+        generate_global_descriptor(feature_set, 
+                                   index_.word_descriptor.at(count_file),
+                                   index_.word_l1_norms.at(count_file),
+                                   index_.word_total_soft_assignment.at(count_file));
+
+        // Report status
+#pragma omp critical 
+        {
+            number_files_processed++;
+        }
+        if (verbose_level >= 2) {
+            printf("[%06d, %06d] %04d features \n", 
+                   count_file, number_files_processed, feature_set->m_nNumFeatures);
+        }
+
+        // Clean up feature set
+        if (feature_set == NULL) {
+            delete feature_set;
+        }
+    }
+  
+    update_index();
 }
 
 void GDIndex::generate_index_shot_based(const vector<string>& feature_files, 

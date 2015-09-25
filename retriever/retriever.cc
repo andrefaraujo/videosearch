@@ -14,7 +14,7 @@ using namespace std;
 HELPER FUNCTIONS
 ********************************/
 
-bool file_exists(string filename)
+static bool file_exists(string filename)
 {
   ifstream ifile(filename.c_str());
   return bool(ifile);
