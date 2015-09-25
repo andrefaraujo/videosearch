@@ -113,6 +113,9 @@ void gmm_compute_p (int n, const float * v,
  * @param fisher_vector_out(dd) output descriptor. The output descriptor size dd is given by gmm_fisher_sizeof(flags)
  *
  */
+void gmm_fisher_save_soft_assgn(int n, const float *v, const gmm_t * g, int flags,
+                                float *fisher_vector_out, float *word_total_soft_assignment);
+
 void gmm_fisher (int n, const float *v, const gmm_t * g, 
                  int flags, float * fisher_vector_out);
 

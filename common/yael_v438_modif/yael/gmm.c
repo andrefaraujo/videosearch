@@ -529,13 +529,27 @@ size_t gmm_fisher_sizeof(const gmm_t * g,int flags) {
   return sz;
 }
 
-
-
 void gmm_fisher(int n, const float *v, const gmm_t * g, int flags, float *dp_dlambda) {
+    gmm_fisher_save_soft_assgn(n, v, g, flags, dp_dlambda, NULL);
+}
+
+void gmm_fisher_save_soft_assgn(int n, const float *v, const gmm_t * g, int flags, 
+                                float *dp_dlambda, float *word_total_soft_assignment) {
   
   float *p = fvec_new(n * g->k);
   gmm_compute_p(n,v,g,p,flags | GMM_FLAGS_W);
   
+  // Save total soft assignment in case word_total_soft_assignment is != NULL
+  if(word_total_soft_assignment != NULL) {
+      int i, j;
+      for(j = 0; j < g->k; j++) {
+          double sum = 0;
+          for(i = 0; i < n; i++)
+              sum += p[i*g->k + j];
+          word_total_soft_assignment[j] = (float)(sum/n);
+      }
+  }
+
   gmm_fisher_from_posteriors(n, v, g, flags, p, dp_dlambda); 
 
   free(p); 
