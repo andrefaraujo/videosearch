@@ -1,6 +1,6 @@
 # videosearch: Large-Scale Video Retrieval Using Images
 
-Andre Araujo ([stanford.edu/~afaraujo](http://stanford.edu/~afaraujo), afaraujo@stanford.edu)
+Andre Araujo ([stanford.edu/~afaraujo](http://stanford.edu/~afaraujo), afaraujo@stanford.edu)  
 In collaboration with Jason Chaves, David Chen and Haricharan Lakshman
 
 Image, Video and Multimedia Systems Group, Stanford University
@@ -69,21 +69,21 @@ If you use this code, please cite:
 A. Araujo, J. Chaves, R. Angst and B. Girod. "Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval", in Proc. ICIP, 2015
 
 Bibtex:
-> @inproceedings{AraujoICIP2015,
-> author = {Araujo, A. and Chaves, J. and Angst, R. and Girod, B.},
-> booktitle = {Proc. ICIP},
-> title = {{Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval}},
-> year = {2015}
-> }
+    > @inproceedings{AraujoICIP2015,
+    > author = {Araujo, A. and Chaves, J. and Angst, R. and Girod, B.},
+    > booktitle = {Proc. ICIP},
+    > title = {{Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval}},
+    > year = {2015}
+    > }
 
 If you use the Stanford I2V dataset, please cite:
 
 A. Araujo, J. Chaves, D. Chen, R. Angst and B. Girod. "Stanford I2V: A News Video Dataset for Query-by-Image Experiments", in Proc. ACM Multimedia Systems, 2015
 
 Bibtex:
-> @inproceedings{AraujoMMSYS2015,
-> author = {Araujo, A. and Chaves, J. and Chen, D. and Angst, R. and Girod, B.},
-> booktitle = {Proc. ACM Multimedia Systems},
-> title = {{Stanford I2V: A News Video Dataset for Query-by-Image Experiments}},
-> year = {2015}
-> }
+    > @inproceedings{AraujoMMSYS2015,
+    > author = {Araujo, A. and Chaves, J. and Chen, D. and Angst, R. and Girod, B.},
+    > booktitle = {Proc. ACM Multimedia Systems},
+    > title = {{Stanford I2V: A News Video Dataset for Query-by-Image Experiments}},
+    > year = {2015}
+    > }
