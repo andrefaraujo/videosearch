@@ -101,12 +101,12 @@ class GDIndex
   void performQuery(const string local_descriptors_path, 
                     vector< pair<float,uint> >& results, 
                     const vector<uint>& indices = vector<uint>(),
-                    const uint num_scenes_to_rerank = 0,
-                    const uint group_testing_number_centroids = 0,
-                    const GDIndex* revv_other_ptr = NULL,
-                    const vector < vector < uint > >& vGroupLists 
+                    const uint number_2nd_stage_rerank = 0,
+                    const uint number_gaussians_2nd_stage = 0,
+                    GDIndex* gdindex_ptr_rerank = NULL,
+                    const vector < vector < uint > >& group_lists
                       = vector < vector < uint > >(), 
-                    const vector < pair < string, pair < uint, uint > > >& shot_info
+                    const vector < pair < string, pair < uint, uint > > >& info_2nd_stage
                       = vector < pair < string, pair < uint, uint > > >(),
                     const int verbose_level = 1);
 

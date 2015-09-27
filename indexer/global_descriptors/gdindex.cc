@@ -291,7 +291,7 @@ void GDIndex::generate_index(const vector<string>& feature_files,
 
 	uint number_files_processed = 0;
 #pragma omp parallel for
-    for (uint count_file = 0; count_file < feature_files.size(); count_file++) {
+    for (uint count_file = 0; count_file < number_files_to_process; count_file++) {
         // Load feature set
         if (!file_exists(feature_files.at(count_file))) {
             fprintf(stderr, "Missing feature file: %s\n", 
@@ -342,7 +342,7 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
                                         const vector < vector < 
                                             pair < uint, uint > > >& track_lists,
                                         const int verbose_level) {
-
+    // TODO(andrefaraujo): index generation for shot-based scheme
 }
 
 void GDIndex::generate_global_descriptor(const FeatureSet* feature_set, 
@@ -410,13 +410,50 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
 void GDIndex::performQuery(const string local_descriptors_path, 
                            vector< pair<float,uint> >& results, 
                            const vector<uint>& indices,
-                           const uint num_scenes_to_rerank,
-                           const uint group_testing_number_centroids ,
-                           const GDIndex* revv_other_ptr,
-                           const vector < vector < uint > >& vGroupLists,
-                           const vector < pair < string, pair < uint, uint > > >& shot_info,
+                           const uint number_2nd_stage_rerank,
+                           const uint number_gaussians_2nd_stage ,
+                           GDIndex* gdindex_ptr_rerank,
+                           const vector < vector < uint > >& group_lists,
+                           const vector < pair < string, pair < uint, uint > > >& info_2nd_stage,
                            const int verbose_level) {
+    // Load local descriptors
+    FeatureSet* feature_set = NULL;
+    if (index_parameters_.ld_name == "sift") {
+        feature_set = readSIFTFile(local_descriptors_path, 
+                                   index_parameters_.ld_frame_length,
+                                   index_parameters_.ld_length);
+    } else {
+        cout << "Local feature " << index_parameters_.ld_name
+             << " is not supported" << endl;
+    }
 
+    // Generate global descriptor
+    vector<uint> gd_word_descriptor;
+    vector<float> gd_word_l1_norm, gd_word_total_soft_assignment;
+    generate_global_descriptor(feature_set, 
+                               gd_word_descriptor, 
+                               gd_word_l1_norm, 
+                               gd_word_total_soft_assignment);
+    
+    // If number_2nd_stage_rerank is 0, we're not using two-stage scoring
+    if (!number_2nd_stage_rerank) {
+        query(gd_word_descriptor, gd_word_l1_norm, gd_word_total_soft_assignment,
+              indices, results);
+    } else {
+        vector<uint> gd_word_descriptor_rerank;
+        vector<float> gd_word_l1_norm_rerank, gd_word_total_soft_assignment_rerank;
+        gdindex_ptr_rerank->generate_global_descriptor(feature_set,
+                                                       gd_word_descriptor_rerank,
+                                                       gd_word_l1_norm_rerank,
+                                                       gd_word_total_soft_assignment_rerank);
+        // TODO(andrefaraujo): two-stage scoring for scene+shot reranking
+    }
+
+    // Clean up
+    if (feature_set != NULL) {
+        delete feature_set;
+        feature_set = NULL;
+    }
 }
 
 void GDIndex::set_index_parameters(const uint ld_length, const uint ld_frame_length,
