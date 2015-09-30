@@ -82,10 +82,6 @@ public:
 
 private:
 	/************ Constants *************/
-	// Constants for shot mode
-	enum {SHOT_MODE_INDEP_KEYF = 0, SHOT_MODE_SHOT_AGG = 1, 
-	      SHOT_MODE_GLOBAL_AGG = 2, SHOT_MODE_TRACK_AGG = 3};
-
     enum {SIFT_LOCAL_DESCRIPTOR = 0};
 
 	/************ Variables *************/

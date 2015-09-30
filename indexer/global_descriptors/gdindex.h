@@ -127,13 +127,17 @@ class GDIndex
                             const float word_selection_thresh,
                             const string trained_parameters_path,
                             const int verbose_level = 1);
- private:
-  /************ Constants *************/
+
+  /************ Public Constants *************/
   // Modes for shot detection
   enum {SHOT_MODE_INDEP_KEYF = 0, SHOT_MODE_SHOT_AGG = 1, SHOT_MODE_GLOBAL_AGG = 2, SHOT_MODE_TRACK_AGG = 3};
+  /************ End of Public Constants *************/
+
+ private:
+  /************ Private Constants *************/
   // Mode used in word selection for querying
   enum {WORD_L1_NORM = 0, WORD_SOFT_ASSGN = 1};
-  /************ End of Constants *************/
+  /************ End of Private Constants *************/
 
   /************ Variable  *************/  
   // Variables that will hold the index and number of signatures stored

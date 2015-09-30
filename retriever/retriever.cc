@@ -96,14 +96,14 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
 	log_file_ << "The query set contains " << number_queries << " query images" << endl;
 
     // Set keyframe_ids_for_eval_, helpful for the usage of different types of indexing
-    if ((shot_mode == SHOT_MODE_INDEP_KEYF) && (keyframe_numbers_path != "")) {
+    if ((shot_mode == GDIndex::SHOT_MODE_INDEP_KEYF) && (keyframe_numbers_path != "")) {
 		// Shots with aggregation per frames in shots; in this case, we just need to 
 		// use the correct indices for the frames; other than that, the processing works 
 		// as usual
 		get_vector_of_uints_from_file_lines(keyframe_numbers_path, 
                                             keyframe_ids_for_eval_);
-	} else if ((shot_mode == SHOT_MODE_SHOT_AGG || shot_mode == SHOT_MODE_GLOBAL_AGG
-		    || shot_mode == SHOT_MODE_TRACK_AGG) && (shot_list_path != "")) {
+	} else if ((shot_mode == GDIndex::SHOT_MODE_SHOT_AGG || shot_mode == GDIndex::SHOT_MODE_GLOBAL_AGG
+		    || shot_mode == GDIndex::SHOT_MODE_TRACK_AGG) && (shot_list_path != "")) {
 		// Shots with one signature per shot, which aggregates features from many
 		// frames; in this case, we'll use shot numbers in "keyframe_ids_for_eval_"
 		// and we'll process the results from querying separately
