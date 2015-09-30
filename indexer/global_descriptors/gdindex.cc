@@ -347,8 +347,6 @@ void GDIndex::generate_index(const vector<string>& feature_files,
 void GDIndex::generate_index_shot_based(const vector<string>& feature_files, 
                                         const vector<uint>& shot_beg_frames,
                                         const int shot_mode, const int shot_keyf, 
-                                        const vector < vector < 
-                                            pair < uint, uint > > >& track_lists,
                                         const int verbose_level) {
     if (verbose_level >= 4) cout << "Starting generate_index_shot_based..." 
                                  << endl;

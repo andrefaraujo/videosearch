@@ -88,8 +88,6 @@ class GDIndex
   void generate_index_shot_based(const vector<string>& feature_files, 
                                  const vector<uint>& shot_beg_frames,
                                  const int shot_mode, const int shot_keyf, 
-                                 const vector < vector < 
-                                   pair < uint, uint > > >& track_lists,
                                  const int verbose_level = 1);
   // -- generate one global descriptor from features
   void generate_global_descriptor(const FeatureSet* feature_set, 
