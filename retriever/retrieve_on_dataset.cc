@@ -46,7 +46,7 @@ void usage() {
 	cout << "--number_output_results[-s] ARG: size of list of results to output (default: 100)" << endl;
 	cout << "--verbose_level[-v] ARG: (default: 1)" << endl;
 	cout << "--shot_mode[-m] ARG: -1 = not using this; 0 = using indep. keyframes in a shot; 1 = aggregating local features from several frames into a global signature; 2 = aggregating global signatures from several frames into a global signature; 3 = aggregating local features from several frames, using tracking, into a global signature (default: -1)" << endl;
-	cout << "--shot_list[-l] ARG: path of list of shots, used only if shot_mode == 1 (default: not using it)" << endl;
+	cout << "--shot_list[-l] ARG: path of list of shots, used only if shot_mode == 1, 2 or 3 (default: not using it)" << endl;
     cout << "--min_number_words_visited ARG: ARG = minimum number of centroids/Gaussians necessary to consider a given database item. Default: 20." << endl;
     cout << "--word_selection_mode ARG: Options: (ARG = 0 : use L1 norm mode), (ARG = 1 : use total soft assgn mode). Default: 0." << endl;
 	cout << "--number_scenes_rerank ARG: when using two-stage retrieval, ARG is the number ofscenes to re-rank. Default: 0" << endl;
