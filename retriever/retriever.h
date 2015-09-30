@@ -17,17 +17,6 @@ using namespace std;
 const int DEFAULT_VERBOSE_LEVEL = 1;
 const uint DEFAULT_NUMBER_OUTPUT_RESULTS = 100;
 
-// SIFT constants
-const uint SIFT_LENGTH = 128;
-const uint SIFT_FRAME_LENGTH = 4;
-const string SIFT_EXTENSION = ".siftb";
-const string SIFT_NAME = "sift";
-
-// Other constants for now (we might turn them into options later)
-const uint LD_PCA_DIM = 32;
-const float LD_PRE_PCA_POWER = 0.5;
-const float GD_POWER = 0.5;
-
 class Retriever {
 public:
 
@@ -81,9 +70,6 @@ public:
     void set_min_num_words_visited(uint n);
 
 private:
-	/************ Constants *************/
-    enum {SIFT_LOCAL_DESCRIPTOR = 0};
-
 	/************ Variables *************/
 	// GDIndex database, pointer to it
 	GDIndex* gdindex_ptr_;

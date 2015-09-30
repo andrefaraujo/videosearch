@@ -17,6 +17,14 @@ extern "C" {
 }
 
 /********************************
+Constant strings and floats from GDIndex
+********************************/
+const string GDIndex::SIFT_EXTENSION = ".siftb";
+const string GDIndex::SIFT_NAME = "sift";
+const float GDIndex::LD_PRE_PCA_POWER = 0.5;
+const float GDIndex::GD_POWER = 0.5;
+
+/********************************
 HELPER FUNCTIONS
 ********************************/
 
