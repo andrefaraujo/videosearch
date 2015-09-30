@@ -342,7 +342,219 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
                                         const vector < vector < 
                                             pair < uint, uint > > >& track_lists,
                                         const int verbose_level) {
-    // TODO(andrefaraujo): index generation for shot-based scheme
+    if (verbose_level >= 4) cout << "Starting generate_index_shot_based..." 
+                                 << endl;
+    uint number_shots = shot_beg_frames.size();
+    if (verbose_level >= 3) cout << "Using " << number_shots << " shots" << endl;
+
+    uint number_frames_in_db = feature_files.size();
+    if (verbose_level >= 3) cout << "There are " << number_frames_in_db 
+                                 << " frames in the database." << endl;
+
+    // The number of entries in the generated index will vary depending
+    // on mode and shot_keyf
+    uint number_entries_in_index = 0;
+
+    // This vector is used only if frames in shot are stored independently.
+    // It contains, for each shot number (first entry), a vector with indices
+    // which are the places in the index where each frame will be placed.
+    vector < vector < uint > > inds_indep_mode;
+
+    if (shot_mode == SHOT_MODE_INDEP_KEYF) {
+        // The number of global signatures will vary for this mode,
+        // it depends on the number of frames in each shot, so
+        // we need to calculate
+        for (uint count_shot = 0; count_shot < number_shots; count_shot++) {
+            uint number_frames_this_shot;
+            // Note: the number calculated in the following lines is a simple
+            // subtraction, since the next number is not part of the shot, so 
+            // there's no +1 at the end of the calculation
+            if (count_shot != number_shots - 1) {
+                number_frames_this_shot = shot_beg_frames.at(count_shot + 1)
+                    - shot_beg_frames.at(count_shot);
+            } else {
+                number_frames_this_shot = number_frames_in_db
+                    - shot_beg_frames.at(count_shot);
+            }
+
+            uint n;
+            if (shot_keyf != -1) {
+                n = min(number_frames_this_shot, static_cast<uint>(shot_keyf));
+            } else {
+                n = number_frames_this_shot;
+            }
+
+            vector < uint > shot_inds;
+            for (uint count_f = 0; count_f < n; count_f++) {
+                shot_inds.push_back(number_entries_in_index + count_f);
+            }
+
+            number_entries_in_index += n;
+            inds_indep_mode.push_back(shot_inds);
+        }		
+    } else if (shot_mode == SHOT_MODE_SHOT_AGG) {
+        // This will generate only a global signature per shot
+        number_entries_in_index = number_shots;
+    } else {
+        cout << "Indexing for shot_mode " << shot_mode 
+             << " is not currently implemented. Quitting..." << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if (verbose_level >= 2) cout << "GD index will contain " 
+                                 << number_entries_in_index << " entries" << endl;
+
+    // Allocate space in index_
+    index_.word_l1_norms.resize(number_entries_in_index);
+    index_.word_total_soft_assignment.resize(number_entries_in_index);
+    index_.word_descriptor.resize(number_entries_in_index);
+
+    // We will loop over shots and aggregate features depending on the mode
+    uint count_index = 0;
+#pragma omp parallel for       
+    for (uint count_shot = 0; count_shot < number_shots; count_shot++) {
+        uint number_frames_this_shot;
+        // Note: the number calculated in the following lines is a simple
+        // subtraction, since the next number is not part of the shot, so 
+        // there's no +1 at the end of the calculation
+        if (count_shot != number_shots - 1) {
+            number_frames_this_shot = shot_beg_frames.at(count_shot + 1)
+                - shot_beg_frames.at(count_shot);
+        } else {
+            number_frames_this_shot = number_frames_in_db
+                - shot_beg_frames.at(count_shot);
+        }
+
+        if (verbose_level >= 3) cout << "Doing shot " << count_shot 
+                                     << " out of " << number_shots << endl;
+        uint number_frames_to_use;
+        if (shot_keyf != -1) {
+            number_frames_to_use = min(number_frames_this_shot, 
+                                       static_cast<uint>(shot_keyf));
+        } else {
+            number_frames_to_use = number_frames_this_shot;
+        }
+
+        if (verbose_level >= 3) cout << "This shot will use " 
+                                     << number_frames_to_use << " frames" << endl;
+
+        vector<uint> frames_to_use;
+        sample_frames_from_shot(number_frames_to_use,
+                                shot_beg_frames.at(count_shot),
+                                number_frames_this_shot,
+                                frames_to_use);
+
+        if (shot_mode == SHOT_MODE_INDEP_KEYF) {
+            for (uint count_ind = 0; count_ind < number_frames_to_use;
+                 count_ind++) {
+                uint frame_this_ind = frames_to_use.at(count_ind);
+                uint ind_in_index = inds_indep_mode.at(count_shot).at(count_ind);
+                // Load feature set
+                if (!file_exists(feature_files.at(frame_this_ind))) {
+                    fprintf(stderr, "Missing feature file: %s\n", 
+                            feature_files.at(frame_this_ind).c_str());
+                    exit(EXIT_FAILURE);
+                }
+                FeatureSet* feature_set = NULL;
+                if (index_parameters_.ld_name == "sift") {
+                    feature_set = readSIFTFile(feature_files.at(frame_this_ind), 
+                                               index_parameters_.ld_frame_length,
+                                               index_parameters_.ld_length);
+                } else {
+                    cout << "Local feature " << index_parameters_.ld_name
+                         << " is not supported" << endl;
+                }
+                // Generate global signature, put in index_
+                index_.word_l1_norms.at(ind_in_index).resize(index_parameters_.gd_number_gaussians);
+                index_.word_total_soft_assignment.at(ind_in_index).resize(index_parameters_.gd_number_gaussians);
+                index_.word_descriptor.at(ind_in_index).resize(index_parameters_.gd_number_gaussians);
+                generate_global_descriptor(feature_set, 
+                                           index_.word_descriptor.at(ind_in_index),
+                                           index_.word_l1_norms.at(ind_in_index),
+                                           index_.word_total_soft_assignment.at(ind_in_index));                
+#pragma omp critical 
+                {
+                    count_index++;
+                    index_.frame_numbers_in_db.push_back(frame_this_ind);
+                }
+    
+                // Clean up feature set
+                if (feature_set == NULL) {
+                    delete feature_set;
+                }
+            }
+        } else if (shot_mode == SHOT_MODE_SHOT_AGG) {
+			// Collect all features
+            FeatureSet* feature_set = new FeatureSet(index_parameters_.ld_length,
+                                                     index_parameters_.ld_frame_length);
+            for (uint count_ind = 0; count_ind < number_frames_to_use; count_ind++) {
+                uint frame_this_ind = frames_to_use.at(count_ind);
+                if (verbose_level >= 4) cout << "Doing frame " << frame_this_ind << endl;
+
+                // Load feature set for this frame
+                FeatureSet* feature_set_this_frame = NULL;
+                if (index_parameters_.ld_name == "sift") {
+                    feature_set_this_frame = readSIFTFile(feature_files.at(frame_this_ind), 
+                                                          index_parameters_.ld_frame_length,
+                                                          index_parameters_.ld_length);
+                } else {
+                    cout << "Local feature " << index_parameters_.ld_name
+                         << " is not supported" << endl;
+                }
+
+                if (verbose_level >= 4) cout << "Loaded features from this frame" 
+                                             << endl;
+
+                // Add this frame's features to collection of all shot's features
+                uint number_features_this_frame = 
+                    feature_set_this_frame->m_nNumFeatures;
+                for (uint count_f = 0; count_f < number_features_this_frame; 
+                     count_f++) {
+                    feature_set->addFeature(feature_set_this_frame->m_vDescriptors.at(count_f),
+                                            feature_set_this_frame->m_vFrames.at(count_f));
+                }
+                if (verbose_level >= 4) cout << "Added these features to shot's features" << endl;
+                // Clean up feature set for this frame
+                if (feature_set_this_frame == NULL) {
+                    delete feature_set_this_frame;
+                }
+            }
+
+            if (verbose_level >= 4) cout << "All features were collected, now shot contains " << feature_set->m_nNumFeatures << " features" << endl;
+
+            // Generate global signature, put in index_
+            index_.word_l1_norms.at(count_shot).resize(index_parameters_.gd_number_gaussians);
+            index_.word_total_soft_assignment.at(count_shot).resize(index_parameters_.gd_number_gaussians);
+            index_.word_descriptor.at(count_shot).resize(index_parameters_.gd_number_gaussians);
+            generate_global_descriptor(feature_set, 
+                                       index_.word_descriptor.at(count_shot),
+                                       index_.word_l1_norms.at(count_shot),
+                                       index_.word_total_soft_assignment.at(count_shot));
+#pragma omp critical 
+            {
+                count_index++;
+            }
+    
+            // Clean up feature set
+            if (feature_set == NULL) {
+                delete feature_set;
+            }
+        } 
+    }
+
+    // We need to sort frame_numbers_in_db, because it might not be in order 
+    // due to parallelization. 
+    // Note: this variable is used only if the mode is SHOT_MODE_INDEP_KEYF,
+    // so if the mode is different it will just sort nothing, it doesnt matter
+    stable_sort(index_.frame_numbers_in_db.begin(), index_.frame_numbers_in_db.end());
+
+    // Make sure we processed the correct number of REVV signatures
+    assert(count_index == number_entries_in_index);
+    if (shot_mode == SHOT_MODE_INDEP_KEYF) {
+        assert(count_index == index_.frame_numbers_in_db.size());
+    }
+
+    update_index();
 }
 
 void GDIndex::generate_global_descriptor(const FeatureSet* feature_set, 
