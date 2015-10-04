@@ -1,4 +1,4 @@
-YAEL_DIR = ../common/yael_v438_modif/yael
+YAEL_DIR = ../common/yael_v260_modif/yael
 GDINDEX_DIR = ../indexer/global_descriptors
 FEATURESET_DIR = ../common/feature_set
 FILEIO_DIR = ../common/file_io

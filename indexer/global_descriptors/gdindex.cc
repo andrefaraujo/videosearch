@@ -12,8 +12,8 @@
 #include "gdindex.h"
 
 extern "C" {
-#include "../../common/yael_v438_modif/yael/gmm.h"
-#include "../../common/yael_v438_modif/yael/matrix.h"
+#include "../../common/yael_v260_modif/yael/gmm.h"
+#include "../../common/yael_v260_modif/yael/matrix.h"
 }
 
 /********************************

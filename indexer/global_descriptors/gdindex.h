@@ -7,7 +7,7 @@
 #include "../../common/feature_set/feature_set.h"
 
 extern "C" {
-#include "../../common/yael_v438_modif/yael/gmm.h"
+#include "../../common/yael_v260_modif/yael/gmm.h"
 }
 
 using namespace std;

@@ -1,4 +1,4 @@
-YAEL_DIR = ../../common/yael_v438_modif/yael
+YAEL_DIR = ../../common/yael_v260_modif/yael
 FEATURESET_DIR = ../../common/feature_set
 FILEIO_DIR = ../../common/file_io
 
