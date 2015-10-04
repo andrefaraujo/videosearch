@@ -559,13 +559,17 @@ void gmm_fisher_save_soft_assgn(int n, const float *v, const gmm_t * g, int flag
 #define VP(l,j) vp[(j)*d+(l)]
 
   // Save total soft assignment per centroid
-  if(word_total_soft_assignment != NULL) {
-      for(j=0;j<k;j++) {
+  if (word_total_soft_assignment != NULL) {
+      for (j=0;j<k;j++) {
           double sum=0;
-          for(i=0;i<n;i++) {
+          for (i=0;i<n;i++) {
               sum += P(j,i);
           }
-          word_total_soft_assignment[j] = (float)(sum/n);
+          if (n != 0) {
+              word_total_soft_assignment[j] = (float)(sum/n);
+          } else {
+              word_total_soft_assignment[j] = 0.0;
+          }
       }
   }
 
