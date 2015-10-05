@@ -39,7 +39,7 @@ void usage(char** argv)
   printf("--single_shot[-g]: Flag that sets the mode of using a single shot in entire database. This is equivalent to passing as shot_file_path a file that contains only one line with '0'. (default: not using it). This is used when aggregating over entire video clip. \n");
   printf("--shot_mode[-m] ARG: Mode to use when using shots: 0 = indep. keyframes per shot; 1 = feature aggregation in shot; (default = 0, used only if shot_file_path is passed or single_shot is set) \n");
   printf("--shot_keyf[-k] ARG: Max number of keyframes per shot to use, when using shot mode (it will try to use as many, but shots might be shorter than this number; in this case, it will use the number of frames in the shot). Set this to -1 if wanting to use all frames from shot (default: -1) \n");
-  printf("--verbose_level[-v] ARG: Currently used only for shot mode (default: 1) \n");
+  printf("--verbose_level[-v] ARG (default: 1) \n");
 }
 
 // Helper function

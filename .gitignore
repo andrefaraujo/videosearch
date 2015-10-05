@@ -1,6 +1,7 @@
 *~
 *.o
 indexer/global_descriptors/index_dataset
+indexer/global_descriptors/join_indexes
 indexer/local_descriptors/extract
 indexer/local_descriptors/test_read
 indexer/local_descriptors/test_extract
