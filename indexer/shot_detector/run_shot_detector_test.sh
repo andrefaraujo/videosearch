@@ -5,7 +5,7 @@ VERBOSE=0
 
 # Get list of clips (make sure to extract keyframes before running this)
 lists=test_shot_lists.txt
-echo ../test_db/*.txt > $lists
+ls ../test_db/*.txt > $lists
 
 for list in `cat $lists`
 do
