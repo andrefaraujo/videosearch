@@ -14,6 +14,10 @@ This project currently contains code for
 - Scoring a retrieval system that uses the Stanford I2V dataset
 - Reproducing main results from the papers mentioned below (IN PROGRESS: to be concluded by Oct 4)
 
+TODO(andrefaraujo): mention that this repo can also be useful if just doing query-by-image image retrieval
+
+For any questions, please get in touch through github or using the contact information mentioned above.
+
 ## Quick start
 
 Clone repository (where "mypath" is the path you'll download the repository):
@@ -35,21 +39,51 @@ Test keyframe extraction:
 Build and test shot boundary detection:
 
     > cd $mypath/videosearch/indexer/shot_detector
-    > make
+    > make # Building shot boundary detector
     > ./run_shot_detector_test.sh
 
 Build and test SIFT extraction:
 
     > cd $mypath/videosearch/indexer/local_descriptors/
-    > make # Making programs for extracting, reading and writing features
+    > make # Building programs for extracting, reading and writing features
     > ./run_sift_extraction_test.sh
 
-You can also test reading a ".siftb" file (you can look at test_read.cc code for an example on how to read SIFT features binary files):
+Build global descriptors:
 
-    > ./test_extract # extract SIFT from test image
-    > ./test_read # read extracted SIFT
+    > cd $mypath/videosearch/indexer/global_descriptors/
+    > make # Building programs for extracting and joining indexes of global descriptors
+    > # First, extract frame-based global descriptors
+    > ./run_frame_based_index_test.sh
+    > TODO(andrefaraujo): shot-based and scene-based indexes
 
-Extracting keyframes and features from entire Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203)). Note: For this to work, you need to download the dataset beforehand and follow the instructions (found [here](https://stacks.stanford.edu/file/druid:zx935qw7203/README.txt)) for setting it up.
+Extract local descriptors for query image (you need to do this before running retriever, which is the next step):
+
+    > cd $mypath/videosearch/indexer/local_descriptors/
+    > ./run_sift_extraction_test_query.sh
+
+Build and run retriever on a small dataset:
+
+    > cd $mypath/videosearch/retriever/
+    > make # Making library and program to do query-by-image video retrieval 
+    > # First, retrieve using frame-based global descriptors
+    > ./run_frame_test.sh # retrieve using frame-based index
+    > TODO(andrefaraujo): retrieve based on shot and scene-based indexes
+
+Evaluate retrieval results (calculate AP and p@1):
+
+    > cd $mypath/videosearch/scoring/
+    > # First, evaluate frame-based results
+    > ./run_convert_frame_based_results_test.sh # converting results to scoreable format
+    > ./run_evaluate_frame_based_test.sh # calculating AP and p@1
+    > TODO(andrefaraujo): shot- and scene-based results
+
+## Performing retrieval on Stanford I2V dataset
+
+Here we provide helpful scripts to use our programs and obtain results on the Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203)). For this to work, you need to download the dataset beforehand and follow the instructions (found [here](https://stacks.stanford.edu/file/druid:zx935qw7203/README.txt)) for setting it up.
+
+TODO(andrefaraujo): complete this by Oct/18
+
+Extracting keyframes and features from entire Stanford I2V dataset:
 
     > cd $mypath/videosearch/stanford_i2v/indexer/
     > python extract_database_keyframes.py # Look at script for more details and for changing parameters
