@@ -16,7 +16,7 @@ This project currently contains code for
 
 ## Quick start
 
-Clone repository:
+Clone repository (where "mypath" is the path you'll download the repository):
 
     > cd $mypath
     > git clone https://github.com/andrefaraujo/videosearch.git
