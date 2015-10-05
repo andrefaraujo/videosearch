@@ -229,10 +229,14 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
 
         if (!avoid_redundant_scene_results) {
             results_file << "Query " << count_query << endl;
-            write_results(results_query, results_file);
+            write_results(results_query, 
+                          shot_mode,
+                          results_file);
         } else {
             results_file << "Query " << count_query << endl;
-            write_results_no_redundancy(results_query, results_file);            
+            write_results_no_redundancy(results_query, 
+                                        shot_mode,
+                                        results_file);
         }
 
         if (verbose_level_) cout << "-----> Query " << count_query <<
@@ -331,12 +335,21 @@ string Retriever::get_local_descriptor_filename(const string image_path,
 }
 
 void Retriever::write_results(const vector< pair < float, uint > >& results,
+                              const int shot_mode,
                               ofstream& file) {
 	uint number_to_write = 
         min(number_output_results_, static_cast<uint>(results.size()));
 
 	for (uint count_result = 0; count_result < number_to_write; count_result++) {
-		uint result_number = results.at(count_result).second;
+		uint result_number;
+        if (shot_mode == GDIndex::SHOT_MODE_SHOT_AGG 
+            || shot_mode == GDIndex::SHOT_MODE_GLOBAL_AGG
+            || shot_mode == GDIndex::SHOT_MODE_TRACK_AGG) {
+            result_number = 
+                shot_first_frames_.at(results.at(count_result).second);
+        } else {
+            result_number = results.at(count_result).second;
+        }
 		float score = results.at(count_result).first;
         string path_to_write = db_list_.at(result_number);
 		log_file_ << "#" << count_result + 1 << ", number " << result_number << ", file name is " << path_to_write << ", score = " << score << endl;
@@ -345,12 +358,21 @@ void Retriever::write_results(const vector< pair < float, uint > >& results,
 }
 
 void Retriever::write_results_no_redundancy(const vector< pair < float, uint > >& results,
+                                            const int shot_mode,
                                             ofstream& file) {
     vector<string> already_scored_clips;
     uint count_result = 0, count_used_result = 0;
     while (count_used_result < number_output_results_ 
            && count_result < results.size()) {
-		uint result_number = results.at(count_result).second;
+		uint result_number;
+        if (shot_mode == GDIndex::SHOT_MODE_SHOT_AGG 
+            || shot_mode == GDIndex::SHOT_MODE_GLOBAL_AGG
+            || shot_mode == GDIndex::SHOT_MODE_TRACK_AGG) {
+            result_number = 
+                shot_first_frames_.at(results.at(count_result).second);
+        } else {
+            result_number = results.at(count_result).second;
+        }
         string path_to_write = db_list_.at(result_number);
         size_t strpos = path_to_write.rfind('/');
         string result_path = path_to_write.substr(0, strpos);

@@ -119,10 +119,12 @@ private:
 
 	// Write query results for a given query
     void write_results(const vector< pair < float, uint > >& results,
+                       const int shot_mode,
                        ofstream& file);
 
 	// Write query results for a given query, avoiding redundant clips
     void write_results_no_redundancy(const vector< pair < float, uint > >& results,
+                                     const int shot_mode,
                                      ofstream& file);
 };
 
