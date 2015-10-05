@@ -27,20 +27,6 @@ Creating VLFEAT library:
     > make # Making vlfeat
     > sudo ln -s bin/glnxa64/libvl.so /usr/lib/libvl.so #sym-link it to your library
 
-Build and test SIFT extraction:
-
-    > cd $mypath/videosearch/indexer/local_descriptors/
-    > make # Making programs for extracting, reading and writing features
-    > ./test_extract
-
-You can also test reading a ".siftb" file (you can look at test_read.cc code for an example on how to read SIFT features binary files):
-
-    > ./test_read # under $mypath/videosearch/indexer/local_descriptors/
-
-A larger scale extraction of features can be done with (look at the code of the shell script for more details):
-
-    > ./run_sift_extraction.sh # under $mypath/videosearch/indexer/local_descriptors/ 
-
 Test keyframe extraction:
 
     > cd $mypath/videosearch/indexer/keyframes
@@ -50,7 +36,18 @@ Build and test shot boundary detection:
 
     > cd $mypath/videosearch/indexer/shot_detector
     > make
-    > ./run_shot_detector.sh
+    > ./run_shot_detector_test.sh
+
+Build and test SIFT extraction:
+
+    > cd $mypath/videosearch/indexer/local_descriptors/
+    > make # Making programs for extracting, reading and writing features
+    > ./run_sift_extraction_test.sh
+
+You can also test reading a ".siftb" file (you can look at test_read.cc code for an example on how to read SIFT features binary files):
+
+    > ./test_extract # extract SIFT from test image
+    > ./test_read # read extracted SIFT
 
 Extracting keyframes and features from entire Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203)). Note: For this to work, you need to download the dataset beforehand and follow the instructions (found [here](https://stacks.stanford.edu/file/druid:zx935qw7203/README.txt)) for setting it up.
 

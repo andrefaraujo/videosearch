@@ -1,6 +1,8 @@
 #!/bin/bash
 
-IMAGE_LIST=test_images.txt
+# Get list of keyframes
+IMAGE_LIST=test_all_db_keyframes.txt
+ls ../test_db/*/*.jpg > $IMAGE_LIST
 
 # Choose the number of threads
 NUMBER_THREADS=5
