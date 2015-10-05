@@ -30,7 +30,7 @@ Creating VLFEAT library:
 Test keyframe extraction:
 
     > cd $mypath/videosearch/indexer/keyframes
-    > ./run_keyframe_extraction.sh
+    > ./run_keyframe_extraction_test.sh
 
 Build and test shot boundary detection:
 
