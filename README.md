@@ -9,16 +9,20 @@ This project currently contains code for
 - Keyframe extraction from videos
 - Shot boundary detector for videos
 - SIFT descriptor extraction per frame
-- Global descriptor (Binarized Fisher vectors) extraction per frame, shot or scene (IN PROGRESS: to be concluded by Oct 4)
-- Retrieval in image or video databases using image queries (IN PROGRESS: to be concluded by Oct 4)
-- Scoring a retrieval system that uses the Stanford I2V dataset
-- Reproducing main results from the papers mentioned below (IN PROGRESS: to be concluded by Oct 4)
+- Global descriptor (Binarized Fisher vectors) extraction per frame, shot or scene
+- Retrieval in image or video databases using image queries
+- Scoring a retrieval system based on Average Precision and Precision at 1
+- Reproducing main results from the papers mentioned below (IN PROGRESS: to be concluded by Oct 18)
 
 TODO(andrefaraujo): mention that this repo can also be useful if just doing query-by-image image retrieval
 
-For any questions, please get in touch through github or using the contact information mentioned above.
+For any questions or issues, please get in touch through github or using the contact information mentioned above.
 
 ## Quick start
+
+Here we illustrate the usage of this repository's code by running through a simple example containing
+4 database video clips and two image queries. This also serves as a way to make sure your code is working
+properly.
 
 Clone repository (where "mypath" is the path you'll download the repository):
 
@@ -52,9 +56,15 @@ Build global descriptors:
 
     > cd $mypath/videosearch/indexer/global_descriptors/
     > make # Building programs for extracting and joining indexes of global descriptors
-    > # First, extract frame-based global descriptors
-    > ./run_frame_based_index_test.sh
-    > TODO(andrefaraujo): shot-based and scene-based indexes
+    > # Extract frame-based global descriptors (GD)
+    > ./run_frame_based_index_test.sh # extract GDs for each clip
+    > ./run_join_frame_based_index_test.sh # Join all GDs in one index
+    > # Extract shot-based global descriptors (GD)
+    > ./run_shot_based_index_test.sh # extract GDs for each clip
+    > ./run_join_shot_based_index_test.sh # Join all GDs in one index
+    > # Extract scene-based global descriptors (GD)
+    > ./run_scene_based_index_test.sh # extract GD for each clip
+    > ./run_join_scene_based_index_test.sh # Join all GDs in one index
 
 Extract local descriptors for query image (you need to do this before running retriever, which is the next step):
 

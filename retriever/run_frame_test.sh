@@ -43,7 +43,7 @@ METHOD_PATH_RESULTS=${METHOD_PATH_RESULTS}"/gaussians_"$GAUSSIANS
 METHOD_PATH_RESULTS=${METHOD_PATH_RESULTS}"/min_num_words_visited_"$MIN_NUM_WORDS_SELECTED
 
 QUERY_LIST_FILE=test_query_list.txt
-ls ../indexer/test_query/test_query.jpg > $QUERY_LIST_FILE
+ls ../indexer/test_query/*.jpg > $QUERY_LIST_FILE
 INDEX_FILE=../indexer/global_descriptors/test_frame_based_index_lists.sift_scfv_idx_k512
 DB_LIST_FILE=test_frame_db_list.txt
 ls ../indexer/test_db/*/*.jpg > $DB_LIST_FILE
