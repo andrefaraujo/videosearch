@@ -8,13 +8,14 @@ Image, Video and Multimedia Systems Group, Stanford University
 This project currently contains code for 
 - Keyframe extraction from videos
 - Shot boundary detector for videos
-- SIFT descriptor extraction per frame
+- SIFT descriptor extraction per image/frame
 - Global descriptor (Binarized Fisher vectors) extraction per frame, shot or scene
 - Retrieval in image or video databases using image queries
 - Scoring a retrieval system based on Average Precision and Precision at 1
 - Reproducing main results from the papers mentioned below (IN PROGRESS: to be concluded by Oct 18)
 
-TODO(andrefaraujo): mention that this repo can also be useful if just doing query-by-image image retrieval
+This repository can also be useful if one is interested in searching a database of images using query images. In
+that case, one can simply use the frame-based techniques described below.
 
 For any questions or issues, please get in touch through github or using the contact information mentioned above.
 
@@ -24,7 +25,7 @@ Here we illustrate the usage of this repository's code by running through a simp
 4 database video clips and two image queries. This also serves as a way to make sure your code is working
 properly.
 
-Clone repository (where "mypath" is the path you'll download the repository):
+Clone repository (where "mypath" is the path you'll download the repository to):
 
     > cd $mypath
     > git clone https://github.com/andrefaraujo/videosearch.git
@@ -66,7 +67,7 @@ Build global descriptors:
     > ./run_scene_based_index_test.sh # extract GD for each clip
     > ./run_join_scene_based_index_test.sh # Join all GDs in one index
 
-Extract local descriptors for query image (you need to do this before running retriever, which is the next step):
+Extract local descriptors for query images (you need to do this before running retriever, which is the next step):
 
     > cd $mypath/videosearch/indexer/local_descriptors/
     > ./run_sift_extraction_test_query.sh
@@ -82,7 +83,7 @@ Build and run retriever on a small dataset:
 Evaluate retrieval results (calculate AP and p@1):
 
     > cd $mypath/videosearch/scoring/
-    > # First, evaluate frame-based results
+    > # Evaluate frame-based results
     > ./run_convert_frame_based_results_test.sh # converting results to scoreable format
     > ./run_evaluate_frame_based_test.sh # calculating AP and p@1
     > TODO(andrefaraujo): shot- and scene-based results
@@ -93,7 +94,7 @@ Here we provide helpful scripts to use our programs and obtain results on the St
 
 TODO(andrefaraujo): complete this by Oct/18
 
-Extracting keyframes and features from entire Stanford I2V dataset:
+Extracting keyframes from entire Stanford I2V dataset:
 
     > cd $mypath/videosearch/stanford_i2v/indexer/
     > python extract_database_keyframes.py # Look at script for more details and for changing parameters
