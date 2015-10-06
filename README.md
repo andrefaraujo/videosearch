@@ -86,17 +86,35 @@ Build and run retriever on a small dataset:
 
     > cd $mypath/videosearch/retriever/
     > make # Making library and program to do query-by-image video retrieval 
-    > # First, retrieve using frame-based global descriptors
-    > ./run_frame_test.sh # retrieve using frame-based index
-    > TODO(andrefaraujo): retrieve based on shot and scene-based indexes
+
+    > # Retrieve using frame-based global descriptors
+    > ./run_frame_test.sh
+
+    > # Retrieve using shot-based global descriptors, mode LOC
+    > ./run_shot_mode_1_test.sh
+
+    > # Retrieve using shot-based global descriptors, mode INDEP
+    > ./run_shot_mode_0_test.sh
+
+    TODO(andrefaraujo): retrieve in two stages using scene descriptors
 
 Evaluate retrieval results (calculate AP and p@1):
 
     > cd $mypath/videosearch/scoring/
+
     > # Evaluate frame-based results
     > ./run_convert_frame_based_results_test.sh # converting results to scoreable format
     > ./run_evaluate_frame_based_test.sh # calculating AP and p@1
-    > TODO(andrefaraujo): shot- and scene-based results
+
+    > # Evaluate shot-based results, mode LOC
+    > ./run_convert_shot_based_mode_1_results_test.sh # converting results to scoreable format
+    > ./run_evaluate_shot_based_mode_1_test.sh # calculating AP and p@1
+
+    > # Evaluate shot-based results, mode INDEP
+    > ./run_convert_shot_based_mode_0_results_test.sh # converting results to scoreable format
+    > ./run_evaluate_shot_based_mode_0_test.sh # calculating AP and p@1
+
+    TODO(andrefaraujo): scene-based results
 
 ## Performing retrieval on Stanford I2V dataset
 
