@@ -57,15 +57,25 @@ Build global descriptors:
 
     > cd $mypath/videosearch/indexer/global_descriptors/
     > make # Building programs for extracting and joining indexes of global descriptors
+    
     > # Extract frame-based global descriptors (GD)
     > ./run_frame_based_index_test.sh # extract GDs for each clip
-    > ./run_join_frame_based_index_test.sh # Join all GDs in one index
-    > # Extract shot-based global descriptors (GD)
-    > ./run_shot_based_index_test.sh # extract GDs for each clip
-    > ./run_join_shot_based_index_test.sh # Join all GDs in one index
+    > ./run_join_frame_based_index_test.sh # join all GDs in one index
+    
+    > # Extract shot-based global descriptors (GD) with mode LOC
+    > ./run_shot_based_index_mode_1_test.sh # extract GDs for each clip
+    > ./run_join_shot_based_index_mode_1_test.sh # join all GDs in one index
+    > ./run_process_shot_files_mode_1_test.sh # process auxiliary shot files for this mode
+
+    > # Extract shot-based global descriptors (GD) with mode INDEP
+    > ./run_shot_based_index_mode_0_test.sh # extract GDs for each clip
+    > ./run_join_shot_based_index_mode_0_test.sh # join all GDs in one index
+    > ./run_process_shot_files_mode_0_test.sh # process auxiliary shot files for this mode
+    
     > # Extract scene-based global descriptors (GD)
     > ./run_scene_based_index_test.sh # extract GD for each clip
-    > ./run_join_scene_based_index_test.sh # Join all GDs in one index
+    > ./run_join_scene_based_index_test.sh # join all GDs in one index
+    > ./run_process_scene_files_test.sh # process auxiliary scene files
 
 Extract local descriptors for query images (you need to do this before running retriever, which is the next step):
 
