@@ -145,7 +145,7 @@ Scoring results obtained with the Stanford I2V dataset. In this case, your shoul
 ## Citation
 If you use this code, please cite:
 
-A. Araujo, J. Chaves, R. Angst and B. Girod. "Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval", in Proc. ICIP, 2015 `[[Paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_ICIP15_v12.pdf)]` `[[Poster](http://web.stanford.edu/~afaraujo/2015_09_28_ICIP_poster_v3.pdf)]`
+A. Araujo, J. Chaves, R. Angst and B. Girod. "Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval", in Proc. ICIP, 2015 ([Paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_ICIP15_v12.pdf)) ([Poster](http://web.stanford.edu/~afaraujo/2015_09_28_ICIP_poster_v3.pdf))
 
 Bibtex:
 
@@ -158,7 +158,7 @@ Bibtex:
 
 If you use the Stanford I2V dataset, please cite:
 
-A. Araujo, J. Chaves, D. Chen, R. Angst and B. Girod. "Stanford I2V: A News Video Dataset for Query-by-Image Experiments", in Proc. ACM Multimedia Systems, 2015 `[[Paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v14.pdf)]` `[[Slides](http://web.stanford.edu/~afaraujo/2015_03_19_MMSys_talk.pdf)]`
+A. Araujo, J. Chaves, D. Chen, R. Angst and B. Girod. "Stanford I2V: A News Video Dataset for Query-by-Image Experiments", in Proc. ACM Multimedia Systems, 2015 ([Paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v14.pdf)) ([Slides](http://web.stanford.edu/~afaraujo/2015_03_19_MMSys_talk.pdf))
 
 Bibtex:
 
