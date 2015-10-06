@@ -10,8 +10,8 @@ LD_MODE=0
 VERBOSE=1
 
 # Shot parameters
-SHOT_MODE=1
-SHOT_KEYF=-1
+SHOT_MODE=0
+SHOT_KEYF=5
 SHOT_THRESH=0.8
 
 # Get list of indexes
