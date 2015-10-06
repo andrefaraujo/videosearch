@@ -12,7 +12,7 @@ NUMBER_OUTPUT_RESULTS=100
 AVOID_REDUNDANT_RESULTS=1
 # Verbose level
 VERBOSE=1
-# Number of min words to consider a match (default: 20)
+# Number of min words to consider a match (default: 0)
 MIN_NUM_WORDS_SELECTED=0
 # Word selection mode: (0=L1 norm), (1=soft assgn)
 WORD_SELECTION_MODE=0
