@@ -1,6 +1,6 @@
 # videosearch: Large-Scale Video Retrieval Using Images
 
-Andre Araujo ([stanford.edu/~afaraujo](http://stanford.edu/~afaraujo), afaraujo@stanford.edu)  
+Andr&eacute; Araujo ([stanford.edu/~afaraujo](http://stanford.edu/~afaraujo), afaraujo@stanford.edu)  
 In collaboration with Jason Chaves, David Chen and Haricharan Lakshman
 
 Image, Video and Multimedia Systems Group, Stanford University
@@ -11,7 +11,7 @@ This project currently contains code for
 - SIFT descriptor extraction per image/frame
 - Global descriptor (Binarized Fisher vectors) extraction per frame, shot or scene
 - Retrieval in image or video databases using image queries
-- Scoring a retrieval system based on Average Precision and Precision at 1
+- Scoring retrieval results based on Average Precision and Precision at 1
 - Reproducing main results from the papers mentioned below (IN PROGRESS: to be concluded by Oct 18)
 
 This repository can also be useful if one is interested in searching a database of images using query images. In
