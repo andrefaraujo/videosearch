@@ -97,7 +97,9 @@ Build and run retriever:
     > # Retrieve using shot-based global descriptors, mode INDEP
     > ./run_shot_mode_0_test.sh
 
-    TODO(andrefaraujo): retrieve in two stages using scene descriptors
+    > # Retrieve using scene-based global descriptors in first stage,
+    > # then shot-based global descriptors in second stage
+    > ./run_scene_test.sh
 
 Evaluate retrieval results (calculate AP and p@1):
 
@@ -115,7 +117,9 @@ Evaluate retrieval results (calculate AP and p@1):
     > ./run_convert_shot_based_mode_0_results_test.sh # converting results to scoreable format
     > ./run_evaluate_shot_based_mode_0_test.sh # calculating AP and p@1
 
-    TODO(andrefaraujo): scene-based results
+    > # Evaluate scene-based results
+    > ./run_convert_scene_based_results_test.sh # converting results to scoreable format
+    > ./run_evaluate_scene_based_test.sh # calculating AP and p@1
 
 ## Performing retrieval on Stanford I2V dataset
 
