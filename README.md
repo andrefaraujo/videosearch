@@ -76,6 +76,7 @@ Build global descriptors:
     > ./run_scene_based_index_test.sh # extract GD for each clip
     > ./run_join_scene_based_index_test.sh # join all GDs in one index
     > ./run_process_scene_files_test.sh # process auxiliary scene files
+    > ./run_process_scene_rerank_files_test.sh # process auxiliary file for scene reranking
 
 Extract local descriptors for query images (you need to do this before running retriever, which is the next step):
 
