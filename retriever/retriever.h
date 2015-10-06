@@ -34,11 +34,11 @@ public:
                                       const string shot_list_path = "", 
                                       const int shot_mode = -1, 
                                       const uint number_scenes_to_rerank = 0, 
-                                      const uint rerank_number_gaussians = 0,  
-                                      const vector < vector < uint > >& group_lists = vector < vector < uint > >(), 
-                                      const vector < pair < string, pair < uint, uint > > >& shot_info = vector < pair < string, pair < uint, uint > > >(), 
+                                      const uint number_gaussians_rerank = 0,  
+                                      const vector < vector < uint > >& group_lists_rerank
+                                        = vector < vector < uint > >(), 
                                       const float word_selection_thresh_rerank = 6, 
-                                      const string gdindex_path_other = "", 
+                                      const string gdindex_path_rerank = "", 
                                       const bool avoid_redundant_scene_results = true);
 
 	/**********************************************************

@@ -69,11 +69,10 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                              const string shot_list_path,
                                              const int shot_mode,
                                              const uint number_scenes_to_rerank,
-                                             const uint rerank_number_gaussians,
-                                             const vector < vector < uint > >& group_lists,
-                                             const vector < pair < string, pair < uint, uint > > >& shot_info,
+                                             const uint number_gaussians_rerank,
+                                             const vector < vector < uint > >& group_lists_rerank,
                                              const float word_selection_thresh_rerank,
-                                             const string gdindex_path_other,
+                                             const string gdindex_path_rerank,
                                              const bool avoid_redundant_scene_results) {
 	// Open files that will be written: log file and results file
 	string log_file_name = output_base_path + "_log.txt";
@@ -152,7 +151,7 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
 	if (number_scenes_to_rerank != 0) {
 		gdindex_ptr_rerank_ = new GDIndex();
         gdindex_ptr_rerank_->set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
-                                                  GDIndex::LD_PCA_DIM, GDIndex::LD_PRE_PCA_POWER, rerank_number_gaussians,
+                                                  GDIndex::LD_PCA_DIM, GDIndex::LD_PRE_PCA_POWER, number_gaussians_rerank,
                                                   GDIndex::GD_POWER, gdindex_trained_parameters_path_,
                                                   verbose_level_);
         gdindex_ptr_rerank_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
@@ -166,8 +165,8 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
               << ld_extension << endl;
 
     gdindex_ptr_->read(gdindex_path);
-    if (number_scenes_to_rerank != 0 && gdindex_path_other != "") {
-        gdindex_ptr_rerank_->read(gdindex_path_other);
+    if (number_scenes_to_rerank != 0 && gdindex_path_rerank != "") {
+        gdindex_ptr_rerank_->read(gdindex_path_rerank);
     }
     if (verbose_level_ >= 2) cout << "GDIndex index was loaded from " << gdindex_path << endl;
     log_file_ << "GDIndex index was loaded from " << gdindex_path << endl;
@@ -204,13 +203,13 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
             if (verbose_level_ >= 2) cout << "Starting querying GDIndex..." << endl;
             log_file_ << "Starting querying GDIndex..." << endl;
             // Note: results_query will be sorted by scores
-            gdindex_ptr_->performQuery(feature_file,
-                                       results_query, 
-                                       keyframe_ids_for_eval_,
-                                       number_scenes_to_rerank, 
-                                       number_gaussians_global_descriptor_,
-                                       gdindex_ptr_rerank_,
-                                       group_lists, shot_info);
+            gdindex_ptr_->perform_query(feature_file,
+                                        keyframe_ids_for_eval_,
+                                        results_query, 
+                                        number_scenes_to_rerank, 
+                                        gdindex_ptr_rerank_,
+                                        group_lists_rerank,
+                                        verbose_level_);
             clock_t end_clock = clock();
             query_duration = double(end_clock - begin_clock)/CLOCKS_PER_SEC;
             if (verbose_level_ >= 2) cout << "done! Took "

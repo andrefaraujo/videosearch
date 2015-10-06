@@ -714,15 +714,13 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
     sign_binarize(fisher_output, gd_word_descriptor);
 }
 
-void GDIndex::performQuery(const string local_descriptors_path, 
-                           vector< pair<float,uint> >& results, 
-                           const vector<uint>& indices,
-                           const uint number_2nd_stage_rerank,
-                           const uint number_gaussians_2nd_stage ,
-                           GDIndex* gdindex_ptr_rerank,
-                           const vector < vector < uint > >& group_lists,
-                           const vector < pair < string, pair < uint, uint > > >& info_2nd_stage,
-                           const int verbose_level) {
+void GDIndex::perform_query(const string local_descriptors_path, 
+                            const vector<uint>& indices,
+                            vector< pair<float,uint> >& results, 
+                            const uint number_2nd_stage_rerank,
+                            GDIndex* gdindex_ptr_rerank,
+                            const vector < vector < uint > >& group_lists_rerank,
+                            const int verbose_level) {
     // Load local descriptors
     FeatureSet* feature_set = NULL;
     if (index_parameters_.ld_name == "sift") {
@@ -734,7 +732,7 @@ void GDIndex::performQuery(const string local_descriptors_path,
              << " is not supported" << endl;
     }
 
-    // Generate global descriptor
+    // Generate query global descriptor
     vector<uint> gd_word_descriptor;
     vector<float> gd_word_l1_norm, gd_word_total_soft_assignment;
     generate_global_descriptor(feature_set, 
@@ -747,13 +745,30 @@ void GDIndex::performQuery(const string local_descriptors_path,
         query(gd_word_descriptor, gd_word_l1_norm, gd_word_total_soft_assignment,
               indices, results);
     } else {
+        // Using two-stage scoring
+        // -- First stage
+        vector<uint> indices_2_stages(index_.number_global_descriptors);
+        for (uint count = 0; count < index_.number_global_descriptors; count++) {
+            // Include indices corresponding to shot numbers
+            indices_2_stages.at(count) = count;
+        }
+        vector< pair<float,uint> > results_1st_stage;
+        query(gd_word_descriptor, gd_word_l1_norm, gd_word_total_soft_assignment,
+              indices_2_stages, results_1st_stage);
+
+        // -- Second stage
         vector<uint> gd_word_descriptor_rerank;
         vector<float> gd_word_l1_norm_rerank, gd_word_total_soft_assignment_rerank;
         gdindex_ptr_rerank->generate_global_descriptor(feature_set,
                                                        gd_word_descriptor_rerank,
                                                        gd_word_l1_norm_rerank,
                                                        gd_word_total_soft_assignment_rerank);
-        // TODO(andrefaraujo): two-stage scoring for scene+shot reranking
+        gdindex_ptr_rerank->query_2nd_stage(gd_word_descriptor_rerank, 
+                                            gd_word_l1_norm_rerank, 
+                                            gd_word_total_soft_assignment_rerank, 
+                                            number_2nd_stage_rerank,
+                                            group_lists_rerank,
+                                            results_1st_stage, results);
     }
 
     // Clean up
@@ -970,6 +985,58 @@ void GDIndex::sample_frames_from_shot(const uint number_frames_out,
     assert(number_frames_out == out_frames.size());
 }
 
+void GDIndex::score_database_item(const vector<uint>& query_word_descriptor,
+                                  const vector<float>& query_word_l1_norm,
+                                  const vector<float>& query_word_total_soft_assignment,
+                                  const uint db_ind,
+                                  float& score) {
+    // Check that the database item has at least the minimum number of
+    // selected words that we require; if not, just set it to FLT_MAX
+    if (index_.number_words_selected.at(db_ind) 
+        <= query_parameters_.min_number_words_selected) {
+        score = FLT_MAX;
+        return;
+    }
+
+    float query_norm = 0;
+    float total_correlation = 0;
+    uint query_number_words_selected = 0;
+    for (uint count_gaussian = 0; 
+         count_gaussian < index_parameters_.gd_number_gaussians;
+         count_gaussian++) {
+        float query_word_strength = 0;
+        if (query_parameters_.word_selection_mode == WORD_L1_NORM) {
+            query_word_strength = query_word_l1_norm.at(count_gaussian);
+        } else {
+            query_word_strength = query_word_total_soft_assignment.at(count_gaussian);
+        }
+
+        // Skip in case query word strength is not enough
+        if (query_word_strength <= query_parameters_.word_selection_thresh) {
+            continue;
+        } else {
+            query_number_words_selected++;
+            // Compute Hamming distance
+            uint aux = query_word_descriptor.at(count_gaussian)
+                ^ index_.word_descriptor.at(db_ind).at(count_gaussian);
+            uint h = query_parameters_.pop_count[aux >> 16]
+                + query_parameters_.pop_count[aux & 65535];
+            // Add to correlation
+            total_correlation += query_parameters_.fast_corr_weights[h];
+        }
+    }
+
+    // Figure out query norm to be used
+    query_norm = sqrt(query_number_words_selected
+                      * index_parameters_.ld_pca_dim);
+
+    // Compute final correlation for this item
+    total_correlation /= index_.norm_factors.at(db_ind) * query_norm;
+
+    // Change sign such that smaller is better
+    score = -total_correlation;
+}
+
 void GDIndex::query(const vector<uint>& query_word_descriptor,
                     const vector<float>& query_word_l1_norm,
                     const vector<float>& query_word_total_soft_assignment,
@@ -985,51 +1052,54 @@ void GDIndex::query(const vector<uint>& query_word_descriptor,
         uint number_item = database_indices.at(count_elem);
         database_scores_indices.at(count_elem).second = number_item;
 
-        // Check that the database item has at least the minimum number of
-        // selected words that we require; if not, just set it to FLT_MAX
-        if (index_.number_words_selected.at(count_elem) 
-            <= query_parameters_.min_number_words_selected) {
-            database_scores_indices.at(count_elem).first = FLT_MAX;
-            continue;
+        score_database_item(query_word_descriptor,
+                            query_word_l1_norm,
+                            query_word_total_soft_assignment,
+                            count_elem,
+                            database_scores_indices.at(count_elem).first);
+    }
+    // Sort scores
+    sort(database_scores_indices.begin(), database_scores_indices.end(), 
+         cmp_float_uint_ascend);
+}
+
+void GDIndex::query_2nd_stage(const vector<uint>& query_word_descriptor,
+                              const vector<float>& query_word_l1_norm,
+                              const vector<float>& query_word_total_soft_assignment,
+                              const uint number_2nd_stage_rerank,
+                              const vector < vector < uint > >& group_lists_rerank,
+                              const vector< pair<float,uint> >& first_stage_scores_indices,
+                              vector< pair<float,uint> >& database_scores_indices) {
+    // Resize vector that will be passed back
+    database_scores_indices.clear();
+
+    // Figure out number of first stage items (groups) to re-rank
+    uint number_rerank = min(number_2nd_stage_rerank,
+                             static_cast<uint>(first_stage_scores_indices.size()));
+
+    // Loop over top number_rerank items from first stage and get score
+    // of the constituent second stage items
+    for (uint count_top = 0; count_top < number_rerank;
+         count_top++) {
+        uint this_group_ind = first_stage_scores_indices.at(count_top).second;
+
+		// Get number of 2nd stage items in this group
+		uint number_items_this_group = group_lists_rerank.at(this_group_ind).size();
+
+		// Loop over 2nd stage items in this group, get their signatures and score them
+		for (uint count_item = 0; count_item < number_items_this_group;
+		     count_item++) {
+			uint this_item_number = group_lists_rerank.at(this_group_ind).at(count_item);
+			pair < float, uint > score_this_item;
+            score_this_item.second = this_item_number;
+            
+            score_database_item(query_word_descriptor,
+                                query_word_l1_norm,
+                                query_word_total_soft_assignment,
+                                this_item_number,
+                                score_this_item.first);
+            database_scores_indices.push_back(score_this_item);
         }
-
-        float query_norm = 0;
-        float total_correlation = 0;
-        uint query_number_words_selected = 0;
-        for (uint count_gaussian = 0; 
-             count_gaussian < index_parameters_.gd_number_gaussians;
-             count_gaussian++) {
-            float query_word_strength = 0;
-            if (query_parameters_.word_selection_mode == WORD_L1_NORM) {
-                query_word_strength = query_word_l1_norm.at(count_gaussian);
-            } else {
-                query_word_strength = query_word_total_soft_assignment.at(count_gaussian);
-            }
-
-            // Skip in case query word strength is not enough
-            if (query_word_strength <= query_parameters_.word_selection_thresh) {
-                continue;
-            } else {
-                query_number_words_selected++;
-                // Compute Hamming distance
-                uint aux = query_word_descriptor.at(count_gaussian)
-                    ^ index_.word_descriptor.at(count_elem).at(count_gaussian);
-                uint h = query_parameters_.pop_count[aux >> 16]
-                    + query_parameters_.pop_count[aux & 65535];
-                // Add to correlation
-                total_correlation += query_parameters_.fast_corr_weights[h];
-            }
-        }
-
-        // Figure out query norm to be used
-        query_norm = sqrt(query_number_words_selected
-                          * index_parameters_.ld_pca_dim);
-
-        // Compute final correlation for this item
-        total_correlation /= index_.norm_factors.at(count_elem) * query_norm;
-
-        // Change sign such that smaller is better
-        database_scores_indices.at(count_elem).first = -total_correlation;
     }
     // Sort scores
     sort(database_scores_indices.begin(), database_scores_indices.end(), 

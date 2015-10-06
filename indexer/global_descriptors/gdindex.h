@@ -100,17 +100,14 @@ class GDIndex
                                   vector<float>& gd_word_total_soft_assignment);
 
   // Query index from query's local descriptor path
-  void performQuery(const string local_descriptors_path, 
-                    vector< pair<float,uint> >& results, 
-                    const vector<uint>& indices = vector<uint>(),
-                    const uint number_2nd_stage_rerank = 0,
-                    const uint number_gaussians_2nd_stage = 0,
-                    GDIndex* gdindex_ptr_rerank = NULL,
-                    const vector < vector < uint > >& group_lists
-                      = vector < vector < uint > >(), 
-                    const vector < pair < string, pair < uint, uint > > >& info_2nd_stage
-                      = vector < pair < string, pair < uint, uint > > >(),
-                    const int verbose_level = 1);
+  void perform_query(const string local_descriptors_path, 
+                     const vector<uint>& indices,
+                     vector< pair<float,uint> >& results, 
+                     const uint number_2nd_stage_rerank = 0,
+                     GDIndex* gdindex_ptr_rerank = NULL,
+                     const vector < vector < uint > >& group_lists_rerank
+                       = vector < vector < uint > >(), 
+                     const int verbose_level = 1);
 
   // Function to set index_parameters_
   void set_index_parameters(const uint ld_length, const uint ld_frame_length,
@@ -237,12 +234,28 @@ class GDIndex
                                const uint number_frames_this_shot, 
                                vector<uint>& out_frames);
 
+  // Obtain score for database item, given a query descriptor
+  void score_database_item(const vector<uint>& query_word_descriptor,
+                           const vector<float>& query_word_l1_norm,
+                           const vector<float>& query_word_total_soft_assignment,
+                           const uint db_ind,
+                           float& score);
+
   // Query index with query global descriptor
   void query(const vector<uint>& query_word_descriptor,
              const vector<float>& query_word_l1_norm,
              const vector<float>& query_word_total_soft_assignment,
              const vector<uint>& database_indices,
              vector< pair<float,uint> >& database_scores_indices);
+
+  // Query index with global descriptor in a second stage
+  void query_2nd_stage(const vector<uint>& query_word_descriptor,
+                       const vector<float>& query_word_l1_norm,
+                       const vector<float>& query_word_total_soft_assignment,
+                       const uint number_2nd_stage_rerank,
+                       const vector < vector < uint > >& group_lists_rerank,
+                       const vector< pair<float,uint> >& first_stage_scores_indices,
+                       vector< pair<float,uint> >& database_scores_indices);
 
   // Functions to load trained parameters from index_parameters_
   void load_ld_mean_vector(string path);
