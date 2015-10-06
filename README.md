@@ -125,7 +125,7 @@ After running the "run_evaluate_*" scripts, you should see the scores for each q
 For this small example dataset, we get mAP = 1 and mP@1 = 1 for all of the cases illustrated above. 
 You should obtain the same results if your code is working properly.
 
-## Performing retrieval on Stanford I2V dataset
+## Performing retrieval on the Stanford I2V dataset
 
 Here we provide helpful scripts to use our programs and obtain results on the Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203)). For this to work, you need to download the dataset beforehand and follow the instructions (found [here](https://stacks.stanford.edu/file/druid:zx935qw7203/README.txt)) for setting it up.
 
