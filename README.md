@@ -25,35 +25,35 @@ Here we illustrate the usage of this repository's code by running through a simp
 4 database video clips and two image queries. This also serves as a way to make sure your code is working
 properly.
 
-Clone repository (where "mypath" is the path you'll download the repository to):
+Step 1: Clone repository (where "mypath" is the path you'll download the repository to):
 
     > cd $mypath
     > git clone https://github.com/andrefaraujo/videosearch.git
 
-Creating VLFEAT library:
+Step 2: Creating VLFEAT library:
 
     > cd $mypath/videosearch/common/vlfeat-0.9.18/
     > make # Making vlfeat
     > sudo ln -s bin/glnxa64/libvl.so /usr/lib/libvl.so #sym-link it to your library
 
-Test keyframe extraction:
+Step 3: Test keyframe extraction:
 
     > cd $mypath/videosearch/indexer/keyframes
     > ./run_keyframe_extraction_test.sh
 
-Build and test shot boundary detection:
+Step 4: Build and test shot boundary detection:
 
     > cd $mypath/videosearch/indexer/shot_detector
     > make # Building shot boundary detector
     > ./run_shot_detector_test.sh
 
-Build and test SIFT extraction:
+Step 5: Build and test SIFT extraction:
 
     > cd $mypath/videosearch/indexer/local_descriptors/
     > make # Building programs for extracting, reading and writing features
     > ./run_sift_extraction_test.sh
 
-Build global descriptors:
+Step 6: Build global descriptors:
 
     > cd $mypath/videosearch/indexer/global_descriptors/
     > make # Building programs for extracting and joining indexes of global descriptors
@@ -78,12 +78,12 @@ Build global descriptors:
     > ./run_process_scene_files_test.sh # process auxiliary scene files
     > ./run_process_scene_rerank_files_test.sh # process auxiliary file for scene reranking
 
-Extract local descriptors for query images (you need to do this before running retriever, which is the next step):
+Step 7: Extract local descriptors for query images (you need to do this before running retriever, which is the next step):
 
     > cd $mypath/videosearch/indexer/local_descriptors/
     > ./run_sift_extraction_test_query.sh
 
-Build and run retriever:
+Step 8: Build and run retriever:
 
     > cd $mypath/videosearch/retriever/
     > make # Making library and program to do query-by-image video retrieval 
@@ -101,7 +101,7 @@ Build and run retriever:
     > # then shot-based global descriptors in second stage
     > ./run_scene_test.sh
 
-Evaluate retrieval results (calculate AP and p@1):
+Step 9: Evaluate retrieval results (calculate AP and p@1):
 
     > cd $mypath/videosearch/scoring/
 
@@ -120,6 +120,10 @@ Evaluate retrieval results (calculate AP and p@1):
     > # Evaluate scene-based results
     > ./run_convert_scene_based_results_test.sh # converting results to scoreable format
     > ./run_evaluate_scene_based_test.sh # calculating AP and p@1
+
+After running the "run_evaluate_*" scripts, you should see the scores for each query and at the end the mean scores (mAP, mP@1). 
+For this small example dataset, we get mAP = 1 and mP@1 = 1 for all of the cases illustrated above. 
+You should obtain the same results if your code is working properly.
 
 ## Performing retrieval on Stanford I2V dataset
 
@@ -141,7 +145,7 @@ Scoring results obtained with the Stanford I2V dataset. In this case, your shoul
 ## Citation
 If you use this code, please cite:
 
-A. Araujo, J. Chaves, R. Angst and B. Girod. "Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval", in Proc. ICIP, 2015
+A. Araujo, J. Chaves, R. Angst and B. Girod. "Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval", in Proc. ICIP, 2015 `[[Paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_ICIP15_v12.pdf)]` `[[Poster](http://web.stanford.edu/~afaraujo/2015_09_28_ICIP_poster_v3.pdf)]`
 
 Bibtex:
 
@@ -154,7 +158,7 @@ Bibtex:
 
 If you use the Stanford I2V dataset, please cite:
 
-A. Araujo, J. Chaves, D. Chen, R. Angst and B. Girod. "Stanford I2V: A News Video Dataset for Query-by-Image Experiments", in Proc. ACM Multimedia Systems, 2015
+A. Araujo, J. Chaves, D. Chen, R. Angst and B. Girod. "Stanford I2V: A News Video Dataset for Query-by-Image Experiments", in Proc. ACM Multimedia Systems, 2015 `[[Paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v14.pdf)]` `[[Slides](http://web.stanford.edu/~afaraujo/2015_03_19_MMSys_talk.pdf)]`
 
 Bibtex:
 
