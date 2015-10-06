@@ -82,7 +82,7 @@ Extract local descriptors for query images (you need to do this before running r
     > cd $mypath/videosearch/indexer/local_descriptors/
     > ./run_sift_extraction_test_query.sh
 
-Build and run retriever on a small dataset:
+Build and run retriever:
 
     > cd $mypath/videosearch/retriever/
     > make # Making library and program to do query-by-image video retrieval 
