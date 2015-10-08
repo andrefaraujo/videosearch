@@ -10,10 +10,8 @@ EXEFLAGS = -Wl,-rpath,$(YAEL_DIR)
 LIBS_RETRIEVER = -L$(YAEL_DIR) -lyael
 
 PLATFORM=$(shell uname)
-ifeq ($(PLATFORM),Darwin)
-	YAEL_LIB=$(YAEL_DIR)/libyael.dylib
-else
-	YAEL_LIB=$(YAEL_DIR)/libyael.so
+ifeq ($(PLATFORM),Darwin) # Mac options
+else # Linux options
 	CXXFLAGS = $(CXXFLAGS)" -fopenmp"
 endif
 
@@ -40,7 +38,7 @@ $(RETRIEVE_DATASET).o: $(RETRIEVE_DATASET).cc
 	$(CXX) $(CXXFLAGS) -c $(RETRIEVE_DATASET).cc \
 	-o $(RETRIEVE_DATASET).o
 
-$(RETRIEVE_DATASET): $(RETRIEVE_DATASET).o retriever.o $(YAEL_LIB) $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(GDINDEX_DIR)/gdindex.o
+$(RETRIEVE_DATASET): $(RETRIEVE_DATASET).o retriever.o $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(GDINDEX_DIR)/gdindex.o
 	$(CXX) $(CXXFLAGS) $(EXEFLAGS) \
 	-o $(RETRIEVE_DATASET) $(RETRIEVE_DATASET).o retriever.o $(GDINDEX_DIR)/gdindex.o \
 	$(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(LIBS_RETRIEVER)
