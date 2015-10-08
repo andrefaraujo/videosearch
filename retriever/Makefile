@@ -46,4 +46,4 @@ $(RETRIEVE_DATASET): $(RETRIEVE_DATASET).o retriever.o $(YAEL_LIB) $(FILEIO_DIR)
 	$(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(LIBS_RETRIEVER)
 
 clean:
-	rm -f $(RETRIEVE_DATASET) $(RETRIEVE_DATASET).o retriever.o
+	rm -f $(RETRIEVE_DATASET) $(RETRIEVE_DATASET).o retriever.o $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(GDINDEX_DIR)/gdindex.o
