@@ -12,7 +12,7 @@ LIBS_RETRIEVER = -L$(YAEL_DIR) -lyael
 PLATFORM=$(shell uname)
 ifeq ($(PLATFORM),Darwin) # Mac options
 else # Linux options
-	CXXFLAGS = $(CXXFLAGS)" -fopenmp"
+	CXXFLAGS += -fopenmp
 endif
 
 RETRIEVE_DATASET = retrieve_on_dataset
