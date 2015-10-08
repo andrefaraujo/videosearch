@@ -29,29 +29,26 @@ $(FEATURESET_DIR)/feature_set.o: $(FEATURESET_DIR)/feature_set.cc $(FEATURESET_D
 	$(CXX) $(CXXFLAGS) -c $(FEATURESET_DIR)/feature_set.cc \
 	-o $(FEATURESET_DIR)/feature_set.o
 
-gdindex.o: gdindex.h gdindex.cc \
-	$(FEATURESET_DIR)/feature_set.o $(FILEIO_DIR)/file_io.o $(YAEL_LIB)
+gdindex.o: gdindex.h gdindex.cc
 	$(CXX) $(CXXFLAGS) -c gdindex.cc -o gdindex.o
 
-$(INDEX_DATASET).o: $(INDEX_DATASET).cc gdindex.o \
-	$(YAEL_LIB)
+$(INDEX_DATASET).o: $(INDEX_DATASET).cc
 	$(CXX) $(CXXFLAGS) -c $(INDEX_DATASET).cc \
 	-o $(INDEX_DATASET).o
 
-$(INDEX_DATASET): $(INDEX_DATASET).o
+$(INDEX_DATASET): $(INDEX_DATASET).o gdindex.o $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(YAEL_LIB)
 	$(CXX) $(CXXFLAGS) $(EXEFLAGS) \
 	-o $(INDEX_DATASET) $(INDEX_DATASET).o gdindex.o \
 	$(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(LIBS_INDEXER)
 
-$(JOIN_INDEXES).o: $(JOIN_INDEXES).cc gdindex.o \
-	$(YAEL_LIB)
+$(JOIN_INDEXES).o: $(JOIN_INDEXES).cc
 	$(CXX) $(CXXFLAGS) -c $(JOIN_INDEXES).cc \
 	-o $(JOIN_INDEXES).o
 
-$(JOIN_INDEXES): $(JOIN_INDEXES).o
+$(JOIN_INDEXES): $(JOIN_INDEXES).o gdindex.o $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(YAEL_LIB)
 	$(CXX) $(CXXFLAGS) $(EXEFLAGS) \
 	-o $(JOIN_INDEXES) $(JOIN_INDEXES).o gdindex.o \
 	$(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(LIBS_INDEXER)
 
 clean:
-	rm -f $(INDEX_DATASET) $(INDEX_DATASET).o $(JOIN_INDEXES) $(JOIN_INDEXES).o gdindex.o
+	rm -f $(INDEX_DATASET) $(INDEX_DATASET).o $(JOIN_INDEXES) $(JOIN_INDEXES).o gdindex.o $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o 
