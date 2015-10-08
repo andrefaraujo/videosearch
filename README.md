@@ -17,6 +17,8 @@ This project currently contains code for
 This repository can also be useful if one is interested in searching a database of images using query images. In
 that case, one can simply use the frame-based techniques described below.
 
+Our implementation has been tested on Linux (Ubuntu) and Mac OS.
+
 For any questions or issues, please get in touch through github or using the contact information mentioned above.
 
 ## Quick start
@@ -25,101 +27,112 @@ Here we illustrate the usage of this repository's code by running through a simp
 4 database video clips and two image queries. This also serves as a way to make sure your code is working
 properly.
 
+Prerequisites: (all of these can be easily obtained for Linux or Mac using 'apt-get install' 
+or 'brew install' respectively)
+- opencv
+- ffmpeg
+- pkg-config
+
 Step 1: Clone repository (where "mypath" is the path you'll download the repository to):
 
-    > cd $mypath
-    > git clone https://github.com/andrefaraujo/videosearch.git
+    $ cd $mypath
+    $ git clone https://github.com/andrefaraujo/videosearch.git
 
-Step 2: Creating VLFEAT library:
+Step 2: Building VLFEAT library:
 
-    > cd $mypath/videosearch/common/vlfeat-0.9.18/
-    > make # Making vlfeat
-    > sudo ln -s bin/glnxa64/libvl.so /usr/lib/libvl.so #sym-link it to your library
+    $ cd $mypath/videosearch/common/vlfeat-0.9.18/
+    $ make
 
-Step 3: Test keyframe extraction:
+Step 3: Building YAEL library:
 
-    > cd $mypath/videosearch/indexer/keyframes
-    > ./run_keyframe_extraction_test.sh
+    $ cd $mypath/videosearch/common/yael_v260_modif/
+    $ ./configure.sh
+    $ make
 
-Step 4: Build and test shot boundary detection:
+Step 4: Extract keyframes from test database videos:
 
-    > cd $mypath/videosearch/indexer/shot_detector
-    > make # Building shot boundary detector
-    > ./run_shot_detector_test.sh
+    $ cd $mypath/videosearch/indexer/keyframes
+    $ ./run_keyframe_extraction_test.sh
 
-Step 5: Build and test SIFT extraction:
+Step 5: Build shot boundary detector and extract shot boundaries for test database videos:
 
-    > cd $mypath/videosearch/indexer/local_descriptors/
-    > make # Building programs for extracting, reading and writing features
-    > ./run_sift_extraction_test.sh
+    $ cd $mypath/videosearch/indexer/shot_detector
+    $ make
+    $ ./run_shot_detector_test.sh
 
-Step 6: Build global descriptors:
+Step 6: Build SIFT extractor and extract SIFT for each keyframe in database:
 
-    > cd $mypath/videosearch/indexer/global_descriptors/
-    > make # Building programs for extracting and joining indexes of global descriptors
+    $ cd $mypath/videosearch/indexer/local_descriptors/
+    $ make
+    $ ./run_sift_extraction_test.sh
+
+Step 7: Build global descriptor extractors and extract global descriptors per frame, shot and scene:
+
+    $ cd $mypath/videosearch/indexer/global_descriptors/
+    $ make
     
-    > # Extract frame-based global descriptors (GD)
-    > ./run_frame_based_index_test.sh # extract GDs for each clip
-    > ./run_join_frame_based_index_test.sh # join all GDs in one index
+    $ # Extract frame-based global descriptors (GD)
+    $ ./run_frame_based_index_test.sh # extract GDs for each clip
+    $ ./run_join_frame_based_index_test.sh # join all GDs in one index
     
-    > # Extract shot-based global descriptors (GD) with mode LOC
-    > ./run_shot_based_index_mode_1_test.sh # extract GDs for each clip
-    > ./run_join_shot_based_index_mode_1_test.sh # join all GDs in one index
-    > ./run_process_shot_files_mode_1_test.sh # process auxiliary shot files for this mode
+    $ # Extract shot-based global descriptors (GD) with mode LOC
+    $ ./run_shot_based_index_mode_1_test.sh # extract GDs for each clip
+    $ ./run_join_shot_based_index_mode_1_test.sh # join all GDs in one index
+    $ ./run_process_shot_files_mode_1_test.sh # process auxiliary shot files for this mode
 
-    > # Extract shot-based global descriptors (GD) with mode INDEP
-    > ./run_shot_based_index_mode_0_test.sh # extract GDs for each clip
-    > ./run_join_shot_based_index_mode_0_test.sh # join all GDs in one index
-    > ./run_process_shot_files_mode_0_test.sh # process auxiliary shot files for this mode
+    $ # Extract shot-based global descriptors (GD) with mode INDEP
+    $ ./run_shot_based_index_mode_0_test.sh # extract GDs for each clip
+    $ ./run_join_shot_based_index_mode_0_test.sh # join all GDs in one index
+    $ ./run_process_shot_files_mode_0_test.sh # process auxiliary shot files for this mode
     
-    > # Extract scene-based global descriptors (GD)
-    > ./run_scene_based_index_test.sh # extract GD for each clip
-    > ./run_join_scene_based_index_test.sh # join all GDs in one index
-    > ./run_process_scene_files_test.sh # process auxiliary scene files
-    > ./run_process_scene_rerank_files_test.sh # process auxiliary file for scene reranking
+    $ # Extract scene-based global descriptors (GD)
+    $ ./run_scene_based_index_test.sh # extract GD for each clip
+    $ ./run_join_scene_based_index_test.sh # join all GDs in one index
+    $ ./run_process_scene_files_test.sh # process auxiliary scene files
+    $ ./run_process_scene_rerank_files_test.sh # process auxiliary file for scene reranking
 
-Step 7: Extract local descriptors for query images (you need to do this before running retriever, which is the next step):
+Step 8: Extract local descriptors for query images (you need to do this before running retriever, which is the next step):
 
-    > cd $mypath/videosearch/indexer/local_descriptors/
-    > ./run_sift_extraction_test_query.sh
+    $ cd $mypath/videosearch/indexer/local_descriptors/
+    $ ./run_sift_extraction_test_query.sh
 
-Step 8: Build and run retriever:
+Step 9: Build retriever and run it for frame-, shot- and scene-based indexes:
 
-    > cd $mypath/videosearch/retriever/
-    > make # Making library and program to do query-by-image video retrieval 
+    $ cd $mypath/videosearch/retriever/
+    $ make
 
-    > # Retrieve using frame-based global descriptors
-    > ./run_frame_test.sh
+    $ # Retrieve using frame-based global descriptors
+    $ ./run_frame_test.sh
 
-    > # Retrieve using shot-based global descriptors, mode LOC
-    > ./run_shot_mode_1_test.sh
+    $ # Retrieve using shot-based global descriptors, mode LOC
+    $ ./run_shot_mode_1_test.sh
 
-    > # Retrieve using shot-based global descriptors, mode INDEP
-    > ./run_shot_mode_0_test.sh
+    $ # Retrieve using shot-based global descriptors, mode INDEP
+    $ ./run_shot_mode_0_test.sh
 
-    > # Retrieve using scene-based global descriptors in first stage,
-    > # then shot-based global descriptors in second stage
-    > ./run_scene_test.sh
+    $ # Retrieve using scene-based global descriptors in first stage,
+    $ # then shot-based global descriptors in second stage
+    $ ./run_scene_test.sh
 
-Step 9: Evaluate retrieval results (calculate AP and p@1):
+Step 10: Evaluate retrieval results (calculate AP and p@1):
 
-    > cd $mypath/videosearch/scoring/
+    $ cd $mypath/videosearch/scoring/
 
-    > # Evaluate frame-based results
-    > ./run_convert_frame_based_results_test.sh # converting results to scoreable format
-    > ./run_evaluate_frame_based_test.sh # calculating AP and p@1
+    $ # Evaluate frame-based results
+    $ ./run_convert_frame_based_results_test.sh # converting results to scoreable format
+    $ ./run_evaluate_frame_based_test.sh # calculating AP and p@1
 
-    > # Evaluate shot-based results, mode LOC
-    > ./run_convert_shot_based_mode_1_results_test.sh # converting results to scoreable format
-    > ./run_evaluate_shot_based_mode_1_test.sh # calculating AP and p@1
+    $ # Evaluate shot-based results, mode LOC
+    $ ./run_convert_shot_based_mode_1_results_test.sh # converting results to scoreable format
+    $ ./run_evaluate_shot_based_mode_1_test.sh # calculating AP and p@1
 
-    > # Evaluate shot-based results, mode INDEP
-    > ./run_convert_shot_based_mode_0_results_test.sh # converting results to scoreable format
-    > ./run_evaluate_shot_based_mode_0_test.sh # calculating AP and p@1
+    $ # Evaluate shot-based results, mode INDEP
+    $ ./run_convert_shot_based_mode_0_results_test.sh # converting results to scoreable format
+    $ ./run_evaluate_shot_based_mode_0_test.sh # calculating AP and p@1
 
-    > # Evaluate scene-based results
-    > ./run_convert_scene_based_results_test.sh # converting results to scoreable format
-    > ./run_evaluate_scene_based_test.sh # calculating AP and p@1
+    $ # Evaluate scene-based results
+    $ ./run_convert_scene_based_results_test.sh # converting results to scoreable format
+    $ ./run_evaluate_scene_based_test.sh # calculating AP and p@1
 
 After running the "run_evaluate_*" scripts, you should see the scores for each query and at the end the mean scores (mAP, mP@1). 
 For this small example dataset, we get mAP = 1 and mP@1 = 1 for all of the cases illustrated above. 
@@ -133,14 +146,14 @@ TODO(andrefaraujo): complete this by Oct/18
 
 Extracting keyframes from entire Stanford I2V dataset:
 
-    > cd $mypath/videosearch/stanford_i2v/indexer/
-    > python extract_database_keyframes.py # Look at script for more details and for changing parameters
+    $ cd $mypath/videosearch/stanford_i2v/indexer/
+    $ python extract_database_keyframes.py # Look at script for more details and for changing parameters
 
 Scoring results obtained with the Stanford I2V dataset. In this case, your should use a file with a specific format (as explained in the scoring/\*format\*.txt files). We provide examples of such files (scoring/example\*) and even helper conversion scripts if your system outputs results based on keyframes (scoring/convert\*). To score Scene Retrieval and Temporal Refinement results (refer to our [MMSys'15 paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v14.pdf) for explanation of this terminology), respectively, do:
 
-    > cd $mypath/videosearch/scoring
-    > python evaluate_scene_retrieval.py example_scene_retrieval_results_file.txt light_dataset_public.txt 100
-    > python evaluate_temporal_refinement.py example_temporal_refinement_results_file_frames.txt light_dataset_public.txt frames
+    $ cd $mypath/videosearch/scoring
+    $ python evaluate_scene_retrieval.py example_scene_retrieval_results_file.txt light_dataset_public.txt 100
+    $ python evaluate_temporal_refinement.py example_temporal_refinement_results_file_frames.txt light_dataset_public.txt frames
 
 ## Citation
 If you use this code, please cite:
