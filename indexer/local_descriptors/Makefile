@@ -20,7 +20,8 @@ else
 	VLROOT_ARCH = glnxa64
 endif
 
-CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0 -Wl,-rpath,$(VLROOT)/bin/$(VLROOT_ARCH)
+CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0
+EXEFLAGS = -Wl,-rpath,$(VLROOT)/bin/$(VLROOT_ARCH)
 
 LIBS_EXTRACTOR = -L$(VLROOT)/bin/$(VLROOT_ARCH)/ -lvl `pkg-config --cflags --libs opencv`
 
@@ -43,17 +44,17 @@ $(FEATURESET_DIR)/feature_set.o: $(FEATURESET_DIR)/feature_set.cc $(FEATURESET_D
 
 sift_extractor.o: sift_extractor.cc sift_extractor.h
 	$(CXX) $(CXXFLAGS) -c sift_extractor.cc -I$(VLROOT) \
-	-o sift_extractor.o $(LIBS_EXTRACTOR)
+	-o sift_extractor.o
 
 extract.o: extract.cc $(OBJS_FEATURE_EXTRACTOR)
 	$(CXX) $(CXXFLAGS) -c extract.cc \
 	-I$(VLROOT) \
-	-o extract.o $(LIBS_EXTRACTOR)
+	-o extract.o
 
 test_extract.o: test_extract.cc $(OBJS_TEST_FEATURE_EXTRACTOR)
 	$(CXX) $(CXXFLAGS) -c test_extract.cc \
 	-I$(VLROOT) \
-	-o test_extract.o $(LIBS_EXTRACTOR)
+	-o test_extract.o
 
 test_read.o: test_read.cc $(OBJS_TEST_READ)
 	$(CXX) $(CXXFLAGS) -c test_read.cc \
@@ -61,18 +62,18 @@ test_read.o: test_read.cc $(OBJS_TEST_READ)
 	-o test_read.o
 
 $(FEATURE_EXTRACTOR): $(FEATURE_EXTRACTOR).o
-	$(CXX) $(CXXFLAGS) $(FEATURE_EXTRACTOR).o $(OBJS_FEATURE_EXTRACTOR) \
+	$(CXX) $(CXXFLAGS) $(EXEFLAGS) $(FEATURE_EXTRACTOR).o $(OBJS_FEATURE_EXTRACTOR) \
 	-I$(VLROOT) \
 	-o $(FEATURE_EXTRACTOR)	$(LIBS_EXTRACTOR); \
 	$(MAC_INSTALL_CMD_FE)
 
 $(TEST_FEATURE_EXTRACTOR): $(TEST_FEATURE_EXTRACTOR).o
-	$(CXX) $(CXXFLAGS) $(TEST_FEATURE_EXTRACTOR).o $(OBJS_TEST_FEATURE_EXTRACTOR) -I$(VLROOT) \
+	$(CXX) $(CXXFLAGS) $(EXEFLAGS) $(TEST_FEATURE_EXTRACTOR).o $(OBJS_TEST_FEATURE_EXTRACTOR) -I$(VLROOT) \
 	-o $(TEST_FEATURE_EXTRACTOR) $(LIBS_EXTRACTOR); \
 	$(MAC_INSTALL_CMD_TFE)
 
 $(TEST_READ): $(TEST_READ).o
-	$(CXX) $(CXXFLAGS) $(TEST_READ).o $(OBJS_TEST_READ) -I$(VLROOT) \
+	$(CXX) $(CXXFLAGS) $(EXEFLAGS) $(TEST_READ).o $(OBJS_TEST_READ) -I$(VLROOT) \
 	-o $(TEST_READ); \
 	$(MAC_INSTALL_CMD_TR)
 
