@@ -3,9 +3,17 @@ FEATURESET_DIR = ../../common/feature_set
 FILEIO_DIR = ../../common/file_io
 
 CXX=g++
-CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0 -fopenmp -Wl,-rpath,$(YAEL_DIR)
+CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0 -Wl,-rpath,$(YAEL_DIR)
 
 LIBS_INDEXER = -L$(YAEL_DIR) -lyael
+
+PLATFORM=$(shell uname)
+ifeq ($(PLATFORM),Darwin)
+	YAEL_LIB=$(YAEL_DIR)/libyael.dylib
+else
+	YAEL_LIB=$(YAEL_DIR)/libyael.so
+	CXXFLAGS = $(CXXFLAGS)" -fopenmp"
+endif
 
 INDEX_DATASET = index_dataset
 JOIN_INDEXES = join_indexes
@@ -21,12 +29,12 @@ $(FEATURESET_DIR)/feature_set.o: $(FEATURESET_DIR)/feature_set.cc $(FEATURESET_D
 	-o $(FEATURESET_DIR)/feature_set.o
 
 gdindex.o: gdindex.h gdindex.cc \
-	$(FEATURESET_DIR)/feature_set.o $(FILEIO_DIR)/file_io.o $(YAEL_DIR)/libyael.so
+	$(FEATURESET_DIR)/feature_set.o $(FILEIO_DIR)/file_io.o $(YAEL_LIB)
 	$(CXX) $(CXXFLAGS) -c gdindex.cc -o gdindex.o \
 	-L$(YAEL_DIR) -lyael
 
 $(INDEX_DATASET).o: $(INDEX_DATASET).cc gdindex.o \
-	$(YAEL_DIR)/libyael.so
+	$(YAEL_LIB)
 	$(CXX) $(CXXFLAGS) -c $(INDEX_DATASET).cc \
 	-I$(YAEL_DIR) \
 	-o $(INDEX_DATASET).o -L$(YAEL_DIR) -lyael
@@ -38,7 +46,7 @@ $(INDEX_DATASET): $(INDEX_DATASET).o
 	$(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(LIBS_INDEXER)
 
 $(JOIN_INDEXES).o: $(JOIN_INDEXES).cc gdindex.o \
-	$(YAEL_DIR)/libyael.so
+	$(YAEL_LIB)
 	$(CXX) $(CXXFLAGS) -c $(JOIN_INDEXES).cc \
 	-I$(YAEL_DIR) \
 	-o $(JOIN_INDEXES).o -L$(YAEL_DIR) -lyael
