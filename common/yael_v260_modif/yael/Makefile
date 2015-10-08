@@ -2,7 +2,6 @@
 
 include ../makefile.inc
 
-CC=gcc 
 
 all: libyael.a libyael.$(SHAREDEXT) _yael.so
 
