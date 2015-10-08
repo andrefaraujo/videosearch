@@ -3,7 +3,8 @@ FEATURESET_DIR = ../../common/feature_set
 FILEIO_DIR = ../../common/file_io
 
 CXX=g++
-CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0 -Wl,-rpath,$(YAEL_DIR)
+CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0
+EXEFLAGS = -Wl,-rpath,$(YAEL_DIR)
 
 LIBS_INDEXER = -L$(YAEL_DIR) -lyael
 
@@ -30,31 +31,26 @@ $(FEATURESET_DIR)/feature_set.o: $(FEATURESET_DIR)/feature_set.cc $(FEATURESET_D
 
 gdindex.o: gdindex.h gdindex.cc \
 	$(FEATURESET_DIR)/feature_set.o $(FILEIO_DIR)/file_io.o $(YAEL_LIB)
-	$(CXX) $(CXXFLAGS) -c gdindex.cc -o gdindex.o \
-	-L$(YAEL_DIR) -lyael
+	$(CXX) $(CXXFLAGS) -c gdindex.cc -o gdindex.o
 
 $(INDEX_DATASET).o: $(INDEX_DATASET).cc gdindex.o \
 	$(YAEL_LIB)
 	$(CXX) $(CXXFLAGS) -c $(INDEX_DATASET).cc \
-	-I$(YAEL_DIR) \
-	-o $(INDEX_DATASET).o -L$(YAEL_DIR) -lyael
+	-o $(INDEX_DATASET).o
 
 $(INDEX_DATASET): $(INDEX_DATASET).o
-	$(CXX) $(CXXFLAGS) \
-	-I$(YAEL_DIR) \
-	-o $(INDEX_DATASET) $(INDEX_DATASET).cc gdindex.o \
+	$(CXX) $(CXXFLAGS) $(EXEFLAGS) \
+	-o $(INDEX_DATASET) $(INDEX_DATASET).o gdindex.o \
 	$(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(LIBS_INDEXER)
 
 $(JOIN_INDEXES).o: $(JOIN_INDEXES).cc gdindex.o \
 	$(YAEL_LIB)
 	$(CXX) $(CXXFLAGS) -c $(JOIN_INDEXES).cc \
-	-I$(YAEL_DIR) \
-	-o $(JOIN_INDEXES).o -L$(YAEL_DIR) -lyael
+	-o $(JOIN_INDEXES).o
 
 $(JOIN_INDEXES): $(JOIN_INDEXES).o
-	$(CXX) $(CXXFLAGS) \
-	-I$(YAEL_DIR) \
-	-o $(JOIN_INDEXES) $(JOIN_INDEXES).cc gdindex.o \
+	$(CXX) $(CXXFLAGS) $(EXEFLAGS) \
+	-o $(JOIN_INDEXES) $(JOIN_INDEXES).o gdindex.o \
 	$(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(LIBS_INDEXER)
 
 clean:
