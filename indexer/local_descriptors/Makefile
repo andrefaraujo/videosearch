@@ -43,37 +43,33 @@ $(FEATURESET_DIR)/feature_set.o: $(FEATURESET_DIR)/feature_set.cc $(FEATURESET_D
 	-o $(FEATURESET_DIR)/feature_set.o
 
 sift_extractor.o: sift_extractor.cc sift_extractor.h
-	$(CXX) $(CXXFLAGS) -c sift_extractor.cc -I$(VLROOT) \
+	$(CXX) $(CXXFLAGS) -c sift_extractor.cc \
 	-o sift_extractor.o
 
 extract.o: extract.cc $(OBJS_FEATURE_EXTRACTOR)
 	$(CXX) $(CXXFLAGS) -c extract.cc \
-	-I$(VLROOT) \
 	-o extract.o
 
 test_extract.o: test_extract.cc $(OBJS_TEST_FEATURE_EXTRACTOR)
 	$(CXX) $(CXXFLAGS) -c test_extract.cc \
-	-I$(VLROOT) \
 	-o test_extract.o
 
 test_read.o: test_read.cc $(OBJS_TEST_READ)
 	$(CXX) $(CXXFLAGS) -c test_read.cc \
-	-I$(VLROOT) \
 	-o test_read.o
 
 $(FEATURE_EXTRACTOR): $(FEATURE_EXTRACTOR).o
 	$(CXX) $(CXXFLAGS) $(EXEFLAGS) $(FEATURE_EXTRACTOR).o $(OBJS_FEATURE_EXTRACTOR) \
-	-I$(VLROOT) \
 	-o $(FEATURE_EXTRACTOR)	$(LIBS_EXTRACTOR); \
 	$(MAC_INSTALL_CMD_FE)
 
 $(TEST_FEATURE_EXTRACTOR): $(TEST_FEATURE_EXTRACTOR).o
-	$(CXX) $(CXXFLAGS) $(EXEFLAGS) $(TEST_FEATURE_EXTRACTOR).o $(OBJS_TEST_FEATURE_EXTRACTOR) -I$(VLROOT) \
+	$(CXX) $(CXXFLAGS) $(EXEFLAGS) $(TEST_FEATURE_EXTRACTOR).o $(OBJS_TEST_FEATURE_EXTRACTOR) \
 	-o $(TEST_FEATURE_EXTRACTOR) $(LIBS_EXTRACTOR); \
 	$(MAC_INSTALL_CMD_TFE)
 
 $(TEST_READ): $(TEST_READ).o
-	$(CXX) $(CXXFLAGS) $(EXEFLAGS) $(TEST_READ).o $(OBJS_TEST_READ) -I$(VLROOT) \
+	$(CXX) $(CXXFLAGS) $(EXEFLAGS) $(TEST_READ).o $(OBJS_TEST_READ) \
 	-o $(TEST_READ); \
 	$(MAC_INSTALL_CMD_TR)
 
