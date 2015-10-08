@@ -10,7 +10,7 @@ all: $(SHOT_DETECTOR)
 
 main.o: main.cc
 	$(CXX) $(CXXFLAGS) -c main.cc \
-	-o main.o $(LIBS)
+	-o main.o
 
 $(SHOT_DETECTOR): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) \
