@@ -74,14 +74,6 @@ void *memalign (size_t ignored, size_t nbytes);
 
 #endif
 
-#if defined(__APPLE__) && defined(_LP64)
-#ifndef _YAEL4MATLAB_  /* bug fix is not for matlab */
-
-#define sgemm_ sgemm_bugfix
-
-#endif
-#endif
-
 
 /*! trace all mallocs between two function calls. Intended to replace
  * struct mallinfo that does not seem to work. Implemented only for

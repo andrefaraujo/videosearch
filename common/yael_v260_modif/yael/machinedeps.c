@@ -103,39 +103,6 @@ void *memalign (size_t ignored, size_t nbytes)
 }
 #endif
 
-#if defined(__APPLE__) && defined(_LP64)
-#ifndef _YAEL4MATLAB_
-#warning "warn: using bugfix sgemm for Mac 64 bit"
-
-#define real float
-#define integer int
-
-
-
-int sgemm_bugfix (char *transa, char *transb, integer * pm, integer *
-            pn, integer * pk, real * palpha, const real * a, integer * plda,
-            const real * b, integer * pldb, real * pbeta, real * c,
-            integer * pldc) {
-  assert(transa[0]=='T' && transb[0]=='N');
-
-  int na=*pm,nb=*pn,d=*pk;
-  int lda=*plda,ldb=*pldb,ldc=*pldc;
-  float alpha=*palpha,beta=*pbeta;
-
-  int i,j,k;
-  
-  for(i=0;i<na;i++) for(j=0;j<nb;j++) {
-    double accu=0;
-    for(k=0;k<d;k++) 
-      accu+=a[k+lda*i]*b[k+ldb*j];
-    c[i+j*ldc]=beta*c[i+j*ldc]+alpha*accu;
-  }  
-  return 0;
-}
-
-#endif
-#endif
-
 
 #ifdef __linux__
 
