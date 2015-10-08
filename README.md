@@ -27,46 +27,46 @@ Here we illustrate the usage of this repository's code by running through a simp
 4 database video clips and two image queries. This also serves as a way to make sure your code is working
 properly.
 
-*Prerequisites*: (all of these can be easily obtained for Linux or Mac using 'apt-get install' 
+**Prerequisites**: (all of these can be easily obtained for Linux or Mac using 'apt-get install' 
 or 'brew install' respectively)
 - opencv
 - ffmpeg
 - pkg-config
 
-*Step 1*: Clone repository (where "mypath" is the path you'll download the repository to):
+**Step 1**: Clone repository (where "mypath" is the path you'll download the repository to):
 
     $ cd $mypath
     $ git clone https://github.com/andrefaraujo/videosearch.git
 
-*Step 2*: Building VLFEAT library:
+**Step 2**: Building VLFEAT library:
 
     $ cd $mypath/videosearch/common/vlfeat-0.9.18/
     $ make
 
-*Step 3*: Building YAEL library:
+**Step 3**: Building YAEL library:
 
     $ cd $mypath/videosearch/common/yael_v260_modif/
     $ ./configure.sh
     $ make
 
-*Step 4*: Extract keyframes from test database videos:
+**Step 4**: Extract keyframes from test database videos:
 
     $ cd $mypath/videosearch/indexer/keyframes
     $ ./run_keyframe_extraction_test.sh
 
-*Step 5*: Build shot boundary detector and extract shot boundaries for test database videos:
+**Step 5**: Build shot boundary detector and extract shot boundaries for test database videos:
 
     $ cd $mypath/videosearch/indexer/shot_detector
     $ make
     $ ./run_shot_detector_test.sh
 
-*Step 6*: Build SIFT extractor and extract SIFT for each keyframe in database:
+**Step 6**: Build SIFT extractor and extract SIFT for each keyframe in database:
 
     $ cd $mypath/videosearch/indexer/local_descriptors/
     $ make
     $ ./run_sift_extraction_test.sh
 
-*Step 7*: Build global descriptor extractors and extract global descriptors per frame, shot and scene:
+**Step 7**: Build global descriptor extractors and extract global descriptors per frame, shot and scene:
 
     $ cd $mypath/videosearch/indexer/global_descriptors/
     $ make
@@ -91,12 +91,12 @@ or 'brew install' respectively)
     $ ./run_process_scene_files_test.sh # process auxiliary scene files
     $ ./run_process_scene_rerank_files_test.sh # process auxiliary file for scene reranking
 
-*Step 8*: Extract local descriptors for query images (you need to do this before running retriever, which is the next step):
+**Step 8**: Extract local descriptors for query images (you need to do this before running retriever, which is the next step):
 
     $ cd $mypath/videosearch/indexer/local_descriptors/
     $ ./run_sift_extraction_test_query.sh
 
-*Step 9*: Build retriever and run it for frame-, shot- and scene-based indexes:
+**Step 9**: Build retriever and run it for frame-, shot- and scene-based indexes:
 
     $ cd $mypath/videosearch/retriever/
     $ make
@@ -114,7 +114,7 @@ or 'brew install' respectively)
     $ # then shot-based global descriptors in second stage
     $ ./run_scene_test.sh
 
-*Step 10*: Evaluate retrieval results (calculate AP and p@1):
+**Step 10**: Evaluate retrieval results (calculate AP and p@1):
 
     $ cd $mypath/videosearch/scoring/
 
