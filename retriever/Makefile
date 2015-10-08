@@ -4,7 +4,8 @@ FEATURESET_DIR = ../common/feature_set
 FILEIO_DIR = ../common/file_io
 
 CXX=g++
-CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0 -Wl,-rpath,$(YAEL_DIR)
+CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0
+EXEFLAGS = -Wl,-rpath,$(YAEL_DIR)
 
 LIBS_RETRIEVER = -L$(YAEL_DIR) -lyael
 
@@ -28,26 +29,20 @@ $(FEATURESET_DIR)/feature_set.o: $(FEATURESET_DIR)/feature_set.cc $(FEATURESET_D
 	$(CXX) $(CXXFLAGS) -c $(FEATURESET_DIR)/feature_set.cc \
 	-o $(FEATURESET_DIR)/feature_set.o
 
-$(GDINDEX_DIR)/gdindex.o: $(GDINDEX_DIR)/gdindex.h $(GDINDEX_DIR)/gdindex.cc \
-	$(FEATURESET_DIR)/feature_set.o $(FILEIO_DIR)/file_io.o $(YAEL_LIB)
-	$(CXX) $(CXXFLAGS) -c $(GDINDEX_DIR)/gdindex.cc -o $(GDINDEX_DIR)/gdindex.o \
-	-L$(YAEL_DIR) -lyael
+$(GDINDEX_DIR)/gdindex.o: $(GDINDEX_DIR)/gdindex.h $(GDINDEX_DIR)/gdindex.cc
+	$(CXX) $(CXXFLAGS) -c $(GDINDEX_DIR)/gdindex.cc -o $(GDINDEX_DIR)/gdindex.o
 
-retriever.o: $(GDINDEX_DIR)/gdindex.o retriever.cc retriever.h
+retriever.o: retriever.cc retriever.h
 	$(CXX) $(CXXFLAGS) -c retriever.cc \
-	-I$(YAEL_DIR) \
-	-o retriever.o -L$(YAEL_DIR) -lyael
+	-o retriever.o
 
-$(RETRIEVE_DATASET).o: $(RETRIEVE_DATASET).cc retriever.o $(GDINDEX_DIR)/gdindex.o \
-	$(YAEL_LIB)
+$(RETRIEVE_DATASET).o: $(RETRIEVE_DATASET).cc
 	$(CXX) $(CXXFLAGS) -c $(RETRIEVE_DATASET).cc \
-	-I$(YAEL_DIR) \
-	-o $(RETRIEVE_DATASET).o -L$(YAEL_DIR) -lyael
+	-o $(RETRIEVE_DATASET).o
 
-$(RETRIEVE_DATASET): $(RETRIEVE_DATASET).o
-	$(CXX) $(CXXFLAGS) \
-	-I$(YAEL_DIR) \
-	-o $(RETRIEVE_DATASET) $(RETRIEVE_DATASET).cc retriever.o $(GDINDEX_DIR)/gdindex.o \
+$(RETRIEVE_DATASET): $(RETRIEVE_DATASET).o retriever.o $(YAEL_LIB) $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(GDINDEX_DIR)/gdindex.o
+	$(CXX) $(CXXFLAGS) $(EXEFLAGS) \
+	-o $(RETRIEVE_DATASET) $(RETRIEVE_DATASET).o retriever.o $(GDINDEX_DIR)/gdindex.o \
 	$(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(LIBS_RETRIEVER)
 
 clean:
