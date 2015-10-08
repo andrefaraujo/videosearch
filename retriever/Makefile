@@ -4,9 +4,17 @@ FEATURESET_DIR = ../common/feature_set
 FILEIO_DIR = ../common/file_io
 
 CXX=g++
-CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0 -fopenmp -Wl,-rpath,$(YAEL_DIR)
+CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0 -Wl,-rpath,$(YAEL_DIR)
 
 LIBS_RETRIEVER = -L$(YAEL_DIR) -lyael
+
+PLATFORM=$(shell uname)
+ifeq ($(PLATFORM),Darwin)
+	YAEL_LIB=$(YAEL_DIR)/libyael.dylib
+else
+	YAEL_LIB=$(YAEL_DIR)/libyael.so
+	CXXFLAGS = $(CXXFLAGS)" -fopenmp"
+endif
 
 RETRIEVE_DATASET = retrieve_on_dataset
 
@@ -21,7 +29,7 @@ $(FEATURESET_DIR)/feature_set.o: $(FEATURESET_DIR)/feature_set.cc $(FEATURESET_D
 	-o $(FEATURESET_DIR)/feature_set.o
 
 $(GDINDEX_DIR)/gdindex.o: $(GDINDEX_DIR)/gdindex.h $(GDINDEX_DIR)/gdindex.cc \
-	$(FEATURESET_DIR)/feature_set.o $(FILEIO_DIR)/file_io.o $(YAEL_DIR)/libyael.so
+	$(FEATURESET_DIR)/feature_set.o $(FILEIO_DIR)/file_io.o $(YAEL_LIB)
 	$(CXX) $(CXXFLAGS) -c $(GDINDEX_DIR)/gdindex.cc -o $(GDINDEX_DIR)/gdindex.o \
 	-L$(YAEL_DIR) -lyael
 
@@ -31,7 +39,7 @@ retriever.o: $(GDINDEX_DIR)/gdindex.o retriever.cc retriever.h
 	-o retriever.o -L$(YAEL_DIR) -lyael
 
 $(RETRIEVE_DATASET).o: $(RETRIEVE_DATASET).cc retriever.o $(GDINDEX_DIR)/gdindex.o \
-	$(YAEL_DIR)/libyael.so
+	$(YAEL_LIB)
 	$(CXX) $(CXXFLAGS) -c $(RETRIEVE_DATASET).cc \
 	-I$(YAEL_DIR) \
 	-o $(RETRIEVE_DATASET).o -L$(YAEL_DIR) -lyael
