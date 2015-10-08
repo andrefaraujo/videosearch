@@ -17,7 +17,7 @@ MIN_NUM_WORDS_SELECTED=0
 # Word selection mode: (0=L1 norm), (1=soft assgn)
 WORD_SELECTION_MODE=0
 # Word selection thresh
-WORD_SELECTION_THRESH=8
+WORD_SELECTION_THRESH=10
 # Shot parameters
 SHOT_MODE=0
 FPSHOT=5
