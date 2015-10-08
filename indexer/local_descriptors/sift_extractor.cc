@@ -25,11 +25,15 @@ using namespace std;
 bool sift_keypoints_and_descriptors(string image_path, bool divide_512,	int verbose,
 		bool display_image, vector<float*>& frames, vector<float*>& descr, unsigned int& number_desc) {
 
+#ifndef __MACH__
 	struct timespec start, finish; //for measuring execution time
 	double elapsed;
+#endif
 
 	if (verbose) {
+#ifndef __MACH__
 		clock_gettime(CLOCK_MONOTONIC, &start);
+#endif
 	}
 
 	// Loading image
@@ -207,10 +211,12 @@ bool sift_keypoints_and_descriptors(string image_path, bool divide_512,	int verb
 	// Write results
 	if (verbose) {
 		printf ("vl_sift: found %d keypoints\n", nframes) ;
+#ifndef __MACH__
 		clock_gettime(CLOCK_MONOTONIC, &finish);
 		elapsed = (finish.tv_sec - start.tv_sec);
 		elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 		printf ("vl_sift: took %f seconds\n", elapsed) ;
+#endif
 	}
 
 	number_desc = nframes;

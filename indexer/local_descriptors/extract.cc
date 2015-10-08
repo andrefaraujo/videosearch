@@ -60,9 +60,11 @@ void save_sift_descriptor(vector<float*> keypoints, vector<float*> descriptors, 
 void process_images(unsigned int start_index, unsigned int number_images, vector<string> all_images,
 		int descriptor_mode, unsigned int thread_ind, bool skip_existing_files) {
 	unsigned int count_proc_thread = 0;
+#ifndef __MACH__
 	struct timespec start, finish; //for measuring execution time
 	double elapsed;
 	clock_gettime(CLOCK_MONOTONIC, &start);
+#endif
 
 	for (unsigned int count_image = start_index; count_image < start_index + number_images;
 			count_image++) {
@@ -71,11 +73,13 @@ void process_images(unsigned int start_index, unsigned int number_images, vector
 			cout << "Thread " << thread_ind << " is at image " << count_image
 					<< ". First was " << start_index << " and last will be "
 					<< start_index + number_images - 1 << endl;
+#ifndef __MACH__
 			clock_gettime(CLOCK_MONOTONIC, &finish);
 			elapsed = (finish.tv_sec - start.tv_sec);
 			elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 			cout << "------> Last " << PROGRESS_INTERVAL << " took " << elapsed << " secs." << endl;
 			clock_gettime(CLOCK_MONOTONIC, &start);
+#endif
 		}
 
 		//Extract descriptors and keypoints and save them
