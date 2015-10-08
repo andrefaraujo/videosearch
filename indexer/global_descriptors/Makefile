@@ -9,10 +9,8 @@ EXEFLAGS = -Wl,-rpath,$(YAEL_DIR)
 LIBS_INDEXER = -L$(YAEL_DIR) -lyael
 
 PLATFORM=$(shell uname)
-ifeq ($(PLATFORM),Darwin)
-	YAEL_LIB=$(YAEL_DIR)/libyael.dylib
-else
-	YAEL_LIB=$(YAEL_DIR)/libyael.so
+ifeq ($(PLATFORM),Darwin) # Mac options
+else # Linux options
 	CXXFLAGS = $(CXXFLAGS)" -fopenmp"
 endif
 
@@ -36,7 +34,7 @@ $(INDEX_DATASET).o: $(INDEX_DATASET).cc
 	$(CXX) $(CXXFLAGS) -c $(INDEX_DATASET).cc \
 	-o $(INDEX_DATASET).o
 
-$(INDEX_DATASET): $(INDEX_DATASET).o gdindex.o $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(YAEL_LIB)
+$(INDEX_DATASET): $(INDEX_DATASET).o gdindex.o $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o
 	$(CXX) $(CXXFLAGS) $(EXEFLAGS) \
 	-o $(INDEX_DATASET) $(INDEX_DATASET).o gdindex.o \
 	$(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(LIBS_INDEXER)
@@ -45,7 +43,7 @@ $(JOIN_INDEXES).o: $(JOIN_INDEXES).cc
 	$(CXX) $(CXXFLAGS) -c $(JOIN_INDEXES).cc \
 	-o $(JOIN_INDEXES).o
 
-$(JOIN_INDEXES): $(JOIN_INDEXES).o gdindex.o $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(YAEL_LIB)
+$(JOIN_INDEXES): $(JOIN_INDEXES).o gdindex.o $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o
 	$(CXX) $(CXXFLAGS) $(EXEFLAGS) \
 	-o $(JOIN_INDEXES) $(JOIN_INDEXES).o gdindex.o \
 	$(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(LIBS_INDEXER)
