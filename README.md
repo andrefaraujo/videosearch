@@ -12,7 +12,7 @@ This project currently contains code for
 - Global descriptor (Binarized Fisher vectors) extraction per image/frame, shot or scene
 - Retrieval in image or video databases using image queries
 - Evaluating retrieval results based on Average Precision and Precision at 1
-- Reproducing main results from the papers mentioned below (IN PROGRESS: to be concluded by Oct 18)
+- Reproducing main results from the papers mentioned below (IN PROGRESS: to be concluded by Nov/2015)
 
 This repository can also be useful if one is interested in searching a database of images using query images. In
 that case, one can simply use the frame-based techniques described below.
@@ -142,7 +142,7 @@ You should obtain the same results if your code is working properly.
 
 Here we provide helpful scripts to use our programs and obtain results on the Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203)). For this to work, you need to download the dataset beforehand and follow the instructions (found [here](https://stacks.stanford.edu/file/druid:zx935qw7203/README.txt)) for setting it up.
 
-TODO(andrefaraujo): complete this by Oct/18
+TODO(andrefaraujo): complete this by Nov 2015
 
 Extracting keyframes from entire Stanford I2V dataset:
 
