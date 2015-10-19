@@ -29,9 +29,9 @@ properly.
 
 **Prerequisites**: (all of these can be easily obtained for Linux or Mac using 'apt-get install' 
 or 'brew install' respectively)
-- opencv
-- ffmpeg
-- pkg-config
+- opencv (tested with version 2.4.0 on Ubuntu, and version 2.4.12 on Mac)
+- ffmpeg (tested with version git-2012-08-24-fef9e84 on Ubuntu, and version 2.6.1 on Mac)
+- pkg-config (tested with version 0.25 on Ubuntu, and version 0.28 on Mac)
 
 **Step 1**: Clone repository (where "mypath" is the path you'll download the repository to):
 
