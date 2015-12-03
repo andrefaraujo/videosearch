@@ -14,7 +14,7 @@ This project currently contains code for
 - Retrieval in image or video databases using image queries
 - Evaluating retrieval results based on Average Precision and Precision at 1
 
-With these, you can reproduce the main results from the papers mentioned below, following the steps outline in the next section.
+With these, you can reproduce the main results from the papers mentioned below, following the steps outlined in the next section.
 
 This repository can also be useful if one is interested in searching a database of images using query images. In
 that case, one can simply use the frame-based techniques described below.
