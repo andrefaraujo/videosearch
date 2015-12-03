@@ -4,7 +4,6 @@
 
 Andr&eacute; Araujo ([stanford.edu/~afaraujo](http://stanford.edu/~afaraujo), afaraujo@stanford.edu)  
 In collaboration with Jason Chaves, David Chen and Haricharan Lakshman
-
 Image, Video and Multimedia Systems Group, Stanford University
 
 This project currently contains code for 
