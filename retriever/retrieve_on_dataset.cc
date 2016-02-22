@@ -70,7 +70,7 @@ int main(int argc, char* * argv) {
     float word_selection_thresh = 7.0;
     float word_selection_thresh_rerank = 8.0;
     string gdindex_path_rerank = "";
-    bool avoid_redundant_scene_results = true;
+    bool avoid_redundant_scene_results = false;
 
     if (argc < 9) {
         cout << "Wrong usage!!!" << endl;
