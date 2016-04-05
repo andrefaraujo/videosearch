@@ -104,7 +104,7 @@ void *memalign (size_t ignored, size_t nbytes)
 #endif
 
 
-#ifdef __linux__
+#if 0
 
 typedef struct {
   void *ptr;
