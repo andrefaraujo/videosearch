@@ -12,7 +12,7 @@ Please follow the instructions outlined in https://github.com/andrefaraujo/video
 
 ## Download of relevant data
 
-In the following, "mypath" refers to the path you downloaded the repository to:
+In the following, "mypath" refers to the path you downloaded the repository to.
 
 **Download configuration files:**
 
@@ -22,12 +22,15 @@ TODO    $ wget # Download config files
     $ cd ../asym_dcq
 TODO: download
     $ unzip -j asym_dcq.zip
-    $ cd ..
+
+**Create data folder:**
+
+    $ cd $mypath/videosearch/asym/
     $ mkdir data
-    $ cd data
 
 **Download SMVS dataset:**
 
+    $ cd $mypath/videosearch/asym/data
     $ mkdir smvs
     $ cd smvs
     $ wget https://stacks.stanford.edu/file/druid:rb470rw0983/cd_covers.zip # Note: size of this file is 442MB
@@ -35,9 +38,11 @@ TODO: download
     $ wget https://stacks.stanford.edu/file/druid:rb470rw0983/dvd_covers.zip # Note: size of this file is 439MB
     $ unzip dvd_covers.zip
 
-**Download Holidays dataset (note: this can be slow):**
+**Download Holidays dataset:** 
 
-    $ cd ..
+(note: this can be slow)
+
+    $ cd $mypath/videosearch/asym/data
     $ mkdir holidays 
     $ cd holidays
     $ wget ftp://ftp.inrialpes.fr/pub/lear/douze/data/jpg1.tar.gz # Note: size of this file is 1.1GB
@@ -46,10 +51,12 @@ TODO: download
     $ tar -zxvf jpg2.tar.gz
 
 **Download MIR-FLICKR-1M:** 
-(note: this can be quite slow):
+
+(note: this can be quite slow)
+
 (only the required parts for these experiments are downloaded)
 
-    $ cd ..
+    $ cd $mypath/videosearch/asym/data
     $ mkdir mirflickr1m
     $ cd mirflickr1m
     $ for i in 0 1 2 3 4 5; do
@@ -61,13 +68,17 @@ TODO: download
 
 Here, we illustrate an example using 5 clutter images per database image (ie, C=5).
 This choice is reflected in the parameters of the files used below.
+In the following, "mypath" refers to the path you downloaded the repository to.
 
 **Extract query features, using 10 threads:**
 
-    $ cd ../../asym_qcd
+    $ cd $mypath/videosearch/asym/asym_qcd
     $ ./run_sift_extraction_query.sh
 
-**Extract database features:** (this can take some time)
+**Extract database features:** 
+
+(this can take some time)
+
 Note: This extracts features for images from C=5 set, using 10 threads.
 For other values of C, change the chosen file in the following script.
 
