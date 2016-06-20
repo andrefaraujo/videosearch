@@ -17,10 +17,10 @@ In the following, "mypath" refers to the path you downloaded the repository to.
 **Download configuration files:**
 
     $ cd $mypath/videosearch/asym/asym_qcd
-TODO    $ wget # Download config files
+    $ wget https://stacks.stanford.edu/file/druid:hg081bj1051/asym_qcd.zip
     $ unzip -j asym_qcd.zip
     $ cd ../asym_dcq
-TODO: download
+    $ wget https://stacks.stanford.edu/file/druid:hg081bj1051/asym_dcq.zip
     $ unzip -j asym_dcq.zip
 
 **Create data folder:**
@@ -69,6 +69,9 @@ TODO: download
 Here, we illustrate an example using 5 clutter images per database image (ie, C=5).
 This choice is reflected in the parameters of the files used below.
 In the following, "mypath" refers to the path you downloaded the repository to.
+
+One can repeat this procedure to generate results with different choices of C.
+Note that the paper's results use SIFT descriptors extracted from Hessian-Affine keypoints, while the results generated below use the Difference-of-Gaussians detector.
 
 **Extract query features, using 10 threads:**
 
