@@ -60,7 +60,7 @@ TODO: download
     $ mkdir mirflickr1m
     $ cd mirflickr1m
     $ for i in 0 1 2 3 4 5; do
-    $   wget http://press.liacs.nl/mirflickr/mirflickr1m/images${i}.zip # Note: size of these files is 12GB
+    $   wget http://press.liacs.nl/mirflickr/mirflickr1m/images${i}.zip # Note: size of these files is 12GB each
     $   unzip images${i}.zip
     $ done
 
@@ -79,8 +79,8 @@ In the following, "mypath" refers to the path you downloaded the repository to.
 
 (this can take some time)
 
-Note: This extracts features for images from C=5 set, using 10 threads.
-For other values of C, change the chosen file in the following script.
+Note: This extracts features for images from the set of images with C=5, using 10 threads.
+For other values of C, you can edit the following script.
 
     $ ./run_sift_extraction_database.sh
 
