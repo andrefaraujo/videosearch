@@ -95,11 +95,11 @@ For other values of C, you can edit the following script.
 
     $ ./run_retriever_asym.sh
 
-**Convert to scoreable format:**
+**Convert results to appropriate scoring format:**
 
     $ ./run_convert_results_format.sh
 
-**Score:**
+**Scoring results:**
 
     $ ./run_evaluate_results.sh
 
