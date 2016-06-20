@@ -5,16 +5,17 @@ datasets (Asym-QCD and Asym-DCQ), and for using them in retrieval experiments.
 
 Please follow the instructions below -- if any questions/issues arise, please contact Andre at afaraujo@alumni.stanford.edu
 
-**Pre-requisites**:
+## Pre-requisites:
 
 The main portion of this github repository must be working.
 Please follow the instructions outlined in https://github.com/andrefaraujo/videosearch/blob/master/README.md#quick-start
 
-**Download of relevant data**
+## Download of relevant data
 
 In the following, "mypath" refers to the path you downloaded the repository to:
 
 Download configuration files:
+
     $ cd $mypath/videosearch/asym/asym_qcd
 TODO    $ wget # Download config files
     $ unzip -j asym_qcd.zip
@@ -26,6 +27,7 @@ TODO: download
     $ cd data
 
 Download SMVS dataset:
+
     $ mkdir smvs
     $ cd smvs
     $ wget https://stacks.stanford.edu/file/druid:rb470rw0983/cd_covers.zip # Note: size of this file is 442MB
@@ -34,6 +36,7 @@ Download SMVS dataset:
     $ unzip dvd_covers.zip
 
 Download Holidays dataset (note: this can be slow):
+
     $ cd ..
     $ mkdir holidays 
     $ cd holidays
@@ -44,6 +47,7 @@ Download Holidays dataset (note: this can be slow):
 
 Download MIR-FLICKR-1M (note: this can be quite slow):
 (only the required parts for these experiments are downloaded)
+
     $ cd ..
     $ mkdir mirflickr1m
     $ cd mirflickr1m
@@ -52,28 +56,34 @@ Download MIR-FLICKR-1M (note: this can be quite slow):
     $   unzip images${i}.zip
     $ done
 
-**Asym-QCD**
+## Asym-QCD
 
 Here, we illustrate an example using C=5 (this choice is reflected in the parameters of the files below).
 
 Extract query features, using 10 threads
+
     $ cd ../../asym_qcd
     $ ./run_sift_extraction_query.sh
 
 Extract database features (this can take some time)
 This extracts features for images from C=5 set, using 10 threads
 For other values of C, change the chosen file in the following script
+
     $ ./run_sift_extraction_database.sh
 
 Extract global descriptors of database using simple parameters
+
     $ ./run_gd_index.sh
 
 Retrieve using simple parameters
+
     $ ./run_retriever_asym.sh
 
 Convert to scoreable format
+
     $ ./run_convert_results_format.sh
 
 Score
+
     $ ./run_evaluate_results.sh
 
