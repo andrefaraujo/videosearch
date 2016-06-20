@@ -5,7 +5,7 @@ datasets (Asym-QCD and Asym-DCQ), and for using them in retrieval experiments.
 
 Please follow the instructions below -- if any questions/issues arise, please contact Andre at afaraujo@alumni.stanford.edu
 
-## Pre-requisites:
+## Pre-requisites
 
 The main portion of this github repository must be working.
 Please follow the instructions outlined in https://github.com/andrefaraujo/videosearch/blob/master/README.md#quick-start
@@ -14,7 +14,7 @@ Please follow the instructions outlined in https://github.com/andrefaraujo/video
 
 In the following, "mypath" refers to the path you downloaded the repository to:
 
-Download configuration files:
+**Download configuration files:**
 
     $ cd $mypath/videosearch/asym/asym_qcd
 TODO    $ wget # Download config files
@@ -26,7 +26,7 @@ TODO: download
     $ mkdir data
     $ cd data
 
-Download SMVS dataset:
+**Download SMVS dataset:**
 
     $ mkdir smvs
     $ cd smvs
@@ -35,7 +35,7 @@ Download SMVS dataset:
     $ wget https://stacks.stanford.edu/file/druid:rb470rw0983/dvd_covers.zip # Note: size of this file is 439MB
     $ unzip dvd_covers.zip
 
-Download Holidays dataset (note: this can be slow):
+**Download Holidays dataset (note: this can be slow):**
 
     $ cd ..
     $ mkdir holidays 
@@ -45,7 +45,8 @@ Download Holidays dataset (note: this can be slow):
     $ wget ftp://ftp.inrialpes.fr/pub/lear/douze/data/jpg2.tar.gz # Note: size of this file is 1.6GB
     $ tar -zxvf jpg2.tar.gz
 
-Download MIR-FLICKR-1M (note: this can be quite slow):
+**Download MIR-FLICKR-1M:** 
+(note: this can be quite slow):
 (only the required parts for these experiments are downloaded)
 
     $ cd ..
@@ -58,32 +59,33 @@ Download MIR-FLICKR-1M (note: this can be quite slow):
 
 ## Asym-QCD
 
-Here, we illustrate an example using C=5 (this choice is reflected in the parameters of the files below).
+Here, we illustrate an example using 5 clutter images per database image (ie, C=5).
+This choice is reflected in the parameters of the files used below.
 
-Extract query features, using 10 threads
+**Extract query features, using 10 threads:**
 
     $ cd ../../asym_qcd
     $ ./run_sift_extraction_query.sh
 
-Extract database features (this can take some time)
-This extracts features for images from C=5 set, using 10 threads
-For other values of C, change the chosen file in the following script
+**Extract database features:** (this can take some time)
+Note: This extracts features for images from C=5 set, using 10 threads.
+For other values of C, change the chosen file in the following script.
 
     $ ./run_sift_extraction_database.sh
 
-Extract global descriptors of database using simple parameters
+**Extract global descriptors of database using simple parameters:**
 
     $ ./run_gd_index.sh
 
-Retrieve using simple parameters
+**Retrieve using simple parameters:**
 
     $ ./run_retriever_asym.sh
 
-Convert to scoreable format
+**Convert to scoreable format:**
 
     $ ./run_convert_results_format.sh
 
-Score
+**Score:**
 
     $ ./run_evaluate_results.sh
 
