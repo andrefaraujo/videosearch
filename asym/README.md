@@ -68,10 +68,10 @@ In the following, "mypath" refers to the path you downloaded the repository to.
 
 Here, we illustrate an example using 5 clutter images per database image (ie, C=5).
 This choice is reflected in the parameters of the files used below.
-In the following, "mypath" refers to the path you downloaded the repository to.
-
 One can repeat this procedure to generate results with different choices of C.
 Note that the paper's results use SIFT descriptors extracted from Hessian-Affine keypoints, while the results generated below use the Difference-of-Gaussians detector.
+
+In the following, "mypath" refers to the path you downloaded the repository to.
 
 **Extract query features, using 10 threads:**
 
