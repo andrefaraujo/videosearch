@@ -4,7 +4,7 @@ FILEIO_DIR = ../../common/file_io
 
 CXX=g++
 CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0
-EXEFLAGS = -Wl,-rpath,$(YAEL_DIR)
+EXEFLAGS = -Wl,-rpath,'$$ORIGIN'/$(YAEL_DIR)
 
 LIBS_INDEXER = -L$(YAEL_DIR) -lyael
 

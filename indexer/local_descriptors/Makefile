@@ -21,7 +21,7 @@ else
 endif
 
 CXXFLAGS = -std=c++0x -O3 -g -Wall -fmessage-length=0
-EXEFLAGS = -Wl,-rpath,$(VLROOT)/bin/$(VLROOT_ARCH)
+EXEFLAGS = -Wl,-rpath,'$$ORIGIN'/$(VLROOT)/bin/$(VLROOT_ARCH)
 
 LIBS_EXTRACTOR = -L$(VLROOT)/bin/$(VLROOT_ARCH)/ -lvl `pkg-config --cflags --libs opencv`
 
