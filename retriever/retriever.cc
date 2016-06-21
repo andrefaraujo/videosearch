@@ -16,8 +16,8 @@ HELPER FUNCTIONS
 
 static bool file_exists(string filename)
 {
-  ifstream ifile(filename.c_str());
-  return bool(ifile);
+    ifstream ifile(filename.c_str());
+    return bool(ifile);
 }
 
 /********************************
@@ -102,7 +102,7 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
 		get_vector_of_uints_from_file_lines(keyframe_numbers_path, 
                                             keyframe_ids_for_eval_);
 	} else if ((shot_mode == GDIndex::SHOT_MODE_SHOT_AGG || shot_mode == GDIndex::SHOT_MODE_GLOBAL_AGG
-		    || shot_mode == GDIndex::SHOT_MODE_TRACK_AGG) && (shot_list_path != "")) {
+                || shot_mode == GDIndex::SHOT_MODE_TRACK_AGG) && (shot_list_path != "")) {
 		// Shots with one signature per shot, which aggregates features from many
 		// frames; in this case, we'll use shot numbers in "keyframe_ids_for_eval_"
 		// and we'll process the results from querying separately
@@ -143,8 +143,8 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                        GDIndex::GD_POWER, gdindex_trained_parameters_path_,
                                        verbose_level_);
     gdindex_ptr_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
-                                              word_selection_thresh_, gdindex_trained_parameters_path_,
-                                              verbose_level_);
+                                       word_selection_thresh_, gdindex_trained_parameters_path_,
+                                       verbose_level_);
 
 	// We instantiate another GDIndex object, in case we're using a two-step
     // scoring (eg, scene + shot)
@@ -160,7 +160,7 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
 	}
 	if (verbose_level_ >= 2) cout << "done!" << endl;
 	if (verbose_level_ >= 2) cout << "It will use feature extension = " 
-                                 << ld_extension << endl;
+                                  << ld_extension << endl;
 	log_file_ << "GDIndex database was instantiated. It will use feature extension = " 
               << ld_extension << endl;
 
@@ -239,8 +239,8 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
         }
 
         if (verbose_level_) cout << "-----> Query " << count_query <<
-							   ", query duration = " << query_duration <<
-							   " secs" << endl;
+                                ", query duration = " << query_duration <<
+                                " secs" << endl;
         log_file_ << "-----> Query " << count_query <<
             ", query duration = " << query_duration <<
             " secs" << endl;
@@ -266,19 +266,19 @@ void Retriever::set_local_descriptor_mode(int mode) {
 void Retriever::set_number_output_results(uint n) {
     number_output_results_ = n;
 	if (verbose_level_ >= 3) cout << "Just set number_output_results_ to " 
-                                 << number_output_results_ << endl;
+                                  << number_output_results_ << endl;
 }
 
 void Retriever::set_number_gaussians_global_descriptor(uint n) {
 	number_gaussians_global_descriptor_ = n;
 	if (verbose_level_ >= 3) cout << "Just set number_gaussians_global_descriptor_ to " 
-                                 << number_gaussians_global_descriptor_ << endl;
+                                  << number_gaussians_global_descriptor_ << endl;
 }
 
 void Retriever::set_gdindex_path(string path) {
 	gdindex_trained_parameters_path_ = path;
 	if (verbose_level_ >= 3) cout << "Just set gdindex_trained_parameters_path_ to " 
-                                 << gdindex_trained_parameters_path_ << endl;
+                                  << gdindex_trained_parameters_path_ << endl;
 }
 
 void Retriever::set_word_selection_mode(int mode) {
