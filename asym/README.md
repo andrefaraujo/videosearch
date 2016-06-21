@@ -82,8 +82,8 @@ In the following, "mypath" refers to the path you downloaded the repository to.
 
 (this can take some time)
 
-Note: This extracts features for images from the set of images with C=5, using 10 threads.
-For other values of C, you can edit the following scripts.
+(note: This extracts features for images from the set of images with C=5, using 10 threads.
+For other values of C, you can edit the following scripts.)
 
     $ ./run_sift_extraction_database.sh
 
