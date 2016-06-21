@@ -101,4 +101,4 @@ For other values of C, you can edit the following script.
 
 This last step gives the results: "Total Results: mAP = 0.456296, mP@1 = 0.410000".
 This illustrates the usage of this dataset.
-Note that these results are different from the paper's, due to the different keypoint detector and different parameters (the paper's results can be reproduced using the settings described therein).
+Note that these results are different from the paper's, due to the different keypoint detector and different parameters (the paper's results can be reproduced in a straightforward manner by using the settings described therein).
