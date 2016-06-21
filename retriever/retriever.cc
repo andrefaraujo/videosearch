@@ -26,17 +26,17 @@ PUBLIC FUNCTIONS
 
 Retriever::Retriever() {
     // GDIndex-related variables
-	gdindex_ptr_ = NULL;
-	gdindex_ptr_rerank_ = NULL;
+    gdindex_ptr_ = NULL;
+    gdindex_ptr_rerank_ = NULL;
     local_descriptor_mode_ = GDIndex::SIFT_LOCAL_DESCRIPTOR;
     number_gaussians_global_descriptor_ = GD_NUMBER_GAUSSIANS_DEFAULT;
     min_number_words_visited_ = MIN_NUMBER_WORDS_SELECTED_DEFAULT;
     word_selection_mode_ = WORD_SELECTION_MODE_DEFAULT;
     word_selection_thresh_ = WORD_SELECTION_THRESH_DEFAULT;
-	gdindex_trained_parameters_path_ = "../indexer/global_descriptors/trained_parameters/";
+    gdindex_trained_parameters_path_ = "../indexer/global_descriptors/trained_parameters/";
 
     number_output_results_ = DEFAULT_NUMBER_OUTPUT_RESULTS;
-	verbose_level_ = DEFAULT_VERBOSE_LEVEL;
+    verbose_level_ = DEFAULT_VERBOSE_LEVEL;
 
     // Clear member vectors
     db_list_.clear();
@@ -46,19 +46,19 @@ Retriever::Retriever() {
 
 Retriever::~Retriever()
 {
-	// Clear data structures
-	db_list_.clear();
+    // Clear data structures
+    db_list_.clear();
     keyframe_ids_for_eval_.clear();
     shot_first_frames_.clear();
 
-	if (gdindex_ptr_ != NULL) {
-		delete gdindex_ptr_;
-		gdindex_ptr_ = NULL;
-	}
-	if (gdindex_ptr_rerank_ != NULL) {
-		delete gdindex_ptr_rerank_;
-		gdindex_ptr_rerank_ = NULL;
-	}
+    if (gdindex_ptr_ != NULL) {
+        delete gdindex_ptr_;
+        gdindex_ptr_ = NULL;
+    }
+    if (gdindex_ptr_rerank_ != NULL) {
+        delete gdindex_ptr_rerank_;
+        gdindex_ptr_rerank_ = NULL;
+    }
 }
 
 void Retriever::retrieve_on_specific_dataset(const string gdindex_path, 
@@ -74,56 +74,56 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                              const float word_selection_thresh_rerank,
                                              const string gdindex_path_rerank,
                                              const bool avoid_redundant_scene_results) {
-	// Open files that will be written: log file and results file
-	string log_file_name = output_base_path + "_log.txt";
-	log_file_.open(log_file_name.c_str());
-	log_file_ << "Starting retrieving using list of DB images from " << db_list_path << endl;
+    // Open files that will be written: log file and results file
+    string log_file_name = output_base_path + "_log.txt";
+    log_file_.open(log_file_name.c_str());
+    log_file_ << "Starting retrieving using list of DB images from " << db_list_path << endl;
 
-	ofstream results_file;
-	string results_file_name = output_base_path + "_results.txt";
-	results_file.open(results_file_name.c_str());     
+    ofstream results_file;
+    string results_file_name = output_base_path + "_results.txt";
+    results_file.open(results_file_name.c_str());     
 
-	// Get queries
-	vector<string> query_list;
-	get_vector_of_strings_from_file_lines(query_list_path, query_list);
-	uint number_queries = query_list.size();
+    // Get queries
+    vector<string> query_list;
+    get_vector_of_strings_from_file_lines(query_list_path, query_list);
+    uint number_queries = query_list.size();
 
-	// Get list of database frames
-	get_vector_of_strings_from_file_lines(db_list_path, db_list_);
-	uint number_keyframes_in_database = db_list_.size();
-	log_file_ << "This database contains " << number_keyframes_in_database << " frames" << endl;
-	log_file_ << "The query set contains " << number_queries << " query images" << endl;
+    // Get list of database frames
+    get_vector_of_strings_from_file_lines(db_list_path, db_list_);
+    uint number_keyframes_in_database = db_list_.size();
+    log_file_ << "This database contains " << number_keyframes_in_database << " frames" << endl;
+    log_file_ << "The query set contains " << number_queries << " query images" << endl;
 
     // Set keyframe_ids_for_eval_, helpful for the usage of different types of indexing
     if ((shot_mode == GDIndex::SHOT_MODE_INDEP_KEYF) && (keyframe_numbers_path != "")) {
-		// Shots with aggregation per frames in shots; in this case, we just need to 
-		// use the correct indices for the frames; other than that, the processing works 
-		// as usual
-		get_vector_of_uints_from_file_lines(keyframe_numbers_path, 
+        // Shots with aggregation per frames in shots; in this case, we just need to 
+        // use the correct indices for the frames; other than that, the processing works 
+        // as usual
+        get_vector_of_uints_from_file_lines(keyframe_numbers_path, 
                                             keyframe_ids_for_eval_);
-	} else if ((shot_mode == GDIndex::SHOT_MODE_SHOT_AGG || shot_mode == GDIndex::SHOT_MODE_GLOBAL_AGG
+    } else if ((shot_mode == GDIndex::SHOT_MODE_SHOT_AGG || shot_mode == GDIndex::SHOT_MODE_GLOBAL_AGG
                 || shot_mode == GDIndex::SHOT_MODE_TRACK_AGG) && (shot_list_path != "")) {
-		// Shots with one signature per shot, which aggregates features from many
-		// frames; in this case, we'll use shot numbers in "keyframe_ids_for_eval_"
-		// and we'll process the results from querying separately
+        // Shots with one signature per shot, which aggregates features from many
+        // frames; in this case, we'll use shot numbers in "keyframe_ids_for_eval_"
+        // and we'll process the results from querying separately
         get_vector_of_uints_from_file_lines(shot_list_path,
                                             shot_first_frames_);
-		for (uint count = 0; count < shot_first_frames_.size(); count++) {
-			// Include indices corresponding to shot numbers
-			keyframe_ids_for_eval_.push_back(count);
-		}
-	} else if (shot_mode == -1) {
+        for (uint count = 0; count < shot_first_frames_.size(); count++) {
+            // Include indices corresponding to shot numbers
+            keyframe_ids_for_eval_.push_back(count);
+        }
+    } else if (shot_mode == -1) {
         for (uint count_keyf = 0; count_keyf < number_keyframes_in_database; count_keyf++) {
             keyframe_ids_for_eval_.push_back(count_keyf);
         }
     } else {
-		cout << "Problem! The combination of shot parameters you used is not allowed. Quitting..." << endl;
-		exit(EXIT_FAILURE);
-	}
+        cout << "Problem! The combination of shot parameters you used is not allowed. Quitting..." << endl;
+        exit(EXIT_FAILURE);
+    }
 
-	// Instantiate GDIndex, set parameters
-	if (verbose_level_ >= 2) cout << "Creating GDIndex database..." << endl;
-	gdindex_ptr_ = new GDIndex();
+    // Instantiate GDIndex, set parameters
+    if (verbose_level_ >= 2) cout << "Creating GDIndex database..." << endl;
+    gdindex_ptr_ = new GDIndex();
     uint ld_length, ld_frame_length;
     string ld_extension, ld_name;
     if (local_descriptor_mode_ == GDIndex::SIFT_LOCAL_DESCRIPTOR) {
@@ -146,10 +146,10 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                        word_selection_thresh_, gdindex_trained_parameters_path_,
                                        verbose_level_);
 
-	// We instantiate another GDIndex object, in case we're using a two-step
+    // We instantiate another GDIndex object, in case we're using a two-step
     // scoring (eg, scene + shot)
-	if (number_scenes_to_rerank != 0) {
-		gdindex_ptr_rerank_ = new GDIndex();
+    if (number_scenes_to_rerank != 0) {
+        gdindex_ptr_rerank_ = new GDIndex();
         gdindex_ptr_rerank_->set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
                                                   GDIndex::LD_PCA_DIM, GDIndex::LD_PRE_PCA_POWER, number_gaussians_rerank,
                                                   GDIndex::GD_POWER, gdindex_trained_parameters_path_,
@@ -157,11 +157,11 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
         gdindex_ptr_rerank_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
                                                   word_selection_thresh_rerank, gdindex_trained_parameters_path_,
                                                   verbose_level_);
-	}
-	if (verbose_level_ >= 2) cout << "done!" << endl;
-	if (verbose_level_ >= 2) cout << "It will use feature extension = " 
+    }
+    if (verbose_level_ >= 2) cout << "done!" << endl;
+    if (verbose_level_ >= 2) cout << "It will use feature extension = " 
                                   << ld_extension << endl;
-	log_file_ << "GDIndex database was instantiated. It will use feature extension = " 
+    log_file_ << "GDIndex database was instantiated. It will use feature extension = " 
               << ld_extension << endl;
 
     gdindex_ptr_->read(gdindex_path);
@@ -222,7 +222,7 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
             cout << "Quitting..." << endl;
 
             log_file_ << "No feature file is available for image " << this_query_name << endl;
-            log_file_ << "Quitting..." << endl;			
+            log_file_ << "Quitting..." << endl;            
             exit(EXIT_FAILURE);
         }
 
@@ -246,56 +246,56 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
             " secs" << endl;
     }
 
-	// Close files
-	log_file_.close();
-	results_file.close();
+    // Close files
+    log_file_.close();
+    results_file.close();
 }
 
 void Retriever::set_verbose_level(uint level) {
-	verbose_level_ = level;
-	if (verbose_level_ >= 3) cout << "Just set verbose_level_ to " 
+    verbose_level_ = level;
+    if (verbose_level_ >= 3) cout << "Just set verbose_level_ to " 
                                   << verbose_level_ << endl;
 }
 
 void Retriever::set_local_descriptor_mode(int mode) {
-	local_descriptor_mode_ = mode;
-	if (verbose_level_ >= 3) cout << "Just set local_descriptor_mode_ to " << 
+    local_descriptor_mode_ = mode;
+    if (verbose_level_ >= 3) cout << "Just set local_descriptor_mode_ to " << 
                                  local_descriptor_mode_ << endl;
 }
 
 void Retriever::set_number_output_results(uint n) {
     number_output_results_ = n;
-	if (verbose_level_ >= 3) cout << "Just set number_output_results_ to " 
+    if (verbose_level_ >= 3) cout << "Just set number_output_results_ to " 
                                   << number_output_results_ << endl;
 }
 
 void Retriever::set_number_gaussians_global_descriptor(uint n) {
-	number_gaussians_global_descriptor_ = n;
-	if (verbose_level_ >= 3) cout << "Just set number_gaussians_global_descriptor_ to " 
+    number_gaussians_global_descriptor_ = n;
+    if (verbose_level_ >= 3) cout << "Just set number_gaussians_global_descriptor_ to " 
                                   << number_gaussians_global_descriptor_ << endl;
 }
 
 void Retriever::set_gdindex_path(string path) {
-	gdindex_trained_parameters_path_ = path;
-	if (verbose_level_ >= 3) cout << "Just set gdindex_trained_parameters_path_ to " 
+    gdindex_trained_parameters_path_ = path;
+    if (verbose_level_ >= 3) cout << "Just set gdindex_trained_parameters_path_ to " 
                                   << gdindex_trained_parameters_path_ << endl;
 }
 
 void Retriever::set_word_selection_mode(int mode) {
-	word_selection_mode_ = mode;
-	if (verbose_level_ >= 3) cout << "Just set word_selection_mode_ to " << 
+    word_selection_mode_ = mode;
+    if (verbose_level_ >= 3) cout << "Just set word_selection_mode_ to " << 
                                  word_selection_mode_ << endl;
 }
 
 void Retriever::set_word_selection_thresh(float t) {
-	word_selection_thresh_ = t;
-	if (verbose_level_ >= 3) cout << "Just set word_selection_thresh_ to " << 
+    word_selection_thresh_ = t;
+    if (verbose_level_ >= 3) cout << "Just set word_selection_thresh_ to " << 
                                  word_selection_thresh_ << endl;
 }
 
 void Retriever::set_min_num_words_visited(uint n) {
-	min_number_words_visited_ = n;
-	if (verbose_level_ >= 3) cout << "Just set min_number_words_visited_ to " << 
+    min_number_words_visited_ = n;
+    if (verbose_level_ >= 3) cout << "Just set min_number_words_visited_ to " << 
                                  min_number_words_visited_ << endl;
 }
 
@@ -306,41 +306,41 @@ PRIVATE FUNCTIONS
 
 void Retriever::get_vector_of_strings_from_file_lines(const string file_name,
                                                       vector<string>& out) {
-	ifstream in_file(file_name.c_str());
-	string line;
+    ifstream in_file(file_name.c_str());
+    string line;
     out.clear();
-	while (in_file >> line) {
-		out.push_back(line);
-	}
+    while (in_file >> line) {
+        out.push_back(line);
+    }
 }
 
 void Retriever::get_vector_of_uints_from_file_lines(const string file_name,
                                                     vector<uint>& out) {
-	ifstream in_file(file_name.c_str());
-	string line;
+    ifstream in_file(file_name.c_str());
+    string line;
     out.clear();
-	while (in_file >> line) {
-		istringstream s(line);
-		uint val;
-		s >> val;
-		out.push_back(val);
-	}
+    while (in_file >> line) {
+        istringstream s(line);
+        uint val;
+        s >> val;
+        out.push_back(val);
+    }
 }
 
 string Retriever::get_local_descriptor_filename(const string image_path,
                                                 const string ext) {
-	uint pos = image_path.find_last_of(".");
-	return (image_path.substr(0, pos) + ext);
+    uint pos = image_path.find_last_of(".");
+    return (image_path.substr(0, pos) + ext);
 }
 
 void Retriever::write_results(const vector< pair < float, uint > >& results,
                               const int shot_mode,
                               ofstream& file) {
-	uint number_to_write = 
+    uint number_to_write = 
         min(number_output_results_, static_cast<uint>(results.size()));
 
-	for (uint count_result = 0; count_result < number_to_write; count_result++) {
-		uint result_number;
+    for (uint count_result = 0; count_result < number_to_write; count_result++) {
+        uint result_number;
         if (shot_mode == GDIndex::SHOT_MODE_SHOT_AGG 
             || shot_mode == GDIndex::SHOT_MODE_GLOBAL_AGG
             || shot_mode == GDIndex::SHOT_MODE_TRACK_AGG) {
@@ -349,11 +349,11 @@ void Retriever::write_results(const vector< pair < float, uint > >& results,
         } else {
             result_number = results.at(count_result).second;
         }
-		float score = results.at(count_result).first;
+        float score = results.at(count_result).first;
         string path_to_write = db_list_.at(result_number);
-		log_file_ << "#" << count_result + 1 << ", number " << result_number << ", file name is " << path_to_write << ", score = " << score << endl;
+        log_file_ << "#" << count_result + 1 << ", number " << result_number << ", file name is " << path_to_write << ", score = " << score << endl;
         file << path_to_write << endl;
-	}
+    }
 }
 
 void Retriever::write_results_no_redundancy(const vector< pair < float, uint > >& results,
@@ -363,7 +363,7 @@ void Retriever::write_results_no_redundancy(const vector< pair < float, uint > >
     uint count_result = 0, count_used_result = 0;
     while (count_used_result < number_output_results_ 
            && count_result < results.size()) {
-		uint result_number;
+        uint result_number;
         if (shot_mode == GDIndex::SHOT_MODE_SHOT_AGG 
             || shot_mode == GDIndex::SHOT_MODE_GLOBAL_AGG
             || shot_mode == GDIndex::SHOT_MODE_TRACK_AGG) {
@@ -375,21 +375,21 @@ void Retriever::write_results_no_redundancy(const vector< pair < float, uint > >
         string path_to_write = db_list_.at(result_number);
         size_t strpos = path_to_write.rfind('/');
         string result_path = path_to_write.substr(0, strpos);
-		// If this clip has already showed up, we skip it
-		vector<string>::iterator it;
-		it = find(already_scored_clips.begin(), already_scored_clips.end(), result_path);
-		if (it != already_scored_clips.end()) {
-			count_result++;
-			continue;
-		}
-		// Include this clip in already_scored_clips, so that the same clip
-		// will not be scored twice.
-		already_scored_clips.push_back(result_path);
-		float score = results.at(count_result).first;
-		log_file_ << "#" << count_result + 1 << ", number " << result_number << ", file name is " << path_to_write << ", score = " << score << endl;
+        // If this clip has already showed up, we skip it
+        vector<string>::iterator it;
+        it = find(already_scored_clips.begin(), already_scored_clips.end(), result_path);
+        if (it != already_scored_clips.end()) {
+            count_result++;
+            continue;
+        }
+        // Include this clip in already_scored_clips, so that the same clip
+        // will not be scored twice.
+        already_scored_clips.push_back(result_path);
+        float score = results.at(count_result).first;
+        log_file_ << "#" << count_result + 1 << ", number " << result_number << ", file name is " << path_to_write << ", score = " << score << endl;
         file << path_to_write << endl;
         count_result++;
         count_used_result++;
-	}
+    }
 }
 
