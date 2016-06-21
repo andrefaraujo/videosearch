@@ -101,6 +101,8 @@ class GDIndex
 
   // Query index from query's local descriptor path
   void perform_query(const string local_descriptors_path, 
+                     const GDIndex* query_index_ptr,
+                     const uint query_number,
                      const vector<uint>& indices,
                      vector< pair<float,uint> >& results, 
                      const uint number_2nd_stage_rerank = 0,

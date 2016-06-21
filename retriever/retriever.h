@@ -28,6 +28,7 @@ public:
 
 	void retrieve_on_specific_dataset(const string gdindex_path, 
                                       const string db_list_path, 
+                                      const string query_index_path,
                                       const string query_list_path, 
                                       const string output_base_path, 
                                       const string keyframe_numbers_path = "", 
@@ -77,6 +78,9 @@ private:
 	// are retrieving in two stages (eg, first with scenes signatures, then
     // with shot signatures)
 	GDIndex* gdindex_ptr_rerank_;
+
+    // Query index database, pointer to it
+    GDIndex* query_index_ptr_;
 
     // Variables related to GDIndex member variables that will be set
     int local_descriptor_mode_;

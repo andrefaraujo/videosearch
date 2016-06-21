@@ -715,30 +715,47 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
 }
 
 void GDIndex::perform_query(const string local_descriptors_path, 
+                            const GDIndex* query_index_ptr,
+                            const uint query_number,
                             const vector<uint>& indices,
                             vector< pair<float,uint> >& results, 
                             const uint number_2nd_stage_rerank,
                             GDIndex* gdindex_ptr_rerank,
                             const vector < vector < uint > >& group_lists_rerank,
                             const int verbose_level) {
-    // Load local descriptors
     FeatureSet* feature_set = NULL;
-    if (index_parameters_.ld_name == "sift") {
-        feature_set = readSIFTFile(local_descriptors_path, 
-                                   index_parameters_.ld_frame_length,
-                                   index_parameters_.ld_length);
-    } else {
-        cout << "Local feature " << index_parameters_.ld_name
-             << " is not supported" << endl;
-    }
-
-    // Generate query global descriptor
     vector<uint> gd_word_descriptor;
     vector<float> gd_word_l1_norm, gd_word_total_soft_assignment;
-    generate_global_descriptor(feature_set, 
-                               gd_word_descriptor, 
-                               gd_word_l1_norm, 
-                               gd_word_total_soft_assignment);
+    if (query_index_ptr != NULL) {
+        // Using pre-computed global descriptor from query_index_ptr
+        gd_word_descriptor = 
+            query_index_ptr->index_.word_descriptor.at(query_number);
+        if (query_parameters_.word_selection_mode == WORD_L1_NORM) {
+            gd_word_l1_norm = 
+                query_index_ptr->index_.word_l1_norms.at(query_number);
+        } else {
+            gd_word_total_soft_assignment = 
+                query_index_ptr->index_.word_total_soft_assignment.at(query_number);
+        }
+    } else {
+        // Computing query global descriptor
+
+        // --> Load local descriptors
+        if (index_parameters_.ld_name == "sift") {
+            feature_set = readSIFTFile(local_descriptors_path, 
+                                       index_parameters_.ld_frame_length,
+                                       index_parameters_.ld_length);
+        } else {
+            cout << "Local feature " << index_parameters_.ld_name
+                 << " is not supported" << endl;
+        }
+
+        // --> Generate query global descriptor
+        generate_global_descriptor(feature_set, 
+                                   gd_word_descriptor, 
+                                   gd_word_l1_norm, 
+                                   gd_word_total_soft_assignment);
+    }
     
     // If number_2nd_stage_rerank is 0, we're not using two-stage scoring
     if (!number_2nd_stage_rerank) {

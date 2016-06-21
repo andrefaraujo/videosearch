@@ -94,10 +94,13 @@ or 'brew install' respectively)
     $ ./run_process_scene_files_test.sh # process auxiliary scene files
     $ ./run_process_scene_rerank_files_test.sh # process auxiliary file for scene reranking
 
-**Step 8**: Extract local descriptors for query images (you need to do this before running retriever, which is the next step):
+**Step 8**: Extract local descriptors (and optionally global descriptors) for query images (you need to do this before running retriever, which is the next step):
 
     $ cd $mypath/videosearch/indexer/local_descriptors/
     $ ./run_sift_extraction_test_query.sh
+    $ # Optional: extract global descriptors
+    $ cd $mypath/videosearch/indexer/global_descriptors/
+    $ ./run_query_index_test.sh
 
 **Step 9**: Build retriever and run it for frame-, shot- and scene-based indexes:
 
@@ -106,6 +109,9 @@ or 'brew install' respectively)
 
     $ # Retrieve using frame-based global descriptors
     $ ./run_frame_test.sh
+
+    $ # Optional: Retrieve using frame-based global descriptors, using pre-computed query global descriptors
+    $ ./run_frame_test_with_query_index.sh
 
     $ # Retrieve using shot-based global descriptors, mode LOC
     $ ./run_shot_mode_1_test.sh
@@ -125,6 +131,10 @@ or 'brew install' respectively)
     $ ./run_convert_frame_based_results_test.sh # converting results to scoreable format
     $ ./run_evaluate_frame_based_test.sh # calculating AP and p@1
 
+    $ # Optional: Evaluate frame-based results which used pre-computed query global descriptors
+    $ ./run_convert_frame_based_results_test_query_index.sh # converting results to scoreable format
+    $ ./run_evaluate_frame_based_test_query_index.sh # calculating AP and p@1
+
     $ # Evaluate shot-based results, mode LOC
     $ ./run_convert_shot_based_mode_1_results_test.sh # converting results to scoreable format
     $ ./run_evaluate_shot_based_mode_1_test.sh # calculating AP and p@1
@@ -140,6 +150,7 @@ or 'brew install' respectively)
 After running the "run_evaluate_*" scripts, you should see the scores for each query and at the end the mean scores (mAP, mP@1). 
 For this small example dataset, we get mAP = 1 and mP@1 = 1 for all of the cases illustrated above. 
 You should obtain the same results if your code is working properly.
+The retrieval results of frame-based experiments using pre-computed query global descriptors (the "optional" commands above) should be exactly the same as those without pre-computation.
 
 ## Performing retrieval on the Stanford I2V dataset
 

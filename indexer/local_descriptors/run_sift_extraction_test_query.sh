@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Get list of keyframes
+# Get list of queries
 IMAGE_LIST=test_query_list.txt
 ls ../test_query/*.jpg > $IMAGE_LIST
 

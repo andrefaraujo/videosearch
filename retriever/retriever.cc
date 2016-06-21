@@ -28,6 +28,7 @@ Retriever::Retriever() {
     // GDIndex-related variables
     gdindex_ptr_ = NULL;
     gdindex_ptr_rerank_ = NULL;
+    query_index_ptr_ = NULL;
     local_descriptor_mode_ = GDIndex::SIFT_LOCAL_DESCRIPTOR;
     number_gaussians_global_descriptor_ = GD_NUMBER_GAUSSIANS_DEFAULT;
     min_number_words_visited_ = MIN_NUMBER_WORDS_SELECTED_DEFAULT;
@@ -63,6 +64,7 @@ Retriever::~Retriever()
 
 void Retriever::retrieve_on_specific_dataset(const string gdindex_path, 
                                              const string db_list_path, 
+                                             const string query_index_path,
                                              const string query_list_path, 
                                              const string output_base_path,
                                              const string keyframe_numbers_path,
@@ -164,12 +166,46 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
     log_file_ << "GDIndex database was instantiated. It will use feature extension = " 
               << ld_extension << endl;
 
-    gdindex_ptr_->read(gdindex_path);
-    if (number_scenes_to_rerank != 0 && gdindex_path_rerank != "") {
-        gdindex_ptr_rerank_->read(gdindex_path_rerank);
+    // Instantiate query index, if necessary
+    if (query_index_path != "") {
+        if (verbose_level_ >= 2) cout << "Creating GDIndex-query..." << endl;
+        query_index_ptr_ = new GDIndex();
+        query_index_ptr_->set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
+                                               GDIndex::LD_PCA_DIM, GDIndex::LD_PRE_PCA_POWER, number_gaussians_global_descriptor_,
+                                               GDIndex::GD_POWER, gdindex_trained_parameters_path_,
+                                               verbose_level_);
+        query_index_ptr_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
+                                               word_selection_thresh_, gdindex_trained_parameters_path_,
+                                               verbose_level_);        
+        if (verbose_level_ >= 2) cout << "done!" << endl;
+        log_file_ << "GDIndex-query was instantiated" << endl;
     }
+
+    // Reading relevant indexes
+    gdindex_ptr_->read(gdindex_path);
     if (verbose_level_ >= 2) cout << "GDIndex index was loaded from " << gdindex_path << endl;
     log_file_ << "GDIndex index was loaded from " << gdindex_path << endl;
+
+    if (number_scenes_to_rerank != 0 && gdindex_path_rerank != "") {
+        gdindex_ptr_rerank_->read(gdindex_path_rerank);
+        if (verbose_level_ >= 2) cout << "GDIndex-rerank index was loaded from " << gdindex_path_rerank << endl;
+        log_file_ << "GDIndex-rerank index was loaded from " << gdindex_path_rerank << endl;
+    }
+
+    if (query_index_path != "") {
+        query_index_ptr_->read(query_index_path);
+        if (verbose_level_ >= 2) cout << "GDIndex-query index was loaded from " << query_index_path << endl;
+        log_file_ << "GDIndex-query index was loaded from " << query_index_path << endl;
+        if (query_index_ptr_->get_number_global_descriptors() != number_queries) {
+            cout << "Error: number of query signatures is different from number of queries" << endl;
+            cout << "Quitting..." << endl;
+
+            log_file_ << "Error: number of query signatures is different from number of queries" << endl;
+            log_file_ << "Quitting..." << endl;            
+            exit(EXIT_FAILURE);
+        }
+    }
+
     if (shot_mode == -1) assert(number_keyframes_in_database 
                                 == gdindex_ptr_->get_number_global_descriptors());
 
@@ -189,42 +225,47 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
         // Declaring results variables for clip-based scoring
         vector< pair<float,uint> > results_query;
 
-        // Check if features already exist for this image
-        // Note: feature_file will have the full path
-        string feature_file = get_local_descriptor_filename(this_query_name,
-                                                            ld_extension);
-        if (file_exists(feature_file)) {
+        string feature_file;
+        if (query_index_path == "") {
+            // In this case, query global descriptor will be computed in "perform_query"
+
+            // Note: feature_file will have the full path
+            feature_file = get_local_descriptor_filename(this_query_name,
+                                                         ld_extension);
+            if (!file_exists(feature_file)) {
+                cout << "Feature file " << feature_file << " does not exist." << endl;
+                cout << "Quitting..." << endl;
+
+                log_file_ << "Feature file " << feature_file << " does not exist." << endl;
+                log_file_ << "Quitting..." << endl;            
+                exit(EXIT_FAILURE);
+            }
             if (verbose_level_ >= 2) cout << "Using features from " << feature_file << endl;
             log_file_ << "Using features from " << feature_file << endl;
-
-            // Time search
-            clock_t begin_clock = clock();
-
-            if (verbose_level_ >= 2) cout << "Starting querying GDIndex..." << endl;
-            log_file_ << "Starting querying GDIndex..." << endl;
-            // Note: results_query will be sorted by scores
-            gdindex_ptr_->perform_query(feature_file,
-                                        keyframe_ids_for_eval_,
-                                        results_query, 
-                                        number_scenes_to_rerank, 
-                                        gdindex_ptr_rerank_,
-                                        group_lists_rerank,
-                                        verbose_level_);
-            clock_t end_clock = clock();
-            query_duration = double(end_clock - begin_clock)/CLOCKS_PER_SEC;
-            if (verbose_level_ >= 2) cout << "done! Took "
-                                          << query_duration << " secs." << endl;
-            log_file_ << "done! Took "
-                      << query_duration << " secs." << endl;
-
-        } else {
-            cout << "No feature file is available for image " << this_query_name << endl;
-            cout << "Quitting..." << endl;
-
-            log_file_ << "No feature file is available for image " << this_query_name << endl;
-            log_file_ << "Quitting..." << endl;            
-            exit(EXIT_FAILURE);
         }
+
+        // Time search
+        clock_t begin_clock = clock();
+
+        if (verbose_level_ >= 2) cout << "Starting querying GDIndex..." << endl;
+        log_file_ << "Starting querying GDIndex..." << endl;
+        // Note: results_query will be sorted by scores
+        gdindex_ptr_->perform_query(feature_file,
+                                    query_index_ptr_,
+                                    count_query,
+                                    keyframe_ids_for_eval_,
+                                    results_query, 
+                                    number_scenes_to_rerank, 
+                                    gdindex_ptr_rerank_,
+                                    group_lists_rerank,
+                                    verbose_level_);
+        clock_t end_clock = clock();
+        query_duration = double(end_clock - begin_clock)/CLOCKS_PER_SEC;
+        if (verbose_level_ >= 2) cout << "done! Took "
+                                      << query_duration << " secs." << endl;
+        log_file_ << "done! Took "
+                  << query_duration << " secs." << endl;
+
 
         if (!avoid_redundant_scene_results) {
             results_file << "Query " << count_query << endl;

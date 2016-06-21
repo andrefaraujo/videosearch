@@ -27,6 +27,7 @@ void usage() {
     cout << "./retrieve_on_dataset -i YOUR_INDEX_FILE -d ../indexer/ -q ../indexer/extract_features/cnn12h_lists/all_cnn12h_queries.txt -g /home/andrefaraujo/datasets/VideoSearchImageQueries/Queries_12hCNN/groundTruth.txt -o results_cnn12h/test_system" << endl;
     cout << "The system will output 2 different files (one with log, one with results), using as the base of the name the output argument." << endl;
     cout << "Options:" << endl;
+    cout << "--query_index ARG: index of global descriptors for queries (default: not using this, and global descriptors are computed on the fly from local descriptors)" << endl;
     cout << "--feature_mode[-f] ARG: feature (local descriptor) mode (default: 0 = SIFT)" << endl;
     cout << "--centroids[-c] ARG: number of centroids/Gaussians to use in global signatures (default: 512)" << endl;
     cout << "--keyframe_numbers[-e] ARG: path to file containing frame numbers to use. This is particularly useful when using some shot modes. (default: not using it)" << endl;
@@ -54,6 +55,7 @@ int main(int argc, char* * argv) {
     string output_base_path = "";
     
     // Default values for options
+    string query_index_path = "";
     int feat_mode = 0;
     uint number_centroids = 512;
     string keyframe_numbers_path = "";
@@ -93,6 +95,9 @@ int main(int argc, char* * argv) {
                 count_arg++;
             } else if ((!strcmp(argv[count_arg], "--output")) || (!strcmp(argv[count_arg], "-o"))) {
                 output_base_path = string(argv[count_arg + 1]);
+                count_arg++;
+            } else if ((!strcmp(argv[count_arg], "--query_index"))) {
+                query_index_path = string(argv[count_arg + 1]);
                 count_arg++;
             } else if ((!strcmp(argv[count_arg], "--feature_mode")) || (!strcmp(argv[count_arg], "-f"))) {
                 feat_mode = atoi(argv[count_arg + 1]);
@@ -180,6 +185,7 @@ int main(int argc, char* * argv) {
         cout << "------>db_list_path = " << db_list_path  << endl;
         cout << "------>query_list_path = " << query_list_path  << endl;
         cout << "------>output_base_path = " << output_base_path  << endl;
+        cout << "------>query_index_path = " << query_index_path  << endl;
         cout << "------>feat_mode = " << feat_mode  << endl;
         cout << "------>number_centroids = " << number_centroids << endl;
         cout << "------>keyframes_numbers_path = " << keyframe_numbers_path << endl;
@@ -220,6 +226,7 @@ int main(int argc, char* * argv) {
     }
     r.retrieve_on_specific_dataset(gdindex_path, 
                                    db_list_path, 
+                                   query_index_path,
                                    query_list_path,
                                    output_base_path,
                                    keyframe_numbers_path, 
