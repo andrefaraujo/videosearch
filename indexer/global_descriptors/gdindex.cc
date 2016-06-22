@@ -1047,8 +1047,14 @@ void GDIndex::score_database_item(const vector<uint>& query_word_descriptor,
     query_norm = sqrt(query_number_words_selected
                       * index_parameters_.ld_pca_dim);
 
+    float corr_den = index_.norm_factors.at(db_ind) * query_norm;
+
     // Compute final correlation for this item
-    total_correlation /= index_.norm_factors.at(db_ind) * query_norm;
+    if (corr_den != 0) {
+        total_correlation /= corr_den;
+    } else {
+        total_correlation = -FLT_MAX;
+    } 
 
     // Change sign such that smaller is better
     score = -total_correlation;
