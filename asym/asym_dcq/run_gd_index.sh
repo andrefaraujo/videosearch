@@ -15,7 +15,7 @@ out_index=${list%.txt}.sift_scfv_idx_k${CENTROIDS}
 # Command line
 cmd=$(echo time \
     ../../indexer/global_descriptors/index_dataset \
-	-i $list \
+    -i $list \
     -o $out_index \
     -r $GDINDEX_PATH \
     -c $CENTROIDS \
