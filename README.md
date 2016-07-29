@@ -3,6 +3,7 @@
 **Large-Scale Video Retrieval Using Image Queries**  
 
 By Andr&eacute; Araujo, in collaboration with Jason Chaves, David Chen and Haricharan Lakshman
+
 Image, Video and Multimedia Systems Group, Stanford University
 
 This project currently contains code for 
