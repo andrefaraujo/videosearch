@@ -2,8 +2,7 @@
 
 **Large-Scale Video Retrieval Using Image Queries**  
 
-Andr&eacute; Araujo ([stanford.edu/~afaraujo](http://stanford.edu/~afaraujo), afaraujo@stanford.edu)  
-In collaboration with Jason Chaves, David Chen and Haricharan Lakshman  
+By Andr&eacute; Araujo, in collaboration with Jason Chaves, David Chen and Haricharan Lakshman
 Image, Video and Multimedia Systems Group, Stanford University
 
 This project currently contains code for 
@@ -21,7 +20,7 @@ that case, one can simply use the frame-based techniques described below.
 
 Our implementation has been tested on Linux (Ubuntu) and Mac OS.
 
-For any questions or issues, please get in touch through github or using the contact information mentioned above.
+For any questions or issues, feel free to get in touch.
 
 ## Quick start
 
@@ -197,3 +196,7 @@ Bibtex:
     title = {{Stanford I2V: A News Video Dataset for Query-by-Image Experiments}},
     year = {2015}
     }
+
+## License
+MIT (except for the pieces of code from other sources -- check their original licenses)
+
