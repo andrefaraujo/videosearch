@@ -19,7 +19,7 @@ With these, you can reproduce the main results from the papers mentioned below, 
 This repository can also be useful if one is interested in searching a database of images using query images. In
 that case, one can simply use the frame-based techniques described below.
 
-Our implementation has been tested on Linux (Ubuntu) and Mac OS.
+Our implementation has been tested on Linux (Ubuntu) and Mac OS X.
 
 For any questions or issues, feel free to get in touch.
 
@@ -29,11 +29,11 @@ Here we illustrate the usage of this repository's code by running through a simp
 4 database video clips and two image queries. This also serves as a way to make sure your code is working
 properly.
 
-**Prerequisites**: (all of these can be easily obtained for Linux or Mac using 'apt-get install' 
+**Prerequisites**: (all of these can be easily obtained for Ubuntu or OS X using 'apt-get install' 
 or 'brew install' respectively)
-- opencv (tested with version 2.4.0 on Ubuntu, and version 2.4.12 on Mac)
-- ffmpeg (tested with version git-2012-08-24-fef9e84 on Ubuntu, and version 2.6.1 on Mac)
-- pkg-config (tested with version 0.25 on Ubuntu, and version 0.28 on Mac)
+- opencv (tested with version 2.4.0 on Ubuntu, and version 2.4.12 on OS X)
+- ffmpeg (tested with version git-2012-08-24-fef9e84 on Ubuntu, and version 2.6.1 on OS X)
+- pkg-config (tested with version 0.25 on Ubuntu, and version 0.28 on OS X)
 
 **Step 1**: Clone repository (where "mypath" is the path you'll download the repository to):
 
