@@ -2,7 +2,7 @@
 
 # Number of Gaussians to use in global descriptor
 GAUSSIANS=512
-# Feature mode: 0=SIFT; others currently not supported
+# Feature mode: 0=SIFT; 1=SIFTGeo
 FEAT_MODE=0
 # Path where to find GDIndex's trained parameters
 GDINDEX_PATH=../indexer/global_descriptors/trained_parameters
@@ -18,6 +18,15 @@ MIN_NUM_WORDS_SELECTED=0
 WORD_SELECTION_MODE=0
 # Word selection thresh
 WORD_SELECTION_THRESH=10
+
+if [ $FEAT_MODE -eq 0 ]; then
+    FEAT_NAME=sift
+elif [ $FEAT_MODE -eq 1 ]; then
+    FEAT_NAME=siftgeo
+else
+    echo "Unrecognized LD_NAME"
+    exit
+fi
 
 OPTIONS=""
 OPTIONS=$OPTIONS" -c "$GAUSSIANS
@@ -36,15 +45,16 @@ fi
 # Composing output path
 OUTPUT_PREFIX=test_query_index
 METHOD_PATH="SCFV_frames"
-METHOD_PATH_RESULTS=${METHOD_PATH}"/gaussians_"$GAUSSIANS
+METHOD_PATH_RESULTS=${METHOD_PATH}"/feat_name_"$FEAT_NAME
+METHOD_PATH_RESULTS=${METHOD_PATH_RESULTS}"/gaussians_"$GAUSSIANS
 METHOD_PATH_RESULTS=${METHOD_PATH_RESULTS}"/ws_mode_"$WORD_SELECTION_MODE
 METHOD_PATH_RESULTS=${METHOD_PATH_RESULTS}"/ws_thresh_"$WORD_SELECTION_THRESH
 METHOD_PATH_RESULTS=${METHOD_PATH_RESULTS}"/min_num_words_visited_"$MIN_NUM_WORDS_SELECTED
 
 QUERY_LIST_FILE=../indexer/global_descriptors/test_query_list.txt
 ls ../indexer/test_query/*.jpg > $QUERY_LIST_FILE
-QUERY_INDEX_FILE=${QUERY_LIST_FILE%.txt}.sift_scfv_idx_k${GAUSSIANS}
-INDEX_FILE=../indexer/global_descriptors/test_frame_based_index_lists.sift_scfv_idx_k${GAUSSIANS}
+QUERY_INDEX_FILE=${QUERY_LIST_FILE%.txt}.${FEAT_NAME}_scfv_idx_k${GAUSSIANS}
+INDEX_FILE=../indexer/global_descriptors/test_frame_based_index_lists.${FEAT_NAME}_scfv_idx_k${GAUSSIANS}
 DB_LIST_FILE=test_frame_db_list.txt
 ls ../indexer/test_db/*/*.jpg > $DB_LIST_FILE
 OUTPUT_PATH=$OUTPUT_PREFIX/results/${METHOD_PATH_RESULTS}

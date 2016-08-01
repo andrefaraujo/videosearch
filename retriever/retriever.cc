@@ -133,6 +133,11 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
         ld_frame_length = GDIndex::SIFT_FRAME_LENGTH;
         ld_extension = GDIndex::SIFT_EXTENSION;
         ld_name = GDIndex::SIFT_NAME;
+    } else if (local_descriptor_mode_ == GDIndex::SIFTGEO_LOCAL_DESCRIPTOR) {
+        ld_length = GDIndex::SIFTGEO_LENGTH;
+        ld_frame_length = GDIndex::SIFTGEO_FRAME_LENGTH;
+        ld_extension = GDIndex::SIFTGEO_EXTENSION;
+        ld_name = GDIndex::SIFTGEO_NAME;
     } else {
         cout << "Problem! local_descriptors_mode_ = " 
              << local_descriptor_mode_

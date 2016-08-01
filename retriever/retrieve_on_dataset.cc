@@ -28,7 +28,7 @@ void usage() {
     cout << "The system will output 2 different files (one with log, one with results), using as the base of the name the output argument." << endl;
     cout << "Options:" << endl;
     cout << "--query_index ARG: index of global descriptors for queries (default: not using this, and global descriptors are computed on the fly from local descriptors)" << endl;
-    cout << "--feature_mode[-f] ARG: feature (local descriptor) mode (default: 0 = SIFT)" << endl;
+    cout << "--feature_mode[-f] ARG: feature (local descriptor) mode (default: 0 = SIFT); another option is 1 = SIFTGEO" << endl;
     cout << "--centroids[-c] ARG: number of centroids/Gaussians to use in global signatures (default: 512)" << endl;
     cout << "--keyframe_numbers[-e] ARG: path to file containing frame numbers to use. This is particularly useful when using some shot modes. (default: not using it)" << endl;
     cout << "--gdindex_parameters_path ARG: path where GDIndex pretrained parameters are saved (default: ../indexer/global_descriptors/trained_parameters)" << endl;
