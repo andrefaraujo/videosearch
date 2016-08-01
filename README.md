@@ -152,6 +152,47 @@ For this small example dataset, we get mAP = 1 and mP@1 = 1 for all of the cases
 You should obtain the same results if your code is working properly.
 The retrieval results of frame-based experiments using pre-computed query global descriptors (the "optional" commands above) should be exactly the same as those without pre-computation.
 
+## Indexing/Retrieving/Scoring using Hessian-Affine detector
+
+The example above uses SIFT detector + SIFT descriptor.
+Usually, the Hessian-Affine (HA) detector provides better retrieval performance, compared to the SIFT detector.
+In this section, we walk through an example using the HA detector.
+
+We'll use the HA detector from INRIA; the detector can be found [here](http://lear.inrialpes.fr/~jegou/data.php) -- download the program named "compute_descriptors_linux64" or "compute_descriptors_mac", depending on your platform.
+Place the downloaded file under "indexer/local_descriptors".
+Also, make sure netpbm is installed (it's available for Ubuntu/OS X via apt-get/brew).
+
+**Step 1**: Extract HesAff+SIFT descriptors for the test example.
+Edit the "indexer/local_descriptors/run_siftHesAff_extraction_test.sh" and "indexer/local_descriptors/run_siftHesAff_extraction_test_query.sh" by setting the netpbm path to the variable NETPBM_BIN_PATH, and setting the variable MAC to 1 (0) if using OS X (Linux).
+Then, run:
+
+    $  cd $mypath/videosearch/indexer/local_descriptors
+    $ ./run_siftHesAff_extraction_test.sh
+    $ ./run_siftHesAff_extraction_test_query.sh
+
+**Step 2**: Build global descriptors for database frames and query images.
+Edit the files "indexer/global_descriptors/run_frame_based_index_test.sh", "indexer/global_descriptors/run_join_frame_based_index_test.sh" and "indexer/global_descriptors/run_query_index_test.sh" by setting the variable LD_MODE to 1.
+Then, run:
+
+    $ cd $mypath/videosearch/indexer/global_descriptors
+    $ ./run_frame_based_index_test.sh
+    $ ./run_join_frame_based_index_test.sh
+    $ ./run_query_index_test.sh
+
+**Step 3**: Run retriever.
+Edit the file "retriever/run_frame_test_with_query_index.sh" by setting the variable FEAT_MODE to 1.
+Then, run:
+
+    $ cd $mypath/videosearch/retriever/
+    $ ./run_frame_test_with_query_index.sh
+
+**Step 4**: Evaluate retrieval results.
+Edit the files "scoring/run_convert_frame_based_results_test_query_index.sh" and "scoring/run_evaluate_frame_based_test_query_index.sh" by setting the variable FEAT_MODE to 1.
+
+    $ cd $mypath/videosearch/scoring/
+    $ ./run_convert_frame_based_results_test_query_index.sh
+    $ ./run_evaluate_frame_based_test_query_index.sh
+
 ## Performing retrieval on the Stanford I2V dataset
 
 Here we provide some scripts to use our programs and obtain results on the Stanford I2V dataset ([Dataset page](http://blackhole1.stanford.edu/vidsearch/dataset/stanfordi2v.html), [Download link](http://purl.stanford.edu/zx935qw7203)). For this to work, you need to download the dataset beforehand and follow the instructions (found [here](https://stacks.stanford.edu/file/druid:zx935qw7203/README.txt)) for setting it up.
