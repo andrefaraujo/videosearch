@@ -20,7 +20,7 @@ IMAGE_LIST=test_query_list.txt
 ls ../test_query/*.jpg > $IMAGE_LIST
 
 # Change this path to where netpbm binaries are located
-NETPBM_BIN_PATH=/usr/local/netpbm/bin/
+NETPBM_BIN_PATH=/usr/local/bin/
 
 for i in `cat $IMAGE_LIST`; do
 
