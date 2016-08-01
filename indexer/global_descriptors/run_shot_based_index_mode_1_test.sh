@@ -10,6 +10,15 @@ CENTROIDS=512
 LD_MODE=0
 VERBOSE=1
 
+if [ $LD_MODE -eq 0 ]; then
+    LD_NAME=sift
+elif [ $LD_MODE -eq 1 ]; then
+    LD_NAME=siftgeo
+else
+    echo "Unrecognized LD_NAME"
+    exit
+fi
+
 # Shot parameters
 SHOT_MODE=1
 SHOT_KEYF=-1
@@ -23,7 +32,7 @@ for list in `cat $KEYFRAMES_LISTS`; do
 	shot_res_file=${list%.txt}.shot_t$SHOT_THRESH
 
     # Compose output index name
-    out_index=${list%.txt}.sift_scfv_idx_k${CENTROIDS}_shot_t${SHOT_THRESH}_n${SHOT_KEYF}_m${SHOT_MODE}
+    out_index=${list%.txt}.${LD_NAME}_scfv_idx_k${CENTROIDS}_shot_t${SHOT_THRESH}_n${SHOT_KEYF}_m${SHOT_MODE}
 
     # Command line
     cmd=$(echo time \

@@ -17,7 +17,7 @@ void usage(char** argv)
   printf("--gdindex_parameters_path[-r] ARG: Path to folder of trained GDIndex parameters. (default: trained_parameters)\n");
   printf("--centroids[-c] ARG: Number of Gaussians/centroids to use in global descriptor (default: 512)\n");
   printf("--threads[-t] ARG: Number of threads to use (default: 1)\n");
-  printf("--ld_mode[-l] ARG: Local descriptor mode to use. 0=SIFT is the only supported mode currently (default: 0)\n");
+  printf("--ld_mode[-l] ARG: Local descriptor mode to use. 0=SIFT; 1=SIFTGeo (default: 0)\n");
   printf("--verbose_level[-v] ARG (default: 1) \n");
 }
 
@@ -129,6 +129,11 @@ int main(int argc, char** argv) {
         ld_frame_length = GDIndex::SIFT_FRAME_LENGTH;
         ld_extension = GDIndex::SIFT_EXTENSION;
         ld_name = GDIndex::SIFT_NAME;
+    } else if (ld_mode == GDIndex::SIFTGEO_LOCAL_DESCRIPTOR) {
+        ld_length = GDIndex::SIFTGEO_LENGTH;
+        ld_frame_length = GDIndex::SIFTGEO_FRAME_LENGTH;
+        ld_extension = GDIndex::SIFTGEO_EXTENSION;
+        ld_name = GDIndex::SIFTGEO_NAME;
     } else {
         cout << "Problem! ld_mode = " 
              << ld_mode

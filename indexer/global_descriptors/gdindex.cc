@@ -20,7 +20,9 @@ extern "C" {
 Constant strings and floats from GDIndex
 ********************************/
 const string GDIndex::SIFT_EXTENSION = ".siftb";
+const string GDIndex::SIFTGEO_EXTENSION = ".siftgeo";
 const string GDIndex::SIFT_NAME = "sift";
+const string GDIndex::SIFTGEO_NAME = "siftgeo";
 const float GDIndex::LD_PRE_PCA_POWER = 0.5;
 const float GDIndex::GD_POWER = 0.5;
 
@@ -396,10 +398,14 @@ void GDIndex::generate_index(const vector<string>& feature_files,
             exit(EXIT_FAILURE);
         }
         FeatureSet* feature_set = NULL;
-        if (index_parameters_.ld_name == "sift") {
+        if (index_parameters_.ld_name == SIFT_NAME) {
             feature_set = readSIFTFile(feature_files.at(count_file), 
                                        index_parameters_.ld_frame_length,
                                        index_parameters_.ld_length);
+        } else if (index_parameters_.ld_name == SIFTGEO_NAME) {
+            feature_set = readSIFTGeoFile(feature_files.at(count_file), 
+                                          index_parameters_.ld_frame_length,
+                                          index_parameters_.ld_length);
         } else {
             cout << "Local feature " << index_parameters_.ld_name
                  << " is not supported" << endl;
@@ -551,10 +557,14 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
                     exit(EXIT_FAILURE);
                 }
                 FeatureSet* feature_set = NULL;
-                if (index_parameters_.ld_name == "sift") {
+                if (index_parameters_.ld_name == SIFT_NAME) {
                     feature_set = readSIFTFile(feature_files.at(frame_this_ind), 
                                                index_parameters_.ld_frame_length,
                                                index_parameters_.ld_length);
+                } else if (index_parameters_.ld_name == SIFTGEO_NAME) {
+                    feature_set = readSIFTGeoFile(feature_files.at(frame_this_ind), 
+                                                  index_parameters_.ld_frame_length,
+                                                  index_parameters_.ld_length);
                 } else {
                     cout << "Local feature " << index_parameters_.ld_name
                          << " is not supported" << endl;
@@ -588,10 +598,14 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
 
                 // Load feature set for this frame
                 FeatureSet* feature_set_this_frame = NULL;
-                if (index_parameters_.ld_name == "sift") {
+                if (index_parameters_.ld_name == SIFT_NAME) {
                     feature_set_this_frame = readSIFTFile(feature_files.at(frame_this_ind), 
                                                           index_parameters_.ld_frame_length,
                                                           index_parameters_.ld_length);
+                } else if (index_parameters_.ld_name == SIFTGEO_NAME) {
+                  feature_set_this_frame = readSIFTGeoFile(feature_files.at(frame_this_ind), 
+                                                           index_parameters_.ld_frame_length,
+                                                           index_parameters_.ld_length);
                 } else {
                     cout << "Local feature " << index_parameters_.ld_name
                          << " is not supported" << endl;
@@ -741,10 +755,14 @@ void GDIndex::perform_query(const string local_descriptors_path,
         // Computing query global descriptor
 
         // --> Load local descriptors
-        if (index_parameters_.ld_name == "sift") {
+        if (index_parameters_.ld_name == SIFT_NAME) {
             feature_set = readSIFTFile(local_descriptors_path, 
                                        index_parameters_.ld_frame_length,
                                        index_parameters_.ld_length);
+        } else if (index_parameters_.ld_name == SIFTGEO_NAME) {
+            feature_set = readSIFTGeoFile(local_descriptors_path, 
+                                          index_parameters_.ld_frame_length,
+                                          index_parameters_.ld_length);
         } else {
             cout << "Local feature " << index_parameters_.ld_name
                  << " is not supported" << endl;

@@ -34,7 +34,7 @@ void usage(char** argv)
   printf("Options:\n");
   printf("--gdindex_parameters_path[-r] ARG: path where GDIndex pretrained parameters are saved (default: trained_parameters)\n");
   printf("--centroids[-c] ARG: Number of centroids/Gaussians to use in global descriptor (default: 512)\n");
-  printf("--ld_mode[-l] ARG: Local descriptor mode to use. 0=SIFT is the only supported mode currently (default: 0)\n");
+  printf("--ld_mode[-l] ARG: Local descriptor mode to use. 0=SIFT; 1=SIFTGeo (default: 0)\n");
   printf("--shot_file_path[-s] ARG: Path to shot file. (default: not using it) \n");
   printf("--single_shot[-g]: Flag that sets the mode of using a single shot in entire database. This is equivalent to passing as shot_file_path a file that contains only one line with '0'. (default: not using it). This is used when aggregating over entire video clip. \n");
   printf("--shot_mode[-m] ARG: Mode to use when using shots: 0 = indep. keyframes per shot; 1 = feature aggregation in shot; (default = 0, used only if shot_file_path is passed or single_shot is set) \n");
@@ -148,6 +148,11 @@ int main(int argc, char** argv)
         ld_frame_length = GDIndex::SIFT_FRAME_LENGTH;
         ld_extension = GDIndex::SIFT_EXTENSION;
         ld_name = GDIndex::SIFT_NAME;
+    } else if (ld_mode == GDIndex::SIFTGEO_LOCAL_DESCRIPTOR) {
+        ld_length = GDIndex::SIFTGEO_LENGTH;
+        ld_frame_length = GDIndex::SIFTGEO_FRAME_LENGTH;
+        ld_extension = GDIndex::SIFTGEO_EXTENSION;
+        ld_name = GDIndex::SIFTGEO_NAME;
     } else {
         cout << "Problem! ld_mode = " 
              << ld_mode

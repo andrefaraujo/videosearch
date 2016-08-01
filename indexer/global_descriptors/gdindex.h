@@ -133,12 +133,14 @@ class GDIndex
   // Modes for shot detection
   enum {SHOT_MODE_INDEP_KEYF = 0, SHOT_MODE_SHOT_AGG = 1, SHOT_MODE_GLOBAL_AGG = 2, SHOT_MODE_TRACK_AGG = 3};
   // Modes for local descriptor
-  enum {SIFT_LOCAL_DESCRIPTOR = 0};
+  enum {SIFT_LOCAL_DESCRIPTOR = 0, SIFTGEO_LOCAL_DESCRIPTOR = 1};
   // SIFT constants
-  enum {SIFT_LENGTH = 128};
-  enum {SIFT_FRAME_LENGTH = 4};
+  enum {SIFT_LENGTH = 128, SIFTGEO_LENGTH = 128};
+  enum {SIFT_FRAME_LENGTH = 4, SIFTGEO_FRAME_LENGTH = 9};
   static const string SIFT_EXTENSION;
+  static const string SIFTGEO_EXTENSION;
   static const string SIFT_NAME;
+  static const string SIFTGEO_NAME;
   // Other constants for now (we might turn them into options later)
   enum {LD_PCA_DIM = 32};
   static const float LD_PRE_PCA_POWER;
