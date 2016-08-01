@@ -20,7 +20,7 @@ IMAGE_LIST=test_all_db_keyframes.txt
 ls ../test_db/*/*.jpg > $IMAGE_LIST
 
 # Change this path to where netpbm binaries are located
-NETPBM_BIN_PATH=/usr/local/netpbm/bin/
+NETPBM_BIN_PATH=/usr/local/bin/
 
 for i in `cat $IMAGE_LIST`; do
 
