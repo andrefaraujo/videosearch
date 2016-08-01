@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Number of Gaussians to use in global descriptor
 GAUSSIANS=512

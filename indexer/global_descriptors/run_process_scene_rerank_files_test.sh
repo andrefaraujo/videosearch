@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Get list of videos
 VIDEO_LIST=test_video_list.txt

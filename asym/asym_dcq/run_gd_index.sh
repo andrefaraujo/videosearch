@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Parameters for index
 GDINDEX_PATH=../../indexer/global_descriptors/trained_parameters

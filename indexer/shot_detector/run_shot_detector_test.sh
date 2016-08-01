@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 THRESHOLD=0.8
 VERBOSE=0

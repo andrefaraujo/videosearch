@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Number of scenes to rerank
 NUM_SCENES_RERANK=100

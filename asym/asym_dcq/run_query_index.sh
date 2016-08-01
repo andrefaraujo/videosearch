@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Parameter that defines the clutter level
 C=5

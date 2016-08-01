@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 NUMBER_RESULTS=100
 GT_FILE=ground_truth_public.txt

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 NUMBER_RESULTS=100
 RESULTS_FILE=../retriever/test/results/SCFV_shots/gaussians_512/ws_mode_0/ws_thresh_10/min_num_words_visited_0/shot_mode_0/fpshot_5/shot_thresh_0.8/out_results.txt

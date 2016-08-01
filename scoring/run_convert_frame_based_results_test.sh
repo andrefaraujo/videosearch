@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 NUMBER_RESULTS=100
 RESULTS_FILE=../retriever/test/results/SCFV_frames/gaussians_512/ws_mode_0/ws_thresh_10/min_num_words_visited_0/out_results.txt

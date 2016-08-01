@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Get list of images
 IMAGE_LIST=query_list_clutter0005_public.txt

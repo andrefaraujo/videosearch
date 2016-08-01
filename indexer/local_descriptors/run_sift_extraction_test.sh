@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Get list of keyframes
 IMAGE_LIST=test_all_db_keyframes.txt

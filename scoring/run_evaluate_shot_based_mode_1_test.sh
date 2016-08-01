@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 NUMBER_RESULTS=100
 GT_FILE=test_dataset_ground_truth_local.txt

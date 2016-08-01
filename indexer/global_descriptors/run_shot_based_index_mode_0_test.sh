@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Get list of keyframe lists
 KEYFRAMES_LISTS=test_keyframe_lists.txt

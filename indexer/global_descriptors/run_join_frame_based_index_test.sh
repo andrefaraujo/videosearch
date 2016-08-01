@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Number of threads to use
 THREADS=10

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 VIDEOS_LIST=../test_db.txt
 

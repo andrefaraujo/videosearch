@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Get list of queries
 IMAGE_LIST=test_query_list.txt

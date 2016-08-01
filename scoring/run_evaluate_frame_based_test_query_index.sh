@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Feature mode: 0=SIFT; 1=SIFTGeo
 FEAT_MODE=0
