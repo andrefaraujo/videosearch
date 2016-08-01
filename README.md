@@ -154,9 +154,9 @@ The retrieval results of frame-based experiments using pre-computed query global
 
 ## Indexing/Retrieving/Scoring using Hessian-Affine detector
 
-The example above uses SIFT detector + SIFT descriptor.
+The example above uses SIFT (DoG) detector + SIFT descriptor.
 Usually, the Hessian-Affine (HA) detector provides better retrieval performance, compared to the SIFT detector.
-In this section, we walk through an example using the HA detector.
+In this section, we walk through an example using the HA detector (for the frame-based pipeline, but shot/scene-based results can also be obtained in a straightforward manner).
 
 We'll use the HA detector from INRIA; the detector can be found [here](http://lear.inrialpes.fr/~jegou/data.php) -- download the program named "compute_descriptors_linux64" or "compute_descriptors_mac", depending on your platform.
 Place the downloaded file under "indexer/local_descriptors".
@@ -192,6 +192,8 @@ Edit the files "scoring/run_convert_frame_based_results_test_query_index.sh" and
     $ cd $mypath/videosearch/scoring/
     $ ./run_convert_frame_based_results_test_query_index.sh
     $ ./run_evaluate_frame_based_test_query_index.sh
+
+You should obtain "Total Results: mAP = 1.000000, mP@1 = 1.000000".
 
 ## Performing retrieval on the Stanford I2V dataset
 
