@@ -188,6 +188,7 @@ Then, run:
 
 **Step 4**: Evaluate retrieval results.
 Edit the files "scoring/run_convert_frame_based_results_test_query_index.sh" and "scoring/run_evaluate_frame_based_test_query_index.sh" by setting the variable FEAT_MODE to 1.
+Then, run:
 
     $ cd $mypath/videosearch/scoring/
     $ ./run_convert_frame_based_results_test_query_index.sh
