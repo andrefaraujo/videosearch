@@ -41,8 +41,8 @@ void usage() {
     cout << "--number_scenes_rerank ARG: when using two-stage retrieval, ARG is the number ofscenes to re-rank. Default: 0" << endl;
     cout << "--number_centroids_rerank ARG: when using two-stage retrieval, ARG is the number of centroids/Gaussians to use in the global signatures of the re-ranking stage. Default: 0" << endl;
     cout << "--group_lists_rerank_path ARG: ARG = path to file containing group configurations, when using two-stage retrieval. Default: empty" << endl;
-    cout << "--word_selection_thresh ARG: ARG = Threshold for asymmetric distance computation. Default: -1" << endl;
-    cout << "--word_selection_thresh_rerank ARG: ARG = Threshold for asymmetric distance computation, used in re-ranking stage if using two-stage retrieval. Default: -1" << endl;
+    cout << "--word_selection_thresh ARG: ARG = Threshold for asymmetric distance computation. Default: 7.0" << endl;
+    cout << "--word_selection_thresh_rerank ARG: ARG = Threshold for asymmetric distance computation, used in re-ranking stage if using two-stage retrieval. Default: 8.0" << endl;
     cout << "--gdindex_path_rerank ARG: ARG = path to index file for index used in second stage, used when using two-stage retrieval." << endl;
     cout << "--avoid_redundant_scene_results: flag that, if set, will make the program write more than number_output_results to the results file, such that it contains exactly number_output_results scenes (clips)"<< endl;
 }
@@ -69,8 +69,8 @@ int main(int argc, char* * argv) {
     uint number_scenes_rerank = 0;
     uint number_centroids_rerank = 0;
     string group_lists_rerank_path = "";
-    float word_selection_thresh = -1;
-    float word_selection_thresh_rerank = -1;
+    float word_selection_thresh = 7.0;
+    float word_selection_thresh_rerank = 8.0;
     string gdindex_path_rerank = "";
     bool avoid_redundant_scene_results = false;
     bool gd_intra_normalization = false;

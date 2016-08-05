@@ -43,7 +43,7 @@ const float GD_POWER_DEFAULT = 0.5;
 const bool GD_INTRA_NORMALIZATION_DEFAULT = false;
 const uint MIN_NUMBER_WORDS_SELECTED_DEFAULT = 20;
 const int WORD_SELECTION_MODE_DEFAULT = 0;
-const float WORD_SELECTION_THRESH_DEFAULT = -1;
+const float WORD_SELECTION_THRESH_DEFAULT = 7;
 
 // Hamming distance above which score is just set to zero
 const uint CORR_WEIGHTS_CLIPPING = 16;
