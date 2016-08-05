@@ -710,7 +710,7 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
     // Apply power law
     float l2_norm_sq = 0;
     for (uint count_dim = 0; count_dim < unbinarized_signature_length; count_dim++) {
-        POWER_LAW_SAME(fisher_output.at(count_dim), 0.5);
+        POWER_LAW_SAME(fisher_output.at(count_dim), index_parameters_.gd_power);
         l2_norm_sq += fisher_output.at(count_dim) * fisher_output.at(count_dim);
     }
 
