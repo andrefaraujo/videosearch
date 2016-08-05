@@ -146,8 +146,8 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
         exit(EXIT_FAILURE);
     }
     gdindex_ptr_->set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
-                                       GDIndex::LD_PCA_DIM, GDIndex::LD_PRE_PCA_POWER, number_gaussians_global_descriptor_,
-                                       GDIndex::GD_POWER, gdindex_trained_parameters_path_,
+                                       GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, number_gaussians_global_descriptor_,
+                                       GD_POWER_DEFAULT, gdindex_trained_parameters_path_,
                                        verbose_level_);
     gdindex_ptr_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
                                        word_selection_thresh_, gdindex_trained_parameters_path_,
@@ -158,8 +158,8 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
     if (number_scenes_to_rerank != 0) {
         gdindex_ptr_rerank_ = new GDIndex();
         gdindex_ptr_rerank_->set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
-                                                  GDIndex::LD_PCA_DIM, GDIndex::LD_PRE_PCA_POWER, number_gaussians_rerank,
-                                                  GDIndex::GD_POWER, gdindex_trained_parameters_path_,
+                                                  GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, number_gaussians_rerank,
+                                                  GD_POWER_DEFAULT, gdindex_trained_parameters_path_,
                                                   verbose_level_);
         gdindex_ptr_rerank_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
                                                   word_selection_thresh_rerank, gdindex_trained_parameters_path_,
@@ -176,8 +176,8 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
         if (verbose_level_ >= 2) cout << "Creating GDIndex-query..." << endl;
         query_index_ptr_ = new GDIndex();
         query_index_ptr_->set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
-                                               GDIndex::LD_PCA_DIM, GDIndex::LD_PRE_PCA_POWER, number_gaussians_global_descriptor_,
-                                               GDIndex::GD_POWER, gdindex_trained_parameters_path_,
+                                               GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, number_gaussians_global_descriptor_,
+                                               GD_POWER_DEFAULT, gdindex_trained_parameters_path_,
                                                verbose_level_);
         query_index_ptr_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
                                                word_selection_thresh_, gdindex_trained_parameters_path_,

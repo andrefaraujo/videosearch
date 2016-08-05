@@ -37,7 +37,6 @@ const uint LD_LENGTH_DEFAULT = 128;
 const uint LD_FRAME_LENGTH_DEFAULT = 4;
 const string LD_EXTENSION_DEFAULT = ".siftb";
 const string LD_NAME_DEFAULT = "sift";
-const uint LD_PCA_DIM_DEFAULT = 32;
 const float LD_PRE_PCA_POWER_DEFAULT = 0.5;
 const uint GD_NUMBER_GAUSSIANS_DEFAULT = 512;
 const float GD_POWER_DEFAULT = 0.5;
@@ -143,8 +142,6 @@ class GDIndex
   static const string SIFTGEO_NAME;
   // Other constants for now (we might turn them into options later)
   enum {LD_PCA_DIM = 32};
-  static const float LD_PRE_PCA_POWER;
-  static const float GD_POWER;
   
   /************ End of Public Constants *************/
 
@@ -186,7 +183,9 @@ class GDIndex
       string ld_name;
 
       // Parameters for PCA-ing local descriptors
-      uint ld_pca_dim;
+      uint ld_pca_dim; // this is set to a constant (32), such that the
+		       // binarized signature conveniently fits in a
+		       // 4-byte unsigned integer
       float ld_pre_pca_power;
       float* ld_mean_vector;
       vector<float*> ld_pca_eigenvectors;      

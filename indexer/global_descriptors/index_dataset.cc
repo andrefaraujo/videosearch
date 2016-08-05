@@ -161,9 +161,9 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
     gdindex.set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
-                                 GDIndex::LD_PCA_DIM, GDIndex::LD_PRE_PCA_POWER, 
+                                 GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, 
                                  number_gaussians,
-                                 GDIndex::GD_POWER, 
+                                 GD_POWER_DEFAULT, 
                                  gdindex_parameters_path,
                                  verbose_level);
     gdindex.set_query_parameters(0, 0, 0, gdindex_parameters_path, verbose_level);

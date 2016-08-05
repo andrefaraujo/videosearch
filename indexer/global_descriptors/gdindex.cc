@@ -23,8 +23,6 @@ const string GDIndex::SIFT_EXTENSION = ".siftb";
 const string GDIndex::SIFTGEO_EXTENSION = ".siftgeo";
 const string GDIndex::SIFT_NAME = "sift";
 const string GDIndex::SIFTGEO_NAME = "siftgeo";
-const float GDIndex::LD_PRE_PCA_POWER = 0.5;
-const float GDIndex::GD_POWER = 0.5;
 
 /********************************
 HELPER FUNCTIONS
@@ -53,7 +51,7 @@ GDIndex::GDIndex() {
     index_parameters_.ld_frame_length = LD_FRAME_LENGTH_DEFAULT;
     index_parameters_.ld_extension = LD_EXTENSION_DEFAULT;
     index_parameters_.ld_name = LD_NAME_DEFAULT;
-    index_parameters_.ld_pca_dim = LD_PCA_DIM_DEFAULT;
+    index_parameters_.ld_pca_dim = LD_PCA_DIM;
     index_parameters_.ld_pre_pca_power = LD_PRE_PCA_POWER_DEFAULT;
     index_parameters_.ld_mean_vector = NULL;
     index_parameters_.ld_pca_eigenvectors.clear();
