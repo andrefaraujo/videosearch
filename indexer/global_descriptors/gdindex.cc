@@ -922,6 +922,10 @@ void GDIndex::update_index() {
     // Update number of global descriptors stored
     index_.number_global_descriptors = index_.word_descriptor.size();
 
+    // Update variables that are useful during retrieval; they will be ready
+    // to serve a query, if perform_query() is called
+    
+    
     // Update number of words selected and norm. factors for each db item
     // The purpose of doing this here is to have these numbers ready when
     // querying (and not need to recalculate them at query time)
