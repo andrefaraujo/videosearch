@@ -23,7 +23,6 @@ void usage() {
     cout << "Usage:" << endl;
     cout << "./retrieve_on_dataset [options] --index[-i] gdindex_file --db_list[-d] database_list_file --query_list[-q] query_list_file --output[-o] output_base_path" << endl;
     cout << "For example:" << endl;
-    // TODO: example
     cout << "./retrieve_on_dataset -i YOUR_INDEX_FILE -d ../indexer/ -q ../indexer/extract_features/cnn12h_lists/all_cnn12h_queries.txt -g /home/andrefaraujo/datasets/VideoSearchImageQueries/Queries_12hCNN/groundTruth.txt -o results_cnn12h/test_system" << endl;
     cout << "The system will output 2 different files (one with log, one with results), using as the base of the name the output argument." << endl;
     cout << "Options:" << endl;
