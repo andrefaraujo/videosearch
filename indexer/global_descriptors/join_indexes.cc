@@ -1,5 +1,10 @@
 /**********************************************
 This program joins several GDIndex's
+
+Note that several parameters of the GDIndex object are irrelevant
+in this case, since all we're doing is loading and concatenating
+indexes. So, many of them are set to default/0 values in the calls
+to set_index_parameters() and set_query_parameter().
  **********************************************/
 
 #include <iostream>
@@ -146,9 +151,9 @@ int main(int argc, char** argv) {
         // Join all indexes using one thread
         GDIndex gdindex;
         gdindex.set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
-                                     GDIndex::LD_PCA_DIM, GDIndex::LD_PRE_PCA_POWER, 
+                                     GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, 
                                      number_gaussians,
-                                     GDIndex::GD_POWER, 
+                                     GD_POWER_DEFAULT, 
                                      gdindex_parameters_path,
                                      verbose_level);
         gdindex.set_query_parameters(0, 0, 0, gdindex_parameters_path, verbose_level);
@@ -197,9 +202,9 @@ int main(int argc, char** argv) {
             partial_indexes.at(count_thread) = new GDIndex();
             partial_indexes.at(count_thread)->set_index_parameters(ld_length, ld_frame_length, 
                                                                    ld_extension, ld_name,
-                                                                   GDIndex::LD_PCA_DIM, GDIndex::LD_PRE_PCA_POWER, 
+                                                                   GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, 
                                                                    number_gaussians,
-                                                                   GDIndex::GD_POWER, 
+                                                                   GD_POWER_DEFAULT, 
                                                                    gdindex_parameters_path,
                                                                    verbose_level);
             partial_indexes.at(count_thread)->set_query_parameters(0, 0, 0, gdindex_parameters_path, 
@@ -234,9 +239,9 @@ int main(int argc, char** argv) {
         // Instantiate final index
         GDIndex gdindex_final;
         gdindex_final.set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
-                                           GDIndex::LD_PCA_DIM, GDIndex::LD_PRE_PCA_POWER, 
+                                           GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, 
                                            number_gaussians,
-                                           GDIndex::GD_POWER, 
+                                           GD_POWER_DEFAULT, 
                                            gdindex_parameters_path,
                                            verbose_level);
         gdindex_final.set_query_parameters(0, 0, 0, gdindex_parameters_path, verbose_level);
