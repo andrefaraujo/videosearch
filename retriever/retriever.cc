@@ -75,7 +75,8 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                              const vector < vector < uint > >& group_lists_rerank,
                                              const float word_selection_thresh_rerank,
                                              const string gdindex_path_rerank,
-                                             const bool avoid_redundant_scene_results) {
+                                             const bool avoid_redundant_scene_results,
+                                             const bool gd_intra_normalization) {
     // Open files that will be written: log file and results file
     string log_file_name = output_base_path + "_log.txt";
     log_file_.open(log_file_name.c_str());
@@ -147,7 +148,8 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
     }
     gdindex_ptr_->set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
                                        GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, number_gaussians_global_descriptor_,
-                                       GD_POWER_DEFAULT, gdindex_trained_parameters_path_,
+                                       GD_POWER_DEFAULT, gd_intra_normalization,
+                                       gdindex_trained_parameters_path_,
                                        verbose_level_);
     gdindex_ptr_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
                                        word_selection_thresh_, gdindex_trained_parameters_path_,
@@ -159,7 +161,8 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
         gdindex_ptr_rerank_ = new GDIndex();
         gdindex_ptr_rerank_->set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
                                                   GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, number_gaussians_rerank,
-                                                  GD_POWER_DEFAULT, gdindex_trained_parameters_path_,
+                                                  GD_POWER_DEFAULT, gd_intra_normalization,
+                                                  gdindex_trained_parameters_path_,
                                                   verbose_level_);
         gdindex_ptr_rerank_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
                                                   word_selection_thresh_rerank, gdindex_trained_parameters_path_,
@@ -177,7 +180,8 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
         query_index_ptr_ = new GDIndex();
         query_index_ptr_->set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
                                                GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, number_gaussians_global_descriptor_,
-                                               GD_POWER_DEFAULT, gdindex_trained_parameters_path_,
+                                               GD_POWER_DEFAULT, gd_intra_normalization,
+                                               gdindex_trained_parameters_path_,
                                                verbose_level_);
         query_index_ptr_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
                                                word_selection_thresh_, gdindex_trained_parameters_path_,

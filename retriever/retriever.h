@@ -40,7 +40,8 @@ public:
                                         = vector < vector < uint > >(), 
                                       const float word_selection_thresh_rerank = 6, 
                                       const string gdindex_path_rerank = "", 
-                                      const bool avoid_redundant_scene_results = true);
+                                      const bool avoid_redundant_scene_results = true,
+                                      const bool gd_intra_normalization = false);
 
 	/**********************************************************
         Setting functions

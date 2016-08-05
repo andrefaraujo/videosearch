@@ -29,6 +29,7 @@ void usage() {
     cout << "Options:" << endl;
     cout << "--query_index ARG: index of global descriptors for queries (default: not using this, and global descriptors are computed on the fly from local descriptors)" << endl;
     cout << "--feature_mode[-f] ARG: feature (local descriptor) mode (default: 0 = SIFT); another option is 1 = SIFTGEO" << endl;
+    cout << "--gd_intra_normalization: Boolean that sets usage of intra-normalization mode for FVs (default: false)" << endl;
     cout << "--centroids[-c] ARG: number of centroids/Gaussians to use in global signatures (default: 512)" << endl;
     cout << "--keyframe_numbers[-e] ARG: path to file containing frame numbers to use. This is particularly useful when using some shot modes. (default: not using it)" << endl;
     cout << "--gdindex_parameters_path ARG: path where GDIndex pretrained parameters are saved (default: ../indexer/global_descriptors/trained_parameters)" << endl;
@@ -73,6 +74,7 @@ int main(int argc, char* * argv) {
     float word_selection_thresh_rerank = 8.0;
     string gdindex_path_rerank = "";
     bool avoid_redundant_scene_results = false;
+    bool gd_intra_normalization = false;
 
     if (argc < 9) {
         cout << "Wrong usage!!!" << endl;
@@ -149,6 +151,8 @@ int main(int argc, char* * argv) {
                 count_arg++;
             } else if (!strcmp(argv[count_arg], "--avoid_redundant_scene_results")) {
                 avoid_redundant_scene_results = true;
+            } else if (!strcmp(argv[count_arg], "--gd_intra_normalization")) {
+                gd_intra_normalization = true;
             } else {
                 cout << "Unrecognized argument " << argv[count_arg] 
                      << " , quitting..." << endl;
@@ -187,6 +191,7 @@ int main(int argc, char* * argv) {
         cout << "------>output_base_path = " << output_base_path  << endl;
         cout << "------>query_index_path = " << query_index_path  << endl;
         cout << "------>feat_mode = " << feat_mode  << endl;
+        cout << "------>gd_intra_normalization = " << gd_intra_normalization << endl;
         cout << "------>number_centroids = " << number_centroids << endl;
         cout << "------>keyframes_numbers_path = " << keyframe_numbers_path << endl;
         cout << "------>gdindex_parameters_path = " << gdindex_parameters_path << endl;
@@ -237,7 +242,8 @@ int main(int argc, char* * argv) {
                                    group_lists_rerank, 
                                    word_selection_thresh_rerank,
                                    gdindex_path_rerank, 
-                                   avoid_redundant_scene_results);
+                                   avoid_redundant_scene_results,
+                                   gd_intra_normalization);
         
     return EXIT_SUCCESS;
 }

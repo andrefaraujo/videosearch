@@ -40,6 +40,7 @@ const string LD_NAME_DEFAULT = "sift";
 const float LD_PRE_PCA_POWER_DEFAULT = 0.5;
 const uint GD_NUMBER_GAUSSIANS_DEFAULT = 512;
 const float GD_POWER_DEFAULT = 0.5;
+const bool GD_INTRA_NORMALIZATION_DEFAULT = false;
 const uint MIN_NUMBER_WORDS_SELECTED_DEFAULT = 20;
 const int WORD_SELECTION_MODE_DEFAULT = 0;
 const float WORD_SELECTION_THRESH_DEFAULT = 7;
@@ -115,6 +116,7 @@ class GDIndex
                             const string ld_extension, const string ld_name,
                             const uint ld_pca_dim, const float ld_pre_pca_power,
                             const uint gd_number_gaussians, const float gd_power,
+                            const bool gd_intra_normalization,
                             const string trained_parameters_path,
                             const int verbose_level = 1);
 
@@ -192,8 +194,11 @@ class GDIndex
 
       // Parameters used for global descriptor computation
       gmm_t* gd_gmm;
-      uint gd_number_gaussians;
-      float gd_power;
+      uint gd_number_gaussians;	  
+      float gd_power; // normalization factor if using SSR normalization
+      bool gd_intra_normalization; // flag that sets IN normalization (instead
+                                   // of SSR) -- in this case, gd_power is
+                                   // unused
   };
   struct_index_parameters index_parameters_;
 

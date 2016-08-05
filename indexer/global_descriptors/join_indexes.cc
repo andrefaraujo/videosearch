@@ -153,7 +153,8 @@ int main(int argc, char** argv) {
         gdindex.set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
                                      GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, 
                                      number_gaussians,
-                                     GD_POWER_DEFAULT, 
+                                     GD_POWER_DEFAULT,
+                                     GD_INTRA_NORMALIZATION_DEFAULT,
                                      gdindex_parameters_path,
                                      verbose_level);
         gdindex.set_query_parameters(0, 0, 0, gdindex_parameters_path, verbose_level);
@@ -205,6 +206,7 @@ int main(int argc, char** argv) {
                                                                    GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, 
                                                                    number_gaussians,
                                                                    GD_POWER_DEFAULT, 
+                                                                   GD_INTRA_NORMALIZATION_DEFAULT,
                                                                    gdindex_parameters_path,
                                                                    verbose_level);
             partial_indexes.at(count_thread)->set_query_parameters(0, 0, 0, gdindex_parameters_path, 
@@ -242,6 +244,7 @@ int main(int argc, char** argv) {
                                            GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, 
                                            number_gaussians,
                                            GD_POWER_DEFAULT, 
+                                           GD_INTRA_NORMALIZATION_DEFAULT,
                                            gdindex_parameters_path,
                                            verbose_level);
         gdindex_final.set_query_parameters(0, 0, 0, gdindex_parameters_path, verbose_level);

@@ -58,6 +58,7 @@ GDIndex::GDIndex() {
     index_parameters_.gd_gmm = NULL;
     index_parameters_.gd_number_gaussians = GD_NUMBER_GAUSSIANS_DEFAULT;
     index_parameters_.gd_power = GD_POWER_DEFAULT;
+    index_parameters_.gd_intra_normalization = GD_INTRA_NORMALIZATION_DEFAULT;
     // -- Query parameters
     query_parameters_.min_number_words_selected = MIN_NUMBER_WORDS_SELECTED_DEFAULT;
     query_parameters_.word_selection_mode = WORD_SELECTION_MODE_DEFAULT;
@@ -707,10 +708,36 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
         gd_word_l1_norm.at(count_gaussian) = static_cast<float>(sum_abs);
     }
 
-    // Apply power law
+    // IN normalization (if selected)
+    if (index_parameters_.gd_intra_normalization) {
+        for (uint count_gaussian = 0; 
+             count_gaussian < index_parameters_.gd_number_gaussians; 
+             count_gaussian++) {
+            // Compute L2 norm for this Gaussian
+            float l2_norm_sq_gaussian = 0;
+            for (uint count_dim = count_gaussian*index_parameters_.ld_pca_dim; 
+                 count_dim < (count_gaussian + 1)*index_parameters_.ld_pca_dim; 
+                 count_dim++) {
+                l2_norm_sq_gaussian += fisher_output.at(count_dim) * fisher_output.at(count_dim);
+            }
+            // Normalize this Gaussian, if it has non-zero norm
+            float l2_norm_gaussian = sqrt(l2_norm_sq_gaussian);            
+            if (l2_norm_gaussian > 0) {
+                for (uint count_dim = count_gaussian*index_parameters_.ld_pca_dim; 
+                     count_dim < (count_gaussian + 1)*index_parameters_.ld_pca_dim; 
+                     count_dim++) {
+                    fisher_output.at(count_dim) /= l2_norm_gaussian;
+                }
+            }
+        }
+    }
+    
+    // Apply power law (if using SSR normalization), and compute L2 norm
     float l2_norm_sq = 0;
     for (uint count_dim = 0; count_dim < unbinarized_signature_length; count_dim++) {
-        POWER_LAW_SAME(fisher_output.at(count_dim), index_parameters_.gd_power);
+        if (!index_parameters_.gd_intra_normalization) {
+            POWER_LAW_SAME(fisher_output.at(count_dim), index_parameters_.gd_power);
+        }
         l2_norm_sq += fisher_output.at(count_dim) * fisher_output.at(count_dim);
     }
 
@@ -815,6 +842,7 @@ void GDIndex::set_index_parameters(const uint ld_length, const uint ld_frame_len
                                    const string ld_extension, const string ld_name,
                                    const uint ld_pca_dim, const float ld_pre_pca_power,
                                    const uint gd_number_gaussians, const float gd_power,
+                                   const bool gd_intra_normalization,
                                    const string trained_parameters_path,
                                    const int verbose_level) {
     // Local descriptor information
@@ -846,6 +874,7 @@ void GDIndex::set_index_parameters(const uint ld_length, const uint ld_frame_len
     // Parameters used for global descriptor computation
     index_parameters_.gd_number_gaussians = gd_number_gaussians;
     index_parameters_.gd_power = gd_power;
+    index_parameters_.gd_intra_normalization = gd_intra_normalization;
 
     char aux_gd_gmm[1024];
     sprintf(aux_gd_gmm, "%s/%s.pre_alpha.%.2f.pca.%d.gmm.%d",
