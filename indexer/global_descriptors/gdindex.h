@@ -186,15 +186,15 @@ class GDIndex
 
       // Parameters for PCA-ing local descriptors
       uint ld_pca_dim; // this is set to a constant (32), such that the
-		       // binarized signature conveniently fits in a
-		       // 4-byte unsigned integer
+               // binarized signature conveniently fits in a
+               // 4-byte unsigned integer
       float ld_pre_pca_power;
       float* ld_mean_vector;
       vector<float*> ld_pca_eigenvectors;      
 
       // Parameters used for global descriptor computation
       gmm_t* gd_gmm;
-      uint gd_number_gaussians;	  
+      uint gd_number_gaussians;      
       float gd_power; // normalization factor if using SSR normalization
       bool gd_intra_normalization; // flag that sets IN normalization (instead
                                    // of SSR) -- in this case, gd_power is

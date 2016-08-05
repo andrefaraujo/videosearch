@@ -21,8 +21,8 @@ void parse_shot_file(string file_name, vector < uint >& output) {
 // Function to get descriptor file name
 string get_local_descriptor_filename(const string image_path,
                                      const string ext) {
-	uint pos = image_path.find_last_of(".");
-	return (image_path.substr(0, pos) + ext);
+    uint pos = image_path.find_last_of(".");
+    return (image_path.substr(0, pos) + ext);
 }
 
 // Usage of this program
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     // Mandatory arguments
     string image_list_file_path = "";
     string out_file_path = "";
-	
+    
     // Default values for options
     uint number_gaussians = 512;
     uint ld_mode = 0;

@@ -387,7 +387,7 @@ void GDIndex::generate_index(const vector<string>& feature_files,
     index_.word_total_soft_assignment.resize(number_files_to_process);
     index_.word_descriptor.resize(number_files_to_process);
 
-	uint number_files_processed = 0;
+    uint number_files_processed = 0;
 #pragma omp parallel for
     for (uint count_file = 0; count_file < number_files_to_process; count_file++) {
         // Load feature set
@@ -491,7 +491,7 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
 
             number_entries_in_index += n;
             inds_indep_mode.push_back(shot_inds);
-        }		
+        }        
     } else if (shot_mode == SHOT_MODE_SHOT_AGG) {
         // This will generate only a global signature per shot
         number_entries_in_index = number_shots;
@@ -588,7 +588,7 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
                 }
             }
         } else if (shot_mode == SHOT_MODE_SHOT_AGG) {
-			// Collect all features
+            // Collect all features
             FeatureSet* feature_set = new FeatureSet(index_parameters_.ld_length,
                                                      index_parameters_.ld_frame_length);
             for (uint count_ind = 0; count_ind < number_frames_to_use; count_ind++) {
@@ -956,7 +956,7 @@ void GDIndex::sign_binarize(const vector<float>& gd_word_residuals,
 
 void GDIndex::project_local_descriptor_pca(const float* desc, float* pca_desc) {
     vector < float > desc_pow(index_parameters_.ld_length, 0);
-	// Pre power law and normalization
+    // Pre power law and normalization
     float l2_norm_sq = 0;
     for (uint count_in_dim = 0; count_in_dim < index_parameters_.ld_length; count_in_dim++) {
         POWER_LAW(desc[count_in_dim], index_parameters_.ld_pre_pca_power, 
@@ -968,7 +968,7 @@ void GDIndex::project_local_descriptor_pca(const float* desc, float* pca_desc) {
         desc_pow.at(count_in_dim) /= l2_norm;
     }
 
-	// Projection onto eigenvectors
+    // Projection onto eigenvectors
     for (uint count_out_dim = 0; count_out_dim < index_parameters_.ld_pca_dim; 
          count_out_dim++) {
         pca_desc[count_out_dim] = 0;
@@ -1151,14 +1151,14 @@ void GDIndex::query_2nd_stage(const vector<uint>& query_word_descriptor,
          count_top++) {
         uint this_group_ind = first_stage_scores_indices.at(count_top).second;
 
-		// Get number of 2nd stage items in this group
-		uint number_items_this_group = group_lists_rerank.at(this_group_ind).size();
+        // Get number of 2nd stage items in this group
+        uint number_items_this_group = group_lists_rerank.at(this_group_ind).size();
 
-		// Loop over 2nd stage items in this group, get their signatures and score them
-		for (uint count_item = 0; count_item < number_items_this_group;
-		     count_item++) {
-			uint this_item_number = group_lists_rerank.at(this_group_ind).at(count_item);
-			pair < float, uint > score_this_item;
+        // Loop over 2nd stage items in this group, get their signatures and score them
+        for (uint count_item = 0; count_item < number_items_this_group;
+             count_item++) {
+            uint this_item_number = group_lists_rerank.at(this_group_ind).at(count_item);
+            pair < float, uint > score_this_item;
             score_this_item.second = this_item_number;
             
             score_database_item(query_word_descriptor,
@@ -1220,11 +1220,11 @@ void GDIndex::load_corr_weights(string path) {
     if (cw_file == NULL) {
         printf("GDIndex::load_corr_weights: Error opening: \n%s \n", path.c_str());
         exit(EXIT_FAILURE);
-	}
-	float* weights = new float[index_parameters_.ld_pca_dim + 1];
-	n_read = fread(weights, sizeof(float), index_parameters_.ld_pca_dim + 1, 
+    }
+    float* weights = new float[index_parameters_.ld_pca_dim + 1];
+    n_read = fread(weights, sizeof(float), index_parameters_.ld_pca_dim + 1, 
                    cw_file);
-	fclose(cw_file);
+    fclose(cw_file);
     
     // Build fast_corr_weights
     query_parameters_.fast_corr_weights = new float[index_parameters_.ld_pca_dim + 1];
@@ -1239,7 +1239,7 @@ void GDIndex::load_corr_weights(string path) {
         if (count_bin < CORR_WEIGHTS_CLIPPING) {
             query_parameters_.fast_corr_weights[count_bin] = prob * corr;
         }
-	}
+    }
 
     // Clean up
     if (weights != NULL) {
