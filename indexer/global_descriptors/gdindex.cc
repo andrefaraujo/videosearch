@@ -61,8 +61,10 @@ GDIndex::GDIndex() {
     index_parameters_.gd_intra_normalization = GD_INTRA_NORMALIZATION_DEFAULT;
     // -- Query parameters
     query_parameters_.min_number_words_selected = MIN_NUMBER_WORDS_SELECTED_DEFAULT;
+    query_parameters_.asym_scoring_mode = ASYM_SCORING_MODE_DEFAULT;
     query_parameters_.word_selection_mode = WORD_SELECTION_MODE_DEFAULT;
     query_parameters_.word_selection_thresh = WORD_SELECTION_THRESH_DEFAULT;
+    query_parameters_.score_den_power_norm = SCORE_DEN_POWER_NORM_DEFAULT;
     query_parameters_.fast_corr_weights = NULL;
 }
 
@@ -888,13 +890,17 @@ void GDIndex::set_index_parameters(const uint ld_length, const uint ld_frame_len
 }
 
 void GDIndex::set_query_parameters(const uint min_number_words_selected,
+                                   const int asym_scoring_mode,
                                    const int word_selection_mode,
                                    const float word_selection_thresh,
+                                   const float score_den_power_norm,
                                    const string trained_parameters_path,
                                    const int verbose_level) {
     query_parameters_.min_number_words_selected = min_number_words_selected;
+    query_parameters_.asym_scoring_mode = asym_scoring_mode;
     query_parameters_.word_selection_mode = word_selection_mode;
     query_parameters_.word_selection_thresh = word_selection_thresh;
+    query_parameters_.score_den_power_norm = score_den_power_norm;
 
     char aux_corr_weights[1024];
     sprintf(aux_corr_weights, "%s/%s.pre_alpha.%.2f.pca.%d.gmm.%d.pre_alpha.%.2f.corr_weights",
@@ -924,20 +930,31 @@ void GDIndex::update_index() {
 
     // Update variables that are useful during retrieval; they will be ready
     // to serve a query, if perform_query() is called
-    
-    
-    // Update number of words selected and norm. factors for each db item
-    // The purpose of doing this here is to have these numbers ready when
-    // querying (and not need to recalculate them at query time)
-    index_.number_words_selected.resize(index_.number_global_descriptors, 
-                                        index_parameters_.gd_number_gaussians);
-    index_.norm_factors.resize(index_.number_global_descriptors, 
-                               sqrt(index_parameters_.gd_number_gaussians
-                                    * index_parameters_.ld_pca_dim));
-    
-    // TODO(andrefaraujo): for future work, we might want to include here
-    // the possibility of skipping Gaussian residuals on the database
-    // side as well
+    index_.number_words_selected.resize(index_.number_global_descriptors, 0);
+    const vector < vector < float > > *all_db_strengths;
+    if (query_parameters_.word_selection_mode == WORD_L1_NORM) {
+        all_db_strengths = &index_.word_l1_norms;
+    } else {
+        all_db_strengths = &index_.word_total_soft_assignment;
+    }
+    for (uint count_elem = 0; count_elem < index_.number_global_descriptors; 
+         count_elem++) {
+        // -- Find number of words (Gaussians) selected for this database element
+        for (uint count_gaussian = 0; 
+             count_gaussian < index_parameters_.gd_number_gaussians;
+             count_gaussian++) {
+            if (query_parameters_.asym_scoring_mode == ASYM_OFF
+                || query_parameters_.asym_scoring_mode == ASYM_QAGS) {
+                index_.number_words_selected.at(count_elem)++;
+            } else if (query_parameters_.asym_scoring_mode == ASYM_DAGS 
+                       || query_parameters_.asym_scoring_mode == ASYM_SGS) {
+                if (all_db_strengths->at(count_elem).at(count_gaussian) >
+                    query_parameters_.word_selection_thresh) {
+                    index_.number_words_selected.at(count_elem)++;
+                }                    
+            }
+        }
+    }
 }
 
 void GDIndex::sign_binarize(const vector<float>& gd_word_residuals, 
@@ -1064,47 +1081,97 @@ void GDIndex::score_database_item(const vector<uint>& query_word_descriptor,
         return;
     }
 
-    float query_norm = 0;
+    // Figure out parameters for asymmetric scoring
+    const vector<float> *q_strengths, *db_strengths;
+    if (query_parameters_.word_selection_mode == WORD_L1_NORM) {
+        q_strengths = &query_word_l1_norm;
+        db_strengths = &index_.word_l1_norms.at(db_ind);
+    } else {
+        q_strengths = &query_word_total_soft_assignment;
+        db_strengths = &index_.word_total_soft_assignment.at(db_ind);
+    }
+
     float total_correlation = 0;
     uint query_number_words_selected = 0;
+    uint db_number_words_selected = 0;
+    uint qags_db_number_words_selected = 0;
     for (uint count_gaussian = 0; 
          count_gaussian < index_parameters_.gd_number_gaussians;
          count_gaussian++) {
-        float query_word_strength = 0;
-        if (query_parameters_.word_selection_mode == WORD_L1_NORM) {
-            query_word_strength = query_word_l1_norm.at(count_gaussian);
-        } else {
-            query_word_strength = query_word_total_soft_assignment.at(count_gaussian);
+        bool use_curr_gaussian = false;
+        if (query_parameters_.asym_scoring_mode == ASYM_OFF) {
+            query_number_words_selected++;
+            db_number_words_selected++;
+            use_curr_gaussian = true;
+        } else if (query_parameters_.asym_scoring_mode == ASYM_QAGS) {
+            if (q_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
+                query_number_words_selected++;
+                db_number_words_selected++;
+                use_curr_gaussian = true;
+            }
+            if (db_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
+                qags_db_number_words_selected++;
+            }
+        } else if (query_parameters_.asym_scoring_mode == ASYM_DAGS) {
+            if (db_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
+                query_number_words_selected++;
+                db_number_words_selected++;
+                use_curr_gaussian = true;
+            }
+        } else if (query_parameters_.asym_scoring_mode == ASYM_SGS) {
+            if (q_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
+                query_number_words_selected++;
+                if (db_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
+                    db_number_words_selected++;
+                    use_curr_gaussian = true;
+                }
+            } else if (db_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
+                db_number_words_selected++;
+            }
         }
 
-        // Skip in case query word strength is not enough
-        if (query_word_strength <= query_parameters_.word_selection_thresh) {
-            continue;
-        } else {
-            query_number_words_selected++;
+        if (use_curr_gaussian) {
             // Compute Hamming distance
             uint aux = query_word_descriptor.at(count_gaussian)
                 ^ index_.word_descriptor.at(db_ind).at(count_gaussian);
             uint h = query_parameters_.pop_count[aux >> 16]
                 + query_parameters_.pop_count[aux & 65535];
             // Add to correlation
-            total_correlation += query_parameters_.fast_corr_weights[h];
+            total_correlation += query_parameters_.fast_corr_weights[h];            
         }
     }
 
-    // Figure out query norm to be used
-    query_norm = sqrt(query_number_words_selected
-                      * index_parameters_.ld_pca_dim);
-
-    float corr_den = index_.norm_factors.at(db_ind) * query_norm;
-
-    // Compute final correlation for this item
-    if (corr_den != 0) {
-        total_correlation /= corr_den;
+    // Compute final score, taking into account normalizations
+    if (query_parameters_.asym_scoring_mode == ASYM_QAGS) {
+        if (query_number_words_selected != 0
+            && qags_db_number_words_selected != 0
+            && db_number_words_selected != 0) {
+            float score_den = pow(query_number_words_selected
+                                  *index_parameters_.ld_pca_dim
+                                  *db_number_words_selected
+                                  *index_parameters_.ld_pca_dim,
+                                  0.5);
+            total_correlation /= score_den;
+            total_correlation *= pow(qags_db_number_words_selected
+                                     *index_parameters_.ld_pca_dim,
+                                     0.5 - query_parameters_.score_den_power_norm);
+        } else {
+            total_correlation = -FLT_MAX;
+        }
     } else {
-        total_correlation = -FLT_MAX;
-    } 
-
+        if (query_number_words_selected != 0
+            && db_number_words_selected != 0) {
+            float score_den = pow(query_number_words_selected
+                                  *index_parameters_.ld_pca_dim
+                                  *db_number_words_selected
+                                  *index_parameters_.ld_pca_dim,
+                                  query_parameters_.score_den_power_norm);
+            total_correlation /= score_den;
+        } else {
+            total_correlation = -FLT_MAX;
+        }
+    }
+    
     // Change sign such that smaller is better
     score = -total_correlation;
 }

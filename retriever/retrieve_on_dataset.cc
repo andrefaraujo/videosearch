@@ -41,6 +41,10 @@ void usage() {
     cout << "--number_scenes_rerank ARG: when using two-stage retrieval, ARG is the number ofscenes to re-rank. Default: 0" << endl;
     cout << "--number_centroids_rerank ARG: when using two-stage retrieval, ARG is the number of centroids/Gaussians to use in the global signatures of the re-ranking stage. Default: 0" << endl;
     cout << "--group_lists_rerank_path ARG: ARG = path to file containing group configurations, when using two-stage retrieval. Default: empty" << endl;
+    cout << "--asym_scoring_mode ARG: ARG = asymmetric scoring mode. Options: (0 = no asymmetric scoring), (1 = QAGS), (2 = DAGS), (3 = SGS). Default: 1 (QAGS)" << endl;
+    cout << "--asym_scoring_mode_rerank ARG: ARG = asymmetric scoring mode for re-ranking, when using two-stage retrieval. Options: (0 = no asymmetric scoring), (1 = QAGS), (2 = DAGS), (3 = SGS). Default: 1 (QAGS)" << endl;
+    cout << "--score_den_power_norm ARG: ARG = power normalization for score denominator. Default: 0.5" << endl;
+    cout << "--score_den_power_norm_rerank ARG: ARG = power normalization for score denominator in re-ranking stage, when using two-stage retrieval. Default: 0.5" << endl;
     cout << "--word_selection_thresh ARG: ARG = Threshold for asymmetric distance computation. Default: 7.0" << endl;
     cout << "--word_selection_thresh_rerank ARG: ARG = Threshold for asymmetric distance computation, used in re-ranking stage if using two-stage retrieval. Default: 8.0" << endl;
     cout << "--gdindex_path_rerank ARG: ARG = path to index file for index used in second stage, used when using two-stage retrieval." << endl;
@@ -69,12 +73,16 @@ int main(int argc, char* * argv) {
     uint number_scenes_rerank = 0;
     uint number_centroids_rerank = 0;
     string group_lists_rerank_path = "";
+    int asym_scoring_mode = 1;
+    int asym_scoring_mode_rerank = 1;
     float word_selection_thresh = 7.0;
     float word_selection_thresh_rerank = 8.0;
     string gdindex_path_rerank = "";
     bool avoid_redundant_scene_results = false;
     bool gd_intra_normalization = false;
-
+    float score_den_power_norm = 0.5;
+    float score_den_power_norm_rerank = 0.5;
+    
     if (argc < 9) {
         cout << "Wrong usage!!!" << endl;
         cout << "***********************************" << endl;
@@ -135,6 +143,18 @@ int main(int argc, char* * argv) {
                 count_arg++;
             } else if (!strcmp(argv[count_arg], "--number_centroids_rerank")) {
                 number_centroids_rerank = static_cast<uint>(atoi(argv[count_arg + 1]));
+                count_arg++;
+            } else if ((!strcmp(argv[count_arg], "--asym_scoring_mode"))) {
+                asym_scoring_mode = atoi(argv[count_arg + 1]);
+                count_arg++;
+            } else if ((!strcmp(argv[count_arg], "--asym_scoring_mode_rerank"))) {
+                asym_scoring_mode_rerank = atoi(argv[count_arg + 1]);
+                count_arg++;
+            } else if (!strcmp(argv[count_arg], "--score_den_power_norm")) {
+                score_den_power_norm = atof(argv[count_arg + 1]);
+                count_arg++;
+            } else if (!strcmp(argv[count_arg], "--score_den_power_norm_rerank")) {
+                score_den_power_norm_rerank = atof(argv[count_arg + 1]);
                 count_arg++;
             } else if (!strcmp(argv[count_arg], "--word_selection_thresh")) {
                 word_selection_thresh = atof(argv[count_arg + 1]);
@@ -203,8 +223,12 @@ int main(int argc, char* * argv) {
         cout << "------>number_scenes_rerank = " << number_scenes_rerank << endl;
         cout << "------>number_centroids_rerank = " << number_centroids_rerank << endl;
         cout << "------>group_lists_rerank_path = " << group_lists_rerank_path << endl;
+        cout << "------>asym_scoring_mode = " << asym_scoring_mode  << endl;
+        cout << "------>asym_scoring_mode_rerank = " << asym_scoring_mode_rerank  << endl;
         cout << "------>word_selection_thresh = " << word_selection_thresh << endl;
         cout << "------>word_selection_thresh_rerank = " << word_selection_thresh_rerank << endl;
+        cout << "------>score_den_power_norm = " << score_den_power_norm << endl;
+        cout << "------>score_den_power_norm_rerank = " << score_den_power_norm_rerank << endl;
         cout << "------>gdindex_path_rerank = " << gdindex_path_rerank << endl;
         cout << "------>avoid_redundant_scene_results = " << avoid_redundant_scene_results << endl;
     }
@@ -242,7 +266,11 @@ int main(int argc, char* * argv) {
                                    word_selection_thresh_rerank,
                                    gdindex_path_rerank, 
                                    avoid_redundant_scene_results,
-                                   gd_intra_normalization);
+                                   gd_intra_normalization,
+                                   asym_scoring_mode,
+                                   asym_scoring_mode_rerank,
+                                   score_den_power_norm,
+                                   score_den_power_norm_rerank);
         
     return EXIT_SUCCESS;
 }

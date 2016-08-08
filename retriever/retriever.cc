@@ -76,7 +76,11 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                              const float word_selection_thresh_rerank,
                                              const string gdindex_path_rerank,
                                              const bool avoid_redundant_scene_results,
-                                             const bool gd_intra_normalization) {
+                                             const bool gd_intra_normalization,
+                                             const int asym_scoring_mode,
+                                             const int asym_scoring_mode_rerank,
+                                             const float score_den_power_norm,
+                                             const float score_den_power_norm_rerank) {
     // Open files that will be written: log file and results file
     string log_file_name = output_base_path + "_log.txt";
     log_file_.open(log_file_name.c_str());
@@ -151,8 +155,10 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                        GD_POWER_DEFAULT, gd_intra_normalization,
                                        gdindex_trained_parameters_path_,
                                        verbose_level_);
-    gdindex_ptr_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
-                                       word_selection_thresh_, gdindex_trained_parameters_path_,
+    gdindex_ptr_->set_query_parameters(min_number_words_visited_, asym_scoring_mode,
+                                       word_selection_mode_, word_selection_thresh_,
+                                       score_den_power_norm,
+                                       gdindex_trained_parameters_path_,
                                        verbose_level_);
 
     // We instantiate another GDIndex object, in case we're using a two-step
@@ -164,8 +170,10 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                                   GD_POWER_DEFAULT, gd_intra_normalization,
                                                   gdindex_trained_parameters_path_,
                                                   verbose_level_);
-        gdindex_ptr_rerank_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
-                                                  word_selection_thresh_rerank, gdindex_trained_parameters_path_,
+        gdindex_ptr_rerank_->set_query_parameters(min_number_words_visited_, asym_scoring_mode_rerank,
+                                                  word_selection_mode_, word_selection_thresh_rerank,
+                                                  score_den_power_norm_rerank,
+                                                  gdindex_trained_parameters_path_,
                                                   verbose_level_);
     }
     if (verbose_level_ >= 2) cout << "done!" << endl;
@@ -183,8 +191,10 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                                GD_POWER_DEFAULT, gd_intra_normalization,
                                                gdindex_trained_parameters_path_,
                                                verbose_level_);
-        query_index_ptr_->set_query_parameters(min_number_words_visited_, word_selection_mode_,
-                                               word_selection_thresh_, gdindex_trained_parameters_path_,
+        query_index_ptr_->set_query_parameters(min_number_words_visited_, asym_scoring_mode,
+                                               word_selection_mode_, word_selection_thresh_,
+                                               score_den_power_norm,
+                                               gdindex_trained_parameters_path_,
                                                verbose_level_);        
         if (verbose_level_ >= 2) cout << "done!" << endl;
         log_file_ << "GDIndex-query was instantiated" << endl;

@@ -42,6 +42,8 @@ const uint GD_NUMBER_GAUSSIANS_DEFAULT = 512;
 const float GD_POWER_DEFAULT = 0.5;
 const bool GD_INTRA_NORMALIZATION_DEFAULT = false;
 const uint MIN_NUMBER_WORDS_SELECTED_DEFAULT = 20;
+const int ASYM_SCORING_MODE_DEFAULT = 1; // default is ASYM_QAGS
+const float SCORE_DEN_POWER_NORM_DEFAULT = 0.5;
 const int WORD_SELECTION_MODE_DEFAULT = 0;
 const float WORD_SELECTION_THRESH_DEFAULT = 7;
 
@@ -125,8 +127,10 @@ class GDIndex
   //    some of the index_parameters_ variables be set. So, ALWAYS
   //    load index_parameters_ BEFORE loading query_parameters_
   void set_query_parameters(const uint min_number_words_selected,
+                            const int asym_scoring_mode,
                             const int word_selection_mode,
                             const float word_selection_thresh,
+                            const float score_den_power_norm,
                             const string trained_parameters_path,
                             const int verbose_level = 1);
 
@@ -135,6 +139,8 @@ class GDIndex
   enum {SHOT_MODE_INDEP_KEYF = 0, SHOT_MODE_SHOT_AGG = 1, SHOT_MODE_GLOBAL_AGG = 2, SHOT_MODE_TRACK_AGG = 3};
   // Modes for local descriptor
   enum {SIFT_LOCAL_DESCRIPTOR = 0, SIFTGEO_LOCAL_DESCRIPTOR = 1};
+  // Modes for asymmetric scoring
+  enum {ASYM_OFF = 0, ASYM_QAGS = 1, ASYM_DAGS = 2, ASYM_SGS = 3};
   // SIFT constants
   enum {SIFT_LENGTH = 128, SIFTGEO_LENGTH = 128};
   enum {SIFT_FRAME_LENGTH = 4, SIFTGEO_FRAME_LENGTH = 9};
@@ -172,7 +178,6 @@ class GDIndex
       // for each database item; these are always updated in
       // function update_index
       vector < uint > number_words_selected;
-      vector < float > norm_factors;
   };
   struct_index index_;
 
@@ -206,12 +211,16 @@ class GDIndex
   struct struct_query_parameters {
       // -- Number of minimum words to require for matching
       uint min_number_words_selected;
+      // -- Scoring mode (options: ASYM_OFF, ASYM_QAGS, ASYM_DAGS, ASYM_SGS)
+      int asym_scoring_mode;
       // -- Type of word selection mode in use
       // WORD_L1_NORM: only globalWordL1Norm is used
       // WORD_SOFT_ASSGN: only globalWordTotalSoftAssignment is used
       int word_selection_mode;
       // -- Threshold to use in visual word selection (used in asymmetric mode)
       float word_selection_thresh;
+      // -- Score denominator's power normalization
+      float score_den_power_norm;
       // -- Parameters used in scoring
       float* fast_corr_weights;
       int pop_count[65536];

@@ -1,5 +1,10 @@
 /**********************************************
 This program builds a database index from local features.
+
+Note that the query parameters of the GDIndex object are irrelevant
+in this case, since all we're doing is generating global descriptors.
+So, many of them are set to default/0 values in the call to
+set_query_parameters().
  **********************************************/
 
 #include <cassert>
@@ -172,7 +177,7 @@ int main(int argc, char** argv)
                                  gd_intra_normalization,
                                  gdindex_parameters_path,
                                  verbose_level);
-    gdindex.set_query_parameters(0, 0, 0, gdindex_parameters_path, verbose_level);
+    gdindex.set_query_parameters(0, 0, 0, 0, 0, gdindex_parameters_path, verbose_level);
 
     // Define feature files
     vector < string > feature_files;

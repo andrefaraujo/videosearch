@@ -4,7 +4,7 @@ This program joins several GDIndex's
 Note that several parameters of the GDIndex object are irrelevant
 in this case, since all we're doing is loading and concatenating
 indexes. So, many of them are set to default/0 values in the calls
-to set_index_parameters() and set_query_parameter().
+to set_index_parameters() and set_query_parameters().
  **********************************************/
 
 #include <iostream>
@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
                                      GD_INTRA_NORMALIZATION_DEFAULT,
                                      gdindex_parameters_path,
                                      verbose_level);
-        gdindex.set_query_parameters(0, 0, 0, gdindex_parameters_path, verbose_level);
+        gdindex.set_query_parameters(0, 0, 0, 0, 0, gdindex_parameters_path, verbose_level);
 
         // Join all indexes
         cout << "Joining " << index_files.size() << " indexes..." << endl;
@@ -209,7 +209,7 @@ int main(int argc, char** argv) {
                                                                    GD_INTRA_NORMALIZATION_DEFAULT,
                                                                    gdindex_parameters_path,
                                                                    verbose_level);
-            partial_indexes.at(count_thread)->set_query_parameters(0, 0, 0, gdindex_parameters_path, 
+            partial_indexes.at(count_thread)->set_query_parameters(0, 0, 0, 0, 0, gdindex_parameters_path, 
                                                                    verbose_level);
 
             // Join indexes from desired range
@@ -247,7 +247,7 @@ int main(int argc, char** argv) {
                                            GD_INTRA_NORMALIZATION_DEFAULT,
                                            gdindex_parameters_path,
                                            verbose_level);
-        gdindex_final.set_query_parameters(0, 0, 0, gdindex_parameters_path, verbose_level);
+        gdindex_final.set_query_parameters(0, 0, 0, 0, 0, gdindex_parameters_path, verbose_level);
 
         // Join partial indexes constructed by each thread
         cout << "Joining " << partial_indexes_paths.size() << " indexes from each thread..." << endl;
