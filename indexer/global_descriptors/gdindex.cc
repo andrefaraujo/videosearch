@@ -76,6 +76,7 @@ GDIndex::~GDIndex() {
     index_.word_l1_norms.clear();
     index_.word_total_soft_assignment.clear();
     index_.frame_numbers_in_db.clear();
+    index_.number_words_selected.clear();
     // -- Index parameters
     if (index_parameters_.ld_mean_vector != NULL) {
         delete[] index_parameters_.ld_mean_vector;
