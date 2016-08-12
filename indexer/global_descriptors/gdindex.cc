@@ -46,6 +46,7 @@ GDIndex::GDIndex() {
     index_.word_l1_norms.clear();
     index_.word_total_soft_assignment.clear();
     index_.frame_numbers_in_db.clear();
+    index_.number_words_selected.clear();
     // -- Index parameters
     index_parameters_.ld_length = LD_LENGTH_DEFAULT;
     index_parameters_.ld_frame_length = LD_FRAME_LENGTH_DEFAULT;
