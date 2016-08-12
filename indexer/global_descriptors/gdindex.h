@@ -175,9 +175,9 @@ class GDIndex
       // this variable is always updated in function update_index
       uint number_global_descriptors;
 
-      // Variables that are used when scoring; these hold values
-      // for each database item; these are always updated in
-      // function update_index
+      // Variable which is used when scoring, holding a value
+      // for each database item; it is always updated in
+      // function update_index()
       vector < uint > number_words_selected;
   };
   struct_index index_;
