@@ -101,7 +101,8 @@ class GDIndex
                                   vector<float>& gd_word_l1_norm, 
                                   vector<float>& gd_word_total_soft_assignment);
 
-  // Query index from query's local descriptor path
+  // Query index from query's local descriptor path or pre-computed query global
+  // descriptor (if using "query_index_ptr")
   void perform_query(const string local_descriptors_path, 
                      const GDIndex* query_index_ptr,
                      const uint query_number,
