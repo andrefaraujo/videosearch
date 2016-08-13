@@ -26,7 +26,9 @@ public:
     // Destructor, clean variables.
     ~Retriever();
 
-    void retrieve_on_specific_dataset(const string gdindex_path, 
+    void retrieve_on_specific_dataset(const string gdindex_path,
+                                      const string gdindex_trained_parameters_path, 
+                                      const int local_descriptor_mode, 
                                       const string db_list_path, 
                                       const string query_index_path,
                                       const string query_list_path, 
@@ -35,10 +37,14 @@ public:
                                       const string shot_list_path = "", 
                                       const int shot_mode = -1, 
                                       const uint number_scenes_to_rerank = 0, 
+                                      const uint number_gaussians = 512,  
                                       const uint number_gaussians_rerank = 0,  
                                       const vector < vector < uint > >& group_lists_rerank
                                         = vector < vector < uint > >(), 
+                                      const int word_selection_mode = 1, 
+                                      const float word_selection_thresh = 7, 
                                       const float word_selection_thresh_rerank = 6, 
+                                      const uint min_number_words_visited = 0, 
                                       const string gdindex_path_rerank = "", 
                                       const bool avoid_redundant_scene_results = true,
                                       const bool gd_intra_normalization = false,
@@ -55,26 +61,8 @@ public:
     // Set verbose level.
     void set_verbose_level(uint level);
 
-    // Set local descriptor type, which will determine its other properties
-    void set_local_descriptor_mode(int mode);
-
     // Set number of results to output
     void set_number_output_results(uint n);
-
-    // Set number of gaussians to use in global descriptor
-    void set_number_gaussians_global_descriptor(uint n);
-
-    // Set path where to find trained GDIndex parameters
-    void set_gdindex_path(string path);
-
-    // Set word selection mode
-    void set_word_selection_mode(int mode);
-
-    // Set word selection threshold
-    void set_word_selection_thresh(float t);
-
-    // Set min number words visited
-    void set_min_num_words_visited(uint n);
 
 private:
     /************ Variables *************/
@@ -87,14 +75,6 @@ private:
 
     // Query index database, pointer to it
     GDIndex* query_index_ptr_;
-
-    // Variables related to GDIndex member variables that will be set
-    int local_descriptor_mode_;
-    uint number_gaussians_global_descriptor_;
-    uint min_number_words_visited_;
-    int word_selection_mode_;
-    float word_selection_thresh_;
-    string gdindex_trained_parameters_path_;
 
     // Number of results to output
     uint number_output_results_;

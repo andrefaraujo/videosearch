@@ -29,12 +29,6 @@ Retriever::Retriever() {
     gdindex_ptr_ = NULL;
     gdindex_ptr_rerank_ = NULL;
     query_index_ptr_ = NULL;
-    local_descriptor_mode_ = GDIndex::SIFT_LOCAL_DESCRIPTOR;
-    number_gaussians_global_descriptor_ = GD_NUMBER_GAUSSIANS_DEFAULT;
-    min_number_words_visited_ = MIN_NUMBER_WORDS_SELECTED_DEFAULT;
-    word_selection_mode_ = WORD_SELECTION_MODE_DEFAULT;
-    word_selection_thresh_ = WORD_SELECTION_THRESH_DEFAULT;
-    gdindex_trained_parameters_path_ = "../indexer/global_descriptors/trained_parameters/";
 
     number_output_results_ = DEFAULT_NUMBER_OUTPUT_RESULTS;
     verbose_level_ = DEFAULT_VERBOSE_LEVEL;
@@ -63,6 +57,8 @@ Retriever::~Retriever()
 }
 
 void Retriever::retrieve_on_specific_dataset(const string gdindex_path, 
+                                             const string gdindex_trained_parameters_path, 
+                                             const int local_descriptor_mode, 
                                              const string db_list_path, 
                                              const string query_index_path,
                                              const string query_list_path, 
@@ -71,9 +67,13 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                              const string shot_list_path,
                                              const int shot_mode,
                                              const uint number_scenes_to_rerank,
+                                             const uint number_gaussians,  
                                              const uint number_gaussians_rerank,
                                              const vector < vector < uint > >& group_lists_rerank,
+                                             const int word_selection_mode, 
+                                             const float word_selection_thresh,
                                              const float word_selection_thresh_rerank,
+                                             const uint min_number_words_visited, 
                                              const string gdindex_path_rerank,
                                              const bool avoid_redundant_scene_results,
                                              const bool gd_intra_normalization,
@@ -134,33 +134,33 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
     gdindex_ptr_ = new GDIndex();
     uint ld_length, ld_frame_length;
     string ld_extension, ld_name;
-    if (local_descriptor_mode_ == GDIndex::SIFT_LOCAL_DESCRIPTOR) {
+    if (local_descriptor_mode == GDIndex::SIFT_LOCAL_DESCRIPTOR) {
         ld_length = GDIndex::SIFT_LENGTH;
         ld_frame_length = GDIndex::SIFT_FRAME_LENGTH;
         ld_extension = GDIndex::SIFT_EXTENSION;
         ld_name = GDIndex::SIFT_NAME;
-    } else if (local_descriptor_mode_ == GDIndex::SIFTGEO_LOCAL_DESCRIPTOR) {
+    } else if (local_descriptor_mode == GDIndex::SIFTGEO_LOCAL_DESCRIPTOR) {
         ld_length = GDIndex::SIFTGEO_LENGTH;
         ld_frame_length = GDIndex::SIFTGEO_FRAME_LENGTH;
         ld_extension = GDIndex::SIFTGEO_EXTENSION;
         ld_name = GDIndex::SIFTGEO_NAME;
     } else {
         cout << "Problem! local_descriptors_mode_ = " 
-             << local_descriptor_mode_
+             << local_descriptor_mode
              << " is not recognized"
              << endl;
         exit(EXIT_FAILURE);
     }
     gdindex_ptr_->set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
-                                       GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, number_gaussians_global_descriptor_,
+                                       GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, number_gaussians,
                                        GD_POWER_DEFAULT, gd_intra_normalization,
                                        gd_unbinarized,
-                                       gdindex_trained_parameters_path_,
+                                       gdindex_trained_parameters_path,
                                        verbose_level_);
-    gdindex_ptr_->set_query_parameters(min_number_words_visited_, asym_scoring_mode,
-                                       word_selection_mode_, word_selection_thresh_,
+    gdindex_ptr_->set_query_parameters(min_number_words_visited, asym_scoring_mode,
+                                       word_selection_mode, word_selection_thresh,
                                        score_den_power_norm,
-                                       gdindex_trained_parameters_path_,
+                                       gdindex_trained_parameters_path,
                                        verbose_level_);
 
     // We instantiate another GDIndex object, in case we're using a two-step
@@ -171,12 +171,12 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
                                                   GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, number_gaussians_rerank,
                                                   GD_POWER_DEFAULT, gd_intra_normalization,
                                                   gd_unbinarized,
-                                                  gdindex_trained_parameters_path_,
+                                                  gdindex_trained_parameters_path,
                                                   verbose_level_);
-        gdindex_ptr_rerank_->set_query_parameters(min_number_words_visited_, asym_scoring_mode_rerank,
-                                                  word_selection_mode_, word_selection_thresh_rerank,
+        gdindex_ptr_rerank_->set_query_parameters(min_number_words_visited, asym_scoring_mode_rerank,
+                                                  word_selection_mode, word_selection_thresh_rerank,
                                                   score_den_power_norm_rerank,
-                                                  gdindex_trained_parameters_path_,
+                                                  gdindex_trained_parameters_path,
                                                   verbose_level_);
     }
     if (verbose_level_ >= 2) cout << "done!" << endl;
@@ -190,15 +190,15 @@ void Retriever::retrieve_on_specific_dataset(const string gdindex_path,
         if (verbose_level_ >= 2) cout << "Creating GDIndex-query..." << endl;
         query_index_ptr_ = new GDIndex();
         query_index_ptr_->set_index_parameters(ld_length, ld_frame_length, ld_extension, ld_name,
-                                               GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, number_gaussians_global_descriptor_,
+                                               GDIndex::LD_PCA_DIM, LD_PRE_PCA_POWER_DEFAULT, number_gaussians,
                                                GD_POWER_DEFAULT, gd_intra_normalization,
                                                gd_unbinarized,
-                                               gdindex_trained_parameters_path_,
+                                               gdindex_trained_parameters_path,
                                                verbose_level_);
-        query_index_ptr_->set_query_parameters(min_number_words_visited_, asym_scoring_mode,
-                                               word_selection_mode_, word_selection_thresh_,
+        query_index_ptr_->set_query_parameters(min_number_words_visited, asym_scoring_mode,
+                                               word_selection_mode, word_selection_thresh,
                                                score_den_power_norm,
-                                               gdindex_trained_parameters_path_,
+                                               gdindex_trained_parameters_path,
                                                verbose_level_);        
         if (verbose_level_ >= 2) cout << "done!" << endl;
         log_file_ << "GDIndex-query was instantiated" << endl;
@@ -321,46 +321,10 @@ void Retriever::set_verbose_level(uint level) {
                                   << verbose_level_ << endl;
 }
 
-void Retriever::set_local_descriptor_mode(int mode) {
-    local_descriptor_mode_ = mode;
-    if (verbose_level_ >= 3) cout << "Just set local_descriptor_mode_ to " << 
-                                 local_descriptor_mode_ << endl;
-}
-
 void Retriever::set_number_output_results(uint n) {
     number_output_results_ = n;
     if (verbose_level_ >= 3) cout << "Just set number_output_results_ to " 
                                   << number_output_results_ << endl;
-}
-
-void Retriever::set_number_gaussians_global_descriptor(uint n) {
-    number_gaussians_global_descriptor_ = n;
-    if (verbose_level_ >= 3) cout << "Just set number_gaussians_global_descriptor_ to " 
-                                  << number_gaussians_global_descriptor_ << endl;
-}
-
-void Retriever::set_gdindex_path(string path) {
-    gdindex_trained_parameters_path_ = path;
-    if (verbose_level_ >= 3) cout << "Just set gdindex_trained_parameters_path_ to " 
-                                  << gdindex_trained_parameters_path_ << endl;
-}
-
-void Retriever::set_word_selection_mode(int mode) {
-    word_selection_mode_ = mode;
-    if (verbose_level_ >= 3) cout << "Just set word_selection_mode_ to " << 
-                                 word_selection_mode_ << endl;
-}
-
-void Retriever::set_word_selection_thresh(float t) {
-    word_selection_thresh_ = t;
-    if (verbose_level_ >= 3) cout << "Just set word_selection_thresh_ to " << 
-                                 word_selection_thresh_ << endl;
-}
-
-void Retriever::set_min_num_words_visited(uint n) {
-    min_number_words_visited_ = n;
-    if (verbose_level_ >= 3) cout << "Just set min_number_words_visited_ to " << 
-                                 min_number_words_visited_ << endl;
 }
 
 /********************************

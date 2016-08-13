@@ -243,13 +243,7 @@ int main(int argc, char* * argv) {
 
     // Setting parameters...
     r.set_verbose_level(verbose_level);
-    r.set_gdindex_path(gdindex_parameters_path);
-    r.set_local_descriptor_mode(feat_mode);
     r.set_number_output_results(number_output_results);
-    r.set_number_gaussians_global_descriptor(number_centroids);
-    r.set_word_selection_mode(word_selection_mode);
-    r.set_word_selection_thresh(word_selection_thresh);
-    r.set_min_num_words_visited(min_number_words_visited);
 
     // Starting retrieval
     vector < vector < uint > > group_lists_rerank;
@@ -257,7 +251,9 @@ int main(int argc, char* * argv) {
         // Parse rerank lists
         parse_agg_list(group_lists_rerank_path, 0, group_lists_rerank);            
     }
-    r.retrieve_on_specific_dataset(gdindex_path, 
+    r.retrieve_on_specific_dataset(gdindex_path,
+                                   gdindex_parameters_path,
+                                   feat_mode,
                                    db_list_path, 
                                    query_index_path,
                                    query_list_path,
@@ -266,9 +262,13 @@ int main(int argc, char* * argv) {
                                    shot_list_path, 
                                    shot_mode, 
                                    number_scenes_rerank, 
+                                   number_centroids,
                                    number_centroids_rerank, 
                                    group_lists_rerank, 
+                                   word_selection_mode,
+                                   word_selection_thresh,
                                    word_selection_thresh_rerank,
+                                   min_number_words_visited,
                                    gdindex_path_rerank, 
                                    avoid_redundant_scene_results,
                                    gd_intra_normalization,
