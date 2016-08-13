@@ -48,6 +48,7 @@ GDIndex::GDIndex() {
     index_.word_total_soft_assignment.clear();
     index_.frame_numbers_in_db.clear();
     index_.number_words_selected.clear();
+    index_.word_l2_norms_sq.clear();
     // -- Index parameters
     index_parameters_.ld_length = LD_LENGTH_DEFAULT;
     index_parameters_.ld_frame_length = LD_FRAME_LENGTH_DEFAULT;
@@ -61,7 +62,7 @@ GDIndex::GDIndex() {
     index_parameters_.gd_number_gaussians = GD_NUMBER_GAUSSIANS_DEFAULT;
     index_parameters_.gd_power = GD_POWER_DEFAULT;
     index_parameters_.gd_intra_normalization = GD_INTRA_NORMALIZATION_DEFAULT;
-    index_parameters_.gd_use_unbinarized = GD_USE_UNBINARIZED_DEFAULT;
+    index_parameters_.gd_unbinarized = GD_UNBINARIZED_DEFAULT;
     // -- Query parameters
     query_parameters_.min_number_words_selected = MIN_NUMBER_WORDS_SELECTED_DEFAULT;
     query_parameters_.asym_scoring_mode = ASYM_SCORING_MODE_DEFAULT;
@@ -80,6 +81,7 @@ GDIndex::~GDIndex() {
     index_.word_total_soft_assignment.clear();
     index_.frame_numbers_in_db.clear();
     index_.number_words_selected.clear();
+    index_.word_l2_norms_sq.clear();
     // -- Index parameters
     if (index_parameters_.ld_mean_vector != NULL) {
         delete[] index_parameters_.ld_mean_vector;
@@ -118,7 +120,7 @@ void GDIndex::write(const string index_path) {
     
     // Assert that we have data in index_ and that it makes sense, 
     // and allocate helper variables
-    if (index_parameters_.gd_use_unbinarized) {
+    if (index_parameters_.gd_unbinarized) {
         assert(index_.fv.size() != 0);
         assert(index_.fv.size() == index_.number_global_descriptors);
         assert(index_.fv.size() == index_.word_l1_norms.size());
@@ -149,7 +151,7 @@ void GDIndex::write(const string index_path) {
                 index_.word_l1_norms.at(count_item).at(count_gaussian);
             word_total_soft_assignment_to_write[count_gaussian] = 
                 index_.word_total_soft_assignment.at(count_item).at(count_gaussian);
-            if (index_parameters_.gd_use_unbinarized) {
+            if (index_parameters_.gd_unbinarized) {
                 // Get ld_pca_dim-sized vector for this Gaussian
                 for (uint d = 0; d < index_parameters_.ld_pca_dim; d++) {
                     fv_to_write[count_gaussian*index_parameters_.ld_pca_dim
@@ -168,7 +170,7 @@ void GDIndex::write(const string index_path) {
                          index_parameters_.gd_number_gaussians, index_file);
         n_write = fwrite(word_total_soft_assignment_to_write, sizeof(float), 
                          index_parameters_.gd_number_gaussians, index_file);
-        if (index_parameters_.gd_use_unbinarized) {
+        if (index_parameters_.gd_unbinarized) {
             n_write = fwrite(fv_to_write, sizeof(float), 
                              index_parameters_.gd_number_gaussians
                              *index_parameters_.ld_pca_dim, index_file);
@@ -237,7 +239,7 @@ void GDIndex::read(const string index_path, const bool both_sel_modes) {
     float* word_total_soft_assignment_to_read = 
         new float[index_parameters_.gd_number_gaussians];
 
-    if (index_parameters_.gd_use_unbinarized) {
+    if (index_parameters_.gd_unbinarized) {
         index_.fv.resize(current_db_size + number_gd_to_read);
     } else {
         index_.word_descriptor.resize(current_db_size + number_gd_to_read);
@@ -261,7 +263,7 @@ void GDIndex::read(const string index_path, const bool both_sel_modes) {
                        index_parameters_.gd_number_gaussians, index_file);
         n_read = fread(word_total_soft_assignment_to_read, sizeof(float), 
                        index_parameters_.gd_number_gaussians, index_file);
-        if (index_parameters_.gd_use_unbinarized) {
+        if (index_parameters_.gd_unbinarized) {
             n_read = fread(fv_to_read, sizeof(float), 
                            index_parameters_.gd_number_gaussians
                            *index_parameters_.ld_pca_dim, index_file);
@@ -293,7 +295,7 @@ void GDIndex::read(const string index_path, const bool both_sel_modes) {
                     = word_total_soft_assignment_to_read[count_gaussian];
             }
         }
-        if (index_parameters_.gd_use_unbinarized) {
+        if (index_parameters_.gd_unbinarized) {
             index_.fv.at(count_item)
                 .resize(index_parameters_.gd_number_gaussians
                         *index_parameters_.ld_pca_dim);
@@ -377,7 +379,11 @@ void GDIndex::generate_index(const vector<string>& feature_files,
     // Allocate space in index_
     index_.word_l1_norms.resize(number_files_to_process);
     index_.word_total_soft_assignment.resize(number_files_to_process);
-    index_.word_descriptor.resize(number_files_to_process);
+    if (index_parameters_.gd_unbinarized) {
+        index_.fv.resize(number_files_to_process);
+    } else {
+        index_.word_descriptor.resize(number_files_to_process);
+    }
 
     uint number_files_processed = 0;
 #pragma omp parallel for
@@ -405,11 +411,20 @@ void GDIndex::generate_index(const vector<string>& feature_files,
         // Generate global signature, put in index_
         index_.word_l1_norms.at(count_file).resize(index_parameters_.gd_number_gaussians);
         index_.word_total_soft_assignment.at(count_file).resize(index_parameters_.gd_number_gaussians);
-        index_.word_descriptor.at(count_file).resize(index_parameters_.gd_number_gaussians);
+        // -- auxiliary vectors
+        vector<uint> aux_gd_word_descriptor(index_parameters_.gd_number_gaussians);
+        vector<float> aux_gd_fv(index_parameters_.gd_number_gaussians
+                                *index_parameters_.ld_pca_dim);
         generate_global_descriptor(feature_set, 
-                                   index_.word_descriptor.at(count_file),
+                                   aux_gd_word_descriptor,
+                                   aux_gd_fv,
                                    index_.word_l1_norms.at(count_file),
                                    index_.word_total_soft_assignment.at(count_file));
+        if (index_parameters_.gd_unbinarized) {
+            index_.fv.at(count_file) = aux_gd_fv;
+        } else {
+            index_.word_descriptor.at(count_file) = aux_gd_word_descriptor;
+        }
 
         // Report status
 #pragma omp critical 
@@ -499,7 +514,11 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
     // Allocate space in index_
     index_.word_l1_norms.resize(number_entries_in_index);
     index_.word_total_soft_assignment.resize(number_entries_in_index);
-    index_.word_descriptor.resize(number_entries_in_index);
+    if (index_parameters_.gd_unbinarized) {
+        index_.fv.resize(number_entries_in_index);
+    } else {
+        index_.word_descriptor.resize(number_entries_in_index);
+    }
 
     // We will loop over shots and aggregate features depending on the mode
     uint count_index = 0;
@@ -563,11 +582,21 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
                 // Generate global signature, put in index_
                 index_.word_l1_norms.at(ind_in_index).resize(index_parameters_.gd_number_gaussians);
                 index_.word_total_soft_assignment.at(ind_in_index).resize(index_parameters_.gd_number_gaussians);
-                index_.word_descriptor.at(ind_in_index).resize(index_parameters_.gd_number_gaussians);
+                // -- auxiliary vectors
+                vector<uint> aux_gd_word_descriptor(index_parameters_.gd_number_gaussians);
+                vector<float> aux_gd_fv(index_parameters_.gd_number_gaussians
+                                        *index_parameters_.ld_pca_dim);
                 generate_global_descriptor(feature_set, 
-                                           index_.word_descriptor.at(ind_in_index),
+                                           aux_gd_word_descriptor,
+                                           aux_gd_fv,
                                            index_.word_l1_norms.at(ind_in_index),
                                            index_.word_total_soft_assignment.at(ind_in_index));                
+                if (index_parameters_.gd_unbinarized) {
+                    index_.fv.at(ind_in_index) = aux_gd_fv;
+                } else {
+                    index_.word_descriptor.at(ind_in_index) = aux_gd_word_descriptor;
+                }
+
 #pragma omp critical 
                 {
                     count_index++;
@@ -625,11 +654,21 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
             // Generate global signature, put in index_
             index_.word_l1_norms.at(count_shot).resize(index_parameters_.gd_number_gaussians);
             index_.word_total_soft_assignment.at(count_shot).resize(index_parameters_.gd_number_gaussians);
-            index_.word_descriptor.at(count_shot).resize(index_parameters_.gd_number_gaussians);
+            // -- auxiliary vectors
+            vector<uint> aux_gd_word_descriptor(index_parameters_.gd_number_gaussians);
+            vector<float> aux_gd_fv(index_parameters_.gd_number_gaussians
+                                    *index_parameters_.ld_pca_dim);
             generate_global_descriptor(feature_set, 
-                                       index_.word_descriptor.at(count_shot),
+                                       aux_gd_word_descriptor,
+                                       aux_gd_fv,
                                        index_.word_l1_norms.at(count_shot),
                                        index_.word_total_soft_assignment.at(count_shot));
+            if (index_parameters_.gd_unbinarized) {
+                index_.fv.at(count_shot) = aux_gd_fv;
+            } else {
+                index_.word_descriptor.at(count_shot) = aux_gd_word_descriptor;
+            }
+
 #pragma omp critical 
             {
                 count_index++;
@@ -659,6 +698,7 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
 
 void GDIndex::generate_global_descriptor(const FeatureSet* feature_set, 
                                          vector<uint>& gd_word_descriptor, 
+                                         vector<float>& gd_fv, 
                                          vector<float>& gd_word_l1_norm, 
                                          vector<float>& gd_word_total_soft_assignment) {
     // Resize the vectors that will be returned
@@ -680,11 +720,12 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
     int gmm_flags = GMM_FLAGS_MU;
     uint fisher_output_length = gmm_fisher_sizeof(index_parameters_.gd_gmm, 
                                                  gmm_flags);
-    vector<float> fisher_output(fisher_output_length, 0);
+    gd_fv.clear();
+    gd_fv.resize(fisher_output_length, 0);
     // This will extract the FV with only the mean component and using FV normalization
     // but NOT the L2 normalization after the end nor the power normalization
     gmm_fisher_save_soft_assgn(feature_set->m_nNumFeatures, all_pca_desc, 
-                               index_parameters_.gd_gmm, gmm_flags, fisher_output.data(), 
+                               index_parameters_.gd_gmm, gmm_flags, gd_fv.data(), 
                                gd_word_total_soft_assignment.data());
 
     // Compute L1Norm info
@@ -695,7 +736,7 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
         for (uint count_dim = count_gaussian*index_parameters_.ld_pca_dim; 
              count_dim < (count_gaussian + 1)*index_parameters_.ld_pca_dim; 
              count_dim++) {
-            sum_abs += fabs(fisher_output.at(count_dim));
+            sum_abs += fabs(gd_fv.at(count_dim));
         }
         gd_word_l1_norm.at(count_gaussian) = static_cast<float>(sum_abs);
     }
@@ -710,7 +751,7 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
             for (uint count_dim = count_gaussian*index_parameters_.ld_pca_dim; 
                  count_dim < (count_gaussian + 1)*index_parameters_.ld_pca_dim; 
                  count_dim++) {
-                l2_norm_sq_gaussian += fisher_output.at(count_dim) * fisher_output.at(count_dim);
+                l2_norm_sq_gaussian += gd_fv.at(count_dim) * gd_fv.at(count_dim);
             }
             // Normalize this Gaussian, if it has non-zero norm
             float l2_norm_gaussian = sqrt(l2_norm_sq_gaussian);            
@@ -718,7 +759,7 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
                 for (uint count_dim = count_gaussian*index_parameters_.ld_pca_dim; 
                      count_dim < (count_gaussian + 1)*index_parameters_.ld_pca_dim; 
                      count_dim++) {
-                    fisher_output.at(count_dim) /= l2_norm_gaussian;
+                    gd_fv.at(count_dim) /= l2_norm_gaussian;
                 }
             }
         }
@@ -728,21 +769,21 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
     float l2_norm_sq = 0;
     for (uint count_dim = 0; count_dim < unbinarized_signature_length; count_dim++) {
         if (!index_parameters_.gd_intra_normalization) {
-            POWER_LAW_SAME(fisher_output.at(count_dim), index_parameters_.gd_power);
+            POWER_LAW_SAME(gd_fv.at(count_dim), index_parameters_.gd_power);
         }
-        l2_norm_sq += fisher_output.at(count_dim) * fisher_output.at(count_dim);
+        l2_norm_sq += gd_fv.at(count_dim) * gd_fv.at(count_dim);
     }
 
     // L2 normalize
     float l2_norm = sqrt(l2_norm_sq);
     if (l2_norm > L2_NORM_SQ_THRESH) {
         for (uint count_dim = 0; count_dim < unbinarized_signature_length; count_dim++) {
-            fisher_output.at(count_dim) /= l2_norm;
+            gd_fv.at(count_dim) /= l2_norm;
         }
     }
     
     // Sign binarize
-    sign_binarize(fisher_output, gd_word_descriptor);
+    sign_binarize(gd_fv, gd_word_descriptor);
 }
 
 void GDIndex::perform_query(const string local_descriptors_path, 
@@ -756,11 +797,16 @@ void GDIndex::perform_query(const string local_descriptors_path,
                             const int verbose_level) {
     FeatureSet* feature_set = NULL;
     vector<uint> gd_word_descriptor;
+    vector<float> gd_fv;
     vector<float> gd_word_l1_norm, gd_word_total_soft_assignment;
     if (query_index_ptr != NULL) {
         // Using pre-computed global descriptor from query_index_ptr
-        gd_word_descriptor = 
-            query_index_ptr->index_.word_descriptor.at(query_number);
+        if (index_parameters_.gd_unbinarized) {
+            gd_fv = query_index_ptr->index_.fv.at(query_number);
+        } else {
+            gd_word_descriptor = 
+                query_index_ptr->index_.word_descriptor.at(query_number);
+        }
         if (query_parameters_.word_selection_mode == WORD_L1_NORM) {
             gd_word_l1_norm = 
                 query_index_ptr->index_.word_l1_norms.at(query_number);
@@ -787,15 +833,16 @@ void GDIndex::perform_query(const string local_descriptors_path,
 
         // --> Generate query global descriptor
         generate_global_descriptor(feature_set, 
-                                   gd_word_descriptor, 
+                                   gd_word_descriptor,
+                                   gd_fv,
                                    gd_word_l1_norm, 
                                    gd_word_total_soft_assignment);
     }
     
     // If number_2nd_stage_rerank is 0, we're not using two-stage scoring
     if (!number_2nd_stage_rerank) {
-        query(gd_word_descriptor, gd_word_l1_norm, gd_word_total_soft_assignment,
-              indices, results);
+        query(gd_word_descriptor, gd_fv, gd_word_l1_norm,
+              gd_word_total_soft_assignment, indices, results);
     } else {
         // Using two-stage scoring
         // -- First stage
@@ -805,17 +852,21 @@ void GDIndex::perform_query(const string local_descriptors_path,
             indices_2_stages.at(count) = count;
         }
         vector< pair<float,uint> > results_1st_stage;
-        query(gd_word_descriptor, gd_word_l1_norm, gd_word_total_soft_assignment,
+        query(gd_word_descriptor, gd_fv, gd_word_l1_norm,
+              gd_word_total_soft_assignment,
               indices_2_stages, results_1st_stage);
 
         // -- Second stage
         vector<uint> gd_word_descriptor_rerank;
+        vector<float> gd_fv_rerank;
         vector<float> gd_word_l1_norm_rerank, gd_word_total_soft_assignment_rerank;
         gdindex_ptr_rerank->generate_global_descriptor(feature_set,
                                                        gd_word_descriptor_rerank,
+                                                       gd_fv_rerank,
                                                        gd_word_l1_norm_rerank,
                                                        gd_word_total_soft_assignment_rerank);
         gdindex_ptr_rerank->query_2nd_stage(gd_word_descriptor_rerank, 
+                                            gd_fv_rerank,
                                             gd_word_l1_norm_rerank, 
                                             gd_word_total_soft_assignment_rerank, 
                                             number_2nd_stage_rerank,
@@ -835,7 +886,7 @@ void GDIndex::set_index_parameters(const uint ld_length, const uint ld_frame_len
                                    const uint ld_pca_dim, const float ld_pre_pca_power,
                                    const uint gd_number_gaussians, const float gd_power,
                                    const bool gd_intra_normalization,
-                                   const bool gd_use_unbinarized,
+                                   const bool gd_unbinarized,
                                    const string trained_parameters_path,
                                    const int verbose_level) {
     // Local descriptor information
@@ -868,7 +919,7 @@ void GDIndex::set_index_parameters(const uint ld_length, const uint ld_frame_len
     index_parameters_.gd_number_gaussians = gd_number_gaussians;
     index_parameters_.gd_power = gd_power;
     index_parameters_.gd_intra_normalization = gd_intra_normalization;
-    index_parameters_.gd_use_unbinarized = gd_use_unbinarized;
+    index_parameters_.gd_unbinarized = gd_unbinarized;
 
     char aux_gd_gmm[1024];
     sprintf(aux_gd_gmm, "%s/%s.pre_alpha.%.2f.pca.%d.gmm.%d",
@@ -918,7 +969,7 @@ PRIVATE FUNCTIONS
 
 void GDIndex::update_index() {
     // Update number of global descriptors stored
-    if (index_parameters_.gd_use_unbinarized) {
+    if (index_parameters_.gd_unbinarized) {
         index_.number_global_descriptors = index_.fv.size();
     } else {
         index_.number_global_descriptors = index_.word_descriptor.size();
@@ -927,6 +978,11 @@ void GDIndex::update_index() {
     // Update variables that are useful during retrieval; they will be ready
     // to serve a query, if perform_query() is called
     index_.number_words_selected.resize(index_.number_global_descriptors, 0);
+    if (index_parameters_.gd_unbinarized) {
+        index_.word_l2_norms_sq.resize(index_.number_global_descriptors,
+                                       vector<float>(index_parameters_.gd_number_gaussians,
+                                                     0));
+    }
     const vector < vector < float > > *all_db_strengths;
     if (query_parameters_.word_selection_mode == WORD_L1_NORM) {
         all_db_strengths = &index_.word_l1_norms;
@@ -948,6 +1004,17 @@ void GDIndex::update_index() {
                     query_parameters_.word_selection_thresh) {
                     index_.number_words_selected.at(count_elem)++;
                 }                    
+            }
+            if (index_parameters_.gd_unbinarized) {
+                for (uint d = 0; d < index_parameters_.ld_pca_dim; d++) {
+                    index_.word_l2_norms_sq.at(count_elem).at(count_gaussian) += 
+                        index_.fv.at(count_elem).at(count_gaussian*
+                                                    index_parameters_.ld_pca_dim
+                                                    + d)
+                        *index_.fv.at(count_elem).at(count_gaussian*
+                                                     index_parameters_.ld_pca_dim
+                                                     + d);
+                }
             }
         }
     }
@@ -1065,8 +1132,10 @@ void GDIndex::sample_frames_from_shot(const uint number_frames_out,
 }
 
 void GDIndex::score_database_item(const vector<uint>& query_word_descriptor,
+                                  const vector<float>& query_fv,
                                   const vector<float>& query_word_l1_norm,
                                   const vector<float>& query_word_total_soft_assignment,
+                                  const vector<float>& query_word_l2_norm_sq,
                                   const uint db_ind,
                                   float& score) {
     // Check that the database item has at least the minimum number of
@@ -1087,92 +1156,138 @@ void GDIndex::score_database_item(const vector<uint>& query_word_descriptor,
         db_strengths = &index_.word_total_soft_assignment.at(db_ind);
     }
 
-    float total_correlation = 0;
-    uint query_number_words_selected = 0;
-    uint db_number_words_selected = 0;
-    uint qags_db_number_words_selected = 0;
+    float total_inner_product = 0;
+    uint query_norm_factor = 0;
+    uint db_norm_factor = 0;
+    uint qags_db_norm_factor = 0;
     for (uint count_gaussian = 0; 
          count_gaussian < index_parameters_.gd_number_gaussians;
          count_gaussian++) {
         bool use_curr_gaussian = false;
         if (query_parameters_.asym_scoring_mode == ASYM_OFF) {
-            query_number_words_selected++;
-            db_number_words_selected++;
+            if (index_parameters_.gd_unbinarized) {
+                query_norm_factor += query_word_l2_norm_sq.at(count_gaussian);
+                db_norm_factor += index_.word_l2_norms_sq.at(db_ind)
+                    .at(count_gaussian);
+            } else {
+                query_norm_factor += index_parameters_.ld_pca_dim;
+                db_norm_factor += index_parameters_.ld_pca_dim;
+            }
             use_curr_gaussian = true;
         } else if (query_parameters_.asym_scoring_mode == ASYM_QAGS) {
-            if (q_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
-                query_number_words_selected++;
-                db_number_words_selected++;
+            if (q_strengths->at(count_gaussian) >
+                query_parameters_.word_selection_thresh) {
+                if (index_parameters_.gd_unbinarized) {
+                    query_norm_factor += query_word_l2_norm_sq.at(count_gaussian);
+                    db_norm_factor += index_.word_l2_norms_sq.at(db_ind)
+                        .at(count_gaussian);
+                } else {
+                    query_norm_factor += index_parameters_.ld_pca_dim;
+                    db_norm_factor += index_parameters_.ld_pca_dim;
+                }
                 use_curr_gaussian = true;
             }
-            if (db_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
-                qags_db_number_words_selected++;
+            if (db_strengths->at(count_gaussian) >
+                query_parameters_.word_selection_thresh) {
+                if (index_parameters_.gd_unbinarized) {
+                    qags_db_norm_factor += index_.word_l2_norms_sq.at(db_ind)
+                        .at(count_gaussian);
+                } else {                    
+                    qags_db_norm_factor += index_parameters_.ld_pca_dim;
+                }
             }
         } else if (query_parameters_.asym_scoring_mode == ASYM_DAGS) {
-            if (db_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
-                query_number_words_selected++;
-                db_number_words_selected++;
+            if (db_strengths->at(count_gaussian) >
+                query_parameters_.word_selection_thresh) {
+                if (index_parameters_.gd_unbinarized) {
+                    query_norm_factor += query_word_l2_norm_sq.at(count_gaussian);
+                    db_norm_factor += index_.word_l2_norms_sq.at(db_ind)
+                        .at(count_gaussian);
+                } else {
+                    query_norm_factor += index_parameters_.ld_pca_dim;
+                    db_norm_factor += index_parameters_.ld_pca_dim;
+                }
                 use_curr_gaussian = true;
             }
         } else if (query_parameters_.asym_scoring_mode == ASYM_SGS) {
-            if (q_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
-                query_number_words_selected++;
-                if (db_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
-                    db_number_words_selected++;
+            if (q_strengths->at(count_gaussian) >
+                query_parameters_.word_selection_thresh) {
+                if (index_parameters_.gd_unbinarized) {
+                    query_norm_factor += query_word_l2_norm_sq.at(count_gaussian);
+                } else {
+                    query_norm_factor += index_parameters_.ld_pca_dim;
+                }
+                if (db_strengths->at(count_gaussian) >
+                    query_parameters_.word_selection_thresh) {
+                    if (index_parameters_.gd_unbinarized) {
+                        db_norm_factor += index_.word_l2_norms_sq.at(db_ind)
+                            .at(count_gaussian);
+                    } else {
+                        db_norm_factor += index_parameters_.ld_pca_dim;
+                    }
                     use_curr_gaussian = true;
                 }
-            } else if (db_strengths->at(count_gaussian) > query_parameters_.word_selection_thresh) {
-                db_number_words_selected++;
+            } else if (db_strengths->at(count_gaussian) >
+                       query_parameters_.word_selection_thresh) {
+                if (index_parameters_.gd_unbinarized) {
+                    db_norm_factor += index_.word_l2_norms_sq.at(db_ind)
+                        .at(count_gaussian);
+                } else {
+                    db_norm_factor += index_parameters_.ld_pca_dim;
+                }
             }
         }
 
         if (use_curr_gaussian) {
-            // Compute Hamming distance
-            uint aux = query_word_descriptor.at(count_gaussian)
-                ^ index_.word_descriptor.at(db_ind).at(count_gaussian);
-            uint h = query_parameters_.pop_count[aux >> 16]
-                + query_parameters_.pop_count[aux & 65535];
-            // Add to correlation
-            total_correlation += query_parameters_.fast_corr_weights[h];            
+            if (index_parameters_.gd_unbinarized) {
+                for (uint d = count_gaussian*index_parameters_.ld_pca_dim;
+                     d < (count_gaussian+1)*index_parameters_.ld_pca_dim;
+                     d++) {
+                    total_inner_product += query_fv.at(d)
+                        *index_.fv.at(db_ind).at(d);
+                }
+            } else {
+                // Compute Hamming distance
+                uint aux = query_word_descriptor.at(count_gaussian)
+                    ^ index_.word_descriptor.at(db_ind).at(count_gaussian);
+                uint h = query_parameters_.pop_count[aux >> 16]
+                    + query_parameters_.pop_count[aux & 65535];
+                // Add to correlation
+                total_inner_product += query_parameters_.fast_corr_weights[h];
+            }
         }
     }
 
     // Compute final score, taking into account normalizations
     if (query_parameters_.asym_scoring_mode == ASYM_QAGS) {
-        if (query_number_words_selected != 0
-            && qags_db_number_words_selected != 0
-            && db_number_words_selected != 0) {
-            float score_den = pow(query_number_words_selected
-                                  *index_parameters_.ld_pca_dim
-                                  *db_number_words_selected
-                                  *index_parameters_.ld_pca_dim,
+        if (query_norm_factor != 0
+            && qags_db_norm_factor != 0
+            && db_norm_factor != 0) {
+            float score_den = pow(query_norm_factor*db_norm_factor,
                                   0.5);
-            total_correlation /= score_den;
-            total_correlation *= pow(qags_db_number_words_selected
-                                     *index_parameters_.ld_pca_dim,
+            total_inner_product /= score_den;
+            total_inner_product *= pow(qags_db_norm_factor,
                                      0.5 - query_parameters_.score_den_power_norm);
         } else {
-            total_correlation = -FLT_MAX;
+            total_inner_product = -FLT_MAX;
         }
     } else {
-        if (query_number_words_selected != 0
-            && db_number_words_selected != 0) {
-            float score_den = pow(query_number_words_selected
-                                  *index_parameters_.ld_pca_dim
-                                  *db_number_words_selected
-                                  *index_parameters_.ld_pca_dim,
+        if (query_norm_factor != 0
+            && db_norm_factor != 0) {
+            float score_den = pow(query_norm_factor*db_norm_factor,
                                   query_parameters_.score_den_power_norm);
-            total_correlation /= score_den;
+            total_inner_product /= score_den;
         } else {
-            total_correlation = -FLT_MAX;
+            total_inner_product = -FLT_MAX;
         }
     }
     
     // Change sign such that smaller is better
-    score = -total_correlation;
+    score = -total_inner_product;
 }
 
 void GDIndex::query(const vector<uint>& query_word_descriptor,
+                    const vector<float>& query_fv,
                     const vector<float>& query_word_l1_norm,
                     const vector<float>& query_word_total_soft_assignment,
                     const vector<uint>& database_indices,
@@ -1181,6 +1296,21 @@ void GDIndex::query(const vector<uint>& query_word_descriptor,
     // Resize vector that will be passed back
     database_scores_indices.resize(index_.number_global_descriptors);
 
+    // If using FV, compute per-Gaussian L2 norm
+    vector<float> query_word_l2_norm_sq(index_parameters_.gd_number_gaussians, 0);
+    if (index_parameters_.gd_unbinarized) {
+        for (uint count_gaussian = 0;
+             count_gaussian < index_parameters_.gd_number_gaussians; 
+             count_gaussian++) {
+            for (uint d = count_gaussian*index_parameters_.ld_pca_dim;
+                 d < (count_gaussian+1)*index_parameters_.ld_pca_dim;
+                 d++) {
+                query_word_l2_norm_sq.at(count_gaussian) += 
+                    query_fv.at(d)*query_fv.at(d);
+            }
+        }        
+    }
+    
     // Loop over database items and get their scores
     for (uint count_elem = 0; count_elem < index_.number_global_descriptors; 
          count_elem++) {
@@ -1188,8 +1318,10 @@ void GDIndex::query(const vector<uint>& query_word_descriptor,
         database_scores_indices.at(count_elem).second = number_item;
 
         score_database_item(query_word_descriptor,
+                            query_fv,
                             query_word_l1_norm,
                             query_word_total_soft_assignment,
+                            query_word_l2_norm_sq,
                             count_elem,
                             database_scores_indices.at(count_elem).first);
     }
@@ -1199,6 +1331,7 @@ void GDIndex::query(const vector<uint>& query_word_descriptor,
 }
 
 void GDIndex::query_2nd_stage(const vector<uint>& query_word_descriptor,
+                              const vector<float>& query_fv,
                               const vector<float>& query_word_l1_norm,
                               const vector<float>& query_word_total_soft_assignment,
                               const uint number_2nd_stage_rerank,
@@ -1207,6 +1340,21 @@ void GDIndex::query_2nd_stage(const vector<uint>& query_word_descriptor,
                               vector< pair<float,uint> >& database_scores_indices) {
     // Resize vector that will be passed back
     database_scores_indices.clear();
+
+    // If using FV, compute per-Gaussian L2 norm
+    vector<float> query_word_l2_norm_sq(index_parameters_.gd_number_gaussians, 0);
+    if (index_parameters_.gd_unbinarized) {
+        for (uint count_gaussian = 0;
+             count_gaussian < index_parameters_.gd_number_gaussians; 
+             count_gaussian++) {
+            for (uint d = count_gaussian*index_parameters_.ld_pca_dim;
+                 d < (count_gaussian+1)*index_parameters_.ld_pca_dim;
+                 d++) {
+                query_word_l2_norm_sq.at(count_gaussian) += 
+                    query_fv.at(d)*query_fv.at(d);
+            }
+        }        
+    }
 
     // Figure out number of first stage items (groups) to re-rank
     uint number_rerank = min(number_2nd_stage_rerank,
@@ -1229,8 +1377,10 @@ void GDIndex::query_2nd_stage(const vector<uint>& query_word_descriptor,
             score_this_item.second = this_item_number;
             
             score_database_item(query_word_descriptor,
+                                query_fv,
                                 query_word_l1_norm,
                                 query_word_total_soft_assignment,
+                                query_word_l2_norm_sq,
                                 this_item_number,
                                 score_this_item.first);
             database_scores_indices.push_back(score_this_item);

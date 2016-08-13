@@ -41,7 +41,7 @@ const float LD_PRE_PCA_POWER_DEFAULT = 0.5;
 const uint GD_NUMBER_GAUSSIANS_DEFAULT = 512;
 const float GD_POWER_DEFAULT = 0.5;
 const bool GD_INTRA_NORMALIZATION_DEFAULT = false;
-const bool GD_USE_UNBINARIZED_DEFAULT = false;
+const bool GD_UNBINARIZED_DEFAULT = false;
 const uint MIN_NUMBER_WORDS_SELECTED_DEFAULT = 20;
 const int ASYM_SCORING_MODE_DEFAULT = 1; // default is ASYM_QAGS
 const float SCORE_DEN_POWER_NORM_DEFAULT = 0.5;
@@ -99,6 +99,7 @@ class GDIndex
   // -- generate one global descriptor from features
   void generate_global_descriptor(const FeatureSet* feature_set, 
                                   vector<uint>& gd_word_descriptor, 
+                                  vector<float>& gd_fv, 
                                   vector<float>& gd_word_l1_norm, 
                                   vector<float>& gd_word_total_soft_assignment);
 
@@ -121,7 +122,7 @@ class GDIndex
                             const uint ld_pca_dim, const float ld_pre_pca_power,
                             const uint gd_number_gaussians, const float gd_power,
                             const bool gd_intra_normalization,
-                            const bool gd_use_unbinarized,
+                            const bool gd_unbinarized,
                             const string trained_parameters_path,
                             const int verbose_level = 1);
 
@@ -167,7 +168,7 @@ class GDIndex
   struct struct_index {
       // The index will contain, at any point, either Binarized FVs or FVs,
       // so only one of the two following variables will be used at a given
-      // point, depending on index_parameters_.gd_use_unbinarized
+      // point, depending on index_parameters_.gd_unbinarized
       // By default, Binarized FVs are used
       vector < vector < uint > > word_descriptor; // Binarized FV
       vector < vector < float > > fv; // FV
@@ -184,10 +185,11 @@ class GDIndex
       // this variable is always updated in function update_index
       uint number_global_descriptors;
 
-      // Variable which is used when scoring, holding a value
-      // for each database item; it is always updated in
+      // Variables which are used when scoring, holding values
+      // for each database item; they are always updated in
       // function update_index()
       vector < uint > number_words_selected;
+      vector < vector < float > > word_l2_norms_sq;
   };
   struct_index index_;
 
@@ -214,8 +216,8 @@ class GDIndex
       bool gd_intra_normalization; // flag that sets IN normalization (instead
                                    // of SSR) -- in this case, gd_power is
                                    // unused
-      bool gd_use_unbinarized; // flag that decides if using FV (true) or
-                               // BFV (false). Default is false.
+      bool gd_unbinarized; // flag that decides if using FV (true) or
+                           // BFV (false). Default is false.
   };
   struct_index_parameters index_parameters_;
 
@@ -265,13 +267,16 @@ class GDIndex
 
   // Obtain score for database item, given a query descriptor
   void score_database_item(const vector<uint>& query_word_descriptor,
+                           const vector<float>& query_fv,
                            const vector<float>& query_word_l1_norm,
                            const vector<float>& query_word_total_soft_assignment,
+                           const vector<float>& query_word_l2_norm,
                            const uint db_ind,
                            float& score);
 
   // Query index with query global descriptor
   void query(const vector<uint>& query_word_descriptor,
+             const vector<float>& query_fv,
              const vector<float>& query_word_l1_norm,
              const vector<float>& query_word_total_soft_assignment,
              const vector<uint>& database_indices,
@@ -279,6 +284,7 @@ class GDIndex
 
   // Query index with global descriptor in a second stage
   void query_2nd_stage(const vector<uint>& query_word_descriptor,
+                       const vector<float>& query_fv,
                        const vector<float>& query_word_l1_norm,
                        const vector<float>& query_word_total_soft_assignment,
                        const uint number_2nd_stage_rerank,
