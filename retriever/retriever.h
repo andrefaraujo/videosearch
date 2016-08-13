@@ -42,6 +42,7 @@ public:
                                       const string gdindex_path_rerank = "", 
                                       const bool avoid_redundant_scene_results = true,
                                       const bool gd_intra_normalization = false,
+                                      const bool gd_unbinarized = false,
                                       const int asym_scoring_mode = 1,
                                       const int asym_scoring_mode_rerank = 1,
                                       const float score_den_power_norm = 0.5, 
