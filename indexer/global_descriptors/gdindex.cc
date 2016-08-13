@@ -34,6 +34,12 @@ static bool file_exists(string filename)
   return bool(ifile);
 }
 
+void copy_floats(const uint n, float* in, float* out) {
+    for (uint d = 0; d < n; d++) {
+        out[d] = in[d];
+    }
+}
+
 /********************************
 PUBLIC FUNCTIONS
 ********************************/
@@ -641,8 +647,15 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
                     feature_set_this_frame->m_nNumFeatures;
                 for (uint count_f = 0; count_f < number_features_this_frame; 
                      count_f++) {
-                    feature_set->addFeature(feature_set_this_frame->m_vDescriptors.at(count_f),
-                                            feature_set_this_frame->m_vFrames.at(count_f));
+                    float* aux_ld = new float[index_parameters_.ld_length];
+                    copy_floats(index_parameters_.ld_length,
+                                feature_set_this_frame->
+                                m_vDescriptors.at(count_f), aux_ld);
+                    float* aux_f = new float[index_parameters_.ld_frame_length];
+                    copy_floats(index_parameters_.ld_frame_length,
+                                feature_set_this_frame->
+                                m_vFrames.at(count_f), aux_f);
+                    feature_set->addFeature(aux_ld, aux_f);
                 }
                 if (verbose_level >= 4) cout << "Added these features to shot's features" << endl;
                 // Clean up feature set for this frame
@@ -768,7 +781,7 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
             }
         }
     }
-    
+
     // Apply power law (if using SSR normalization), and compute L2 norm
     float l2_norm_sq = 0;
     for (uint count_dim = 0; count_dim < unbinarized_signature_length; count_dim++) {
@@ -1052,8 +1065,10 @@ void GDIndex::project_local_descriptor_pca(const float* desc, float* pca_desc) {
         l2_norm_sq += desc_pow.at(count_in_dim) * desc_pow.at(count_in_dim);
     }
     float l2_norm = sqrt(l2_norm_sq);
-    for (uint count_in_dim = 0; count_in_dim < index_parameters_.ld_length; count_in_dim++) {
-        desc_pow.at(count_in_dim) /= l2_norm;
+    if (l2_norm > 0) {
+        for (uint count_in_dim = 0; count_in_dim < index_parameters_.ld_length; count_in_dim++) {
+            desc_pow.at(count_in_dim) /= l2_norm;
+        }
     }
 
     // Projection onto eigenvectors
