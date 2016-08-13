@@ -1176,9 +1176,9 @@ void GDIndex::score_database_item(const vector<uint>& query_word_descriptor,
     }
 
     float total_inner_product = 0;
-    uint query_norm_factor = 0;
-    uint db_norm_factor = 0;
-    uint qags_db_norm_factor = 0;
+    float query_norm_factor = 0;
+    float db_norm_factor = 0;
+    float qags_db_norm_factor = 0;
     for (uint count_gaussian = 0; 
          count_gaussian < index_parameters_.gd_number_gaussians;
          count_gaussian++) {
