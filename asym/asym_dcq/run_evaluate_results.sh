@@ -9,8 +9,7 @@ cmd=$(echo \
     python ../../scoring/evaluate_scene_retrieval.py \
     $RESULTS_FILE \
     $GT_FILE \
-    $NUMBER_RESULTS \
-    --force)
+    $NUMBER_RESULTS)
 
 # Write and execute command
 echo $cmd
