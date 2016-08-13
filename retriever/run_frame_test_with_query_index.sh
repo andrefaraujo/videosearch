@@ -24,7 +24,7 @@ if [ $FEAT_MODE -eq 0 ]; then
 elif [ $FEAT_MODE -eq 1 ]; then
     FEAT_NAME=siftgeo
 else
-    echo "Unrecognized LD_NAME"
+    echo "Unrecognized FEAT_MODE"
     exit
 fi
 
