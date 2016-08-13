@@ -118,20 +118,29 @@ void GDIndex::write(const string index_path) {
     
     // Assert that we have data in index_ and that it makes sense, 
     // and allocate helper variables
-    assert(index_.word_descriptor.size() != 0);
-    assert(index_.word_l1_norms.size() != 0);
-    assert(index_.word_total_soft_assignment.size() != 0);
-    assert(index_.word_descriptor.size() == index_.word_l1_norms.size());
-    assert(index_.word_descriptor.size() == index_.word_total_soft_assignment.size());
+    if (index_parameters_.gd_use_unbinarized) {
+        assert(index_.fv.size() != 0);
+        assert(index_.fv.size() == index_.number_global_descriptors);
+        assert(index_.fv.size() == index_.word_l1_norms.size());
+        assert(index_.fv.size() == index_.word_total_soft_assignment.size());
+    } else {        
+        assert(index_.word_descriptor.size() != 0);
+        assert(index_.word_descriptor.size() == index_.number_global_descriptors);
+        assert(index_.word_descriptor.size() == index_.word_l1_norms.size());
+        assert(index_.word_descriptor.size() == index_.word_total_soft_assignment.size());
+    }
     uint* word_descriptor_to_write = 
         new uint[index_parameters_.gd_number_gaussians];
+    float* fv_to_write = 
+        new float[index_parameters_.gd_number_gaussians
+                  *index_parameters_.ld_pca_dim];
     float* word_l1_norms_to_write = 
         new float[index_parameters_.gd_number_gaussians];
     float* word_total_soft_assignment_to_write = 
         new float[index_parameters_.gd_number_gaussians];
 
     // Loop over items in index and write them out
-    for (int count_item = 0; count_item < number_gd_to_write; count_item++) {
+    for (uint count_item = 0; count_item < number_gd_to_write; count_item++) {
         // Collect data that will be written
         for (uint count_gaussian = 0; 
              count_gaussian < index_parameters_.gd_number_gaussians; 
@@ -140,16 +149,33 @@ void GDIndex::write(const string index_path) {
                 index_.word_l1_norms.at(count_item).at(count_gaussian);
             word_total_soft_assignment_to_write[count_gaussian] = 
                 index_.word_total_soft_assignment.at(count_item).at(count_gaussian);
-            word_descriptor_to_write[count_gaussian] = 
-                index_.word_descriptor.at(count_item).at(count_gaussian);
+            if (index_parameters_.gd_use_unbinarized) {
+                // Get ld_pca_dim-sized vector for this Gaussian
+                for (uint d = 0; d < index_parameters_.ld_pca_dim; d++) {
+                    fv_to_write[count_gaussian*index_parameters_.ld_pca_dim
+                                + d]
+                        = index_.fv.at(count_item).at(count_gaussian
+                                                      *index_parameters_.ld_pca_dim
+                                                      + d);
+                }
+            } else {
+                word_descriptor_to_write[count_gaussian] = 
+                    index_.word_descriptor.at(count_item).at(count_gaussian);
+            }
         }
         // Write to file
         n_write = fwrite(word_l1_norms_to_write, sizeof(float), 
                          index_parameters_.gd_number_gaussians, index_file);
         n_write = fwrite(word_total_soft_assignment_to_write, sizeof(float), 
                          index_parameters_.gd_number_gaussians, index_file);
-        n_write = fwrite(word_descriptor_to_write, sizeof(uint), 
-                         index_parameters_.gd_number_gaussians, index_file);
+        if (index_parameters_.gd_use_unbinarized) {
+            n_write = fwrite(fv_to_write, sizeof(float), 
+                             index_parameters_.gd_number_gaussians
+                             *index_parameters_.ld_pca_dim, index_file);
+        } else {
+            n_write = fwrite(word_descriptor_to_write, sizeof(uint), 
+                             index_parameters_.gd_number_gaussians, index_file);
+        }
     }
 
     // Clean up
@@ -164,6 +190,10 @@ void GDIndex::write(const string index_path) {
     if (word_descriptor_to_write != NULL) {
         delete [] word_descriptor_to_write;
         word_descriptor_to_write = NULL;
+    }
+    if (fv_to_write != NULL) {
+        delete [] fv_to_write;
+        fv_to_write = NULL;
     }
 
     // Close file
@@ -194,20 +224,27 @@ void GDIndex::read(const string index_path, const bool both_sel_modes) {
     n_read = fread(&number_gd_to_read, sizeof(int), 1, index_file);
 
     // Size of current index
-    int current_db_size = index_.number_global_descriptors;
+    uint current_db_size = index_.number_global_descriptors;
 
     // Allocate helper variables
     uint* word_descriptor_to_read = 
         new uint[index_parameters_.gd_number_gaussians];
+    float* fv_to_read = 
+        new float[index_parameters_.gd_number_gaussians
+                  *index_parameters_.ld_pca_dim];
     float* word_l1_norms_to_read = 
         new float[index_parameters_.gd_number_gaussians];
     float* word_total_soft_assignment_to_read = 
         new float[index_parameters_.gd_number_gaussians];
 
+    if (index_parameters_.gd_use_unbinarized) {
+        index_.fv.resize(current_db_size + number_gd_to_read);
+    } else {
+        index_.word_descriptor.resize(current_db_size + number_gd_to_read);
+    }
     // Depending on both_sel_modes and query_parameters_.word_selection_mode,
     // we will load either BOTH l1 norms and total soft assignment information,
     // or only one of them.
-    index_.word_descriptor.resize(current_db_size + number_gd_to_read);
     if (both_sel_modes || query_parameters_.word_selection_mode == WORD_L1_NORM) {
         index_.word_l1_norms.resize(current_db_size + number_gd_to_read);
     }
@@ -216,7 +253,7 @@ void GDIndex::read(const string index_path, const bool both_sel_modes) {
     }
     
     // Loop over items, read and insert them into index_
-    for (int count_item = current_db_size; 
+    for (uint count_item = current_db_size; 
          count_item < current_db_size + number_gd_to_read; 
          count_item++) {
         // Read data
@@ -224,8 +261,14 @@ void GDIndex::read(const string index_path, const bool both_sel_modes) {
                        index_parameters_.gd_number_gaussians, index_file);
         n_read = fread(word_total_soft_assignment_to_read, sizeof(float), 
                        index_parameters_.gd_number_gaussians, index_file);
-        n_read = fread(word_descriptor_to_read, sizeof(uint), 
-                       index_parameters_.gd_number_gaussians, index_file);
+        if (index_parameters_.gd_use_unbinarized) {
+            n_read = fread(fv_to_read, sizeof(float), 
+                           index_parameters_.gd_number_gaussians
+                           *index_parameters_.ld_pca_dim, index_file);
+        } else {
+            n_read = fread(word_descriptor_to_read, sizeof(uint), 
+                           index_parameters_.gd_number_gaussians, index_file);
+        }
 
         // Insert data into index_
         if (both_sel_modes ||
@@ -250,13 +293,31 @@ void GDIndex::read(const string index_path, const bool both_sel_modes) {
                     = word_total_soft_assignment_to_read[count_gaussian];
             }
         }
-        index_.word_descriptor.at(count_item)
-            .resize(index_parameters_.gd_number_gaussians);
-        for (uint count_gaussian = 0; 
-             count_gaussian < index_parameters_.gd_number_gaussians; 
-             count_gaussian++) {
-            index_.word_descriptor.at(count_item).at(count_gaussian)
-                = word_descriptor_to_read[count_gaussian];
+        if (index_parameters_.gd_use_unbinarized) {
+            index_.fv.at(count_item)
+                .resize(index_parameters_.gd_number_gaussians
+                        *index_parameters_.ld_pca_dim);
+            for (uint count_gaussian = 0; 
+                 count_gaussian < index_parameters_.gd_number_gaussians; 
+                 count_gaussian++) {
+                // Get ld_pca_dim-sized vector for this Gaussian
+                for (uint d = 0; d < index_parameters_.ld_pca_dim; d++) {
+                    index_.fv.at(count_item).at(count_gaussian
+                                                *index_parameters_.ld_pca_dim
+                                                + d) =
+                        fv_to_read[count_gaussian*index_parameters_.ld_pca_dim
+                                   + d];
+                }
+            }
+        } else {
+            index_.word_descriptor.at(count_item)
+                .resize(index_parameters_.gd_number_gaussians);
+            for (uint count_gaussian = 0; 
+                 count_gaussian < index_parameters_.gd_number_gaussians; 
+                 count_gaussian++) {
+                index_.word_descriptor.at(count_item).at(count_gaussian)
+                    = word_descriptor_to_read[count_gaussian];
+            }
         }
     }
 
@@ -272,6 +333,10 @@ void GDIndex::read(const string index_path, const bool both_sel_modes) {
     if (word_descriptor_to_read != NULL) {
         delete [] word_descriptor_to_read;
         word_descriptor_to_read = NULL;
+    }
+    if (fv_to_read != NULL) {
+        delete [] fv_to_read;
+        fv_to_read = NULL;
     }
 
     // Close file
@@ -853,7 +918,11 @@ PRIVATE FUNCTIONS
 
 void GDIndex::update_index() {
     // Update number of global descriptors stored
-    index_.number_global_descriptors = index_.word_descriptor.size();
+    if (index_parameters_.gd_use_unbinarized) {
+        index_.number_global_descriptors = index_.fv.size();
+    } else {
+        index_.number_global_descriptors = index_.word_descriptor.size();
+    }
 
     // Update variables that are useful during retrieval; they will be ready
     // to serve a query, if perform_query() is called
