@@ -20,6 +20,7 @@ void usage(char** argv)
   printf("./join_indexes -i test_frame_based_index_lists.txt -o test_frame_based_index_lists.sift_scfv_idx_k512 \n");
   printf("Options:\n");
   printf("--gdindex_parameters_path[-r] ARG: Path to folder of trained GDIndex parameters. (default: trained_parameters)\n");
+  printf("--gd_unbinarized: Boolean that sets usage of standard FVs, without binarization (default: false)\n");
   printf("--centroids[-c] ARG: Number of Gaussians/centroids to use in global descriptor (default: 512)\n");
   printf("--threads[-t] ARG: Number of threads to use (default: 1)\n");
   printf("--ld_mode[-l] ARG: Local descriptor mode to use. 0=SIFT; 1=SIFTGeo (default: 0)\n");
@@ -51,7 +52,9 @@ int main(int argc, char** argv) {
     string gdindex_parameters_path = "trained_parameters";
     int number_threads = 1;
     uint ld_mode = 0;
+    bool gd_unbinarized = false;
     int verbose_level = 1;
+
     if (argc < 3) {
         cout << "Wrong usage!!!" << endl;
         cout << "***********************************" << endl;
@@ -83,6 +86,8 @@ int main(int argc, char** argv) {
             } else if ((!strcmp(argv[count_arg], "--verbose_level")) || (!strcmp(argv[count_arg], "-v"))) {
                 verbose_level = atoi(argv[count_arg + 1]);
                 count_arg++;
+            } else if ((!strcmp(argv[count_arg], "--gd_unbinarized"))) {
+                gd_unbinarized = true;
             } else {
                 cout << "Incorrect argument!" << endl;
                 cout << "See usage below:" << endl;
@@ -111,6 +116,7 @@ int main(int argc, char** argv) {
         cout << "------>gdindex_parameters_path = " << gdindex_parameters_path << endl;
         cout << "------>number_gaussians = " << number_gaussians << endl;
         cout << "------>number_threads = " << number_threads << endl;
+        cout << "------>gd_unbinarized = " << gd_unbinarized << endl;
     }
 
     // Read index file paths
@@ -157,6 +163,7 @@ int main(int argc, char** argv) {
                                      number_gaussians,
                                      GD_POWER_DEFAULT,
                                      GD_INTRA_NORMALIZATION_DEFAULT,
+                                     gd_unbinarized,
                                      gdindex_parameters_path,
                                      verbose_level);
         gdindex.set_query_parameters(0, 0, 0, 0, 0, gdindex_parameters_path, verbose_level);
@@ -209,6 +216,7 @@ int main(int argc, char** argv) {
                                                                    number_gaussians,
                                                                    GD_POWER_DEFAULT, 
                                                                    GD_INTRA_NORMALIZATION_DEFAULT,
+                                                                   gd_unbinarized,
                                                                    gdindex_parameters_path,
                                                                    verbose_level);
             partial_indexes.at(count_thread)->set_query_parameters(0, 0, 0, 0, 0, gdindex_parameters_path, 
@@ -247,6 +255,7 @@ int main(int argc, char** argv) {
                                            number_gaussians,
                                            GD_POWER_DEFAULT, 
                                            GD_INTRA_NORMALIZATION_DEFAULT,
+                                           gd_unbinarized,
                                            gdindex_parameters_path,
                                            verbose_level);
         gdindex_final.set_query_parameters(0, 0, 0, 0, 0, gdindex_parameters_path, verbose_level);

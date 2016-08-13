@@ -43,6 +43,7 @@ GDIndex::GDIndex() {
     // -- Index
     index_.number_global_descriptors = 0;
     index_.word_descriptor.clear();
+    index_.fv.clear();
     index_.word_l1_norms.clear();
     index_.word_total_soft_assignment.clear();
     index_.frame_numbers_in_db.clear();
@@ -60,6 +61,7 @@ GDIndex::GDIndex() {
     index_parameters_.gd_number_gaussians = GD_NUMBER_GAUSSIANS_DEFAULT;
     index_parameters_.gd_power = GD_POWER_DEFAULT;
     index_parameters_.gd_intra_normalization = GD_INTRA_NORMALIZATION_DEFAULT;
+    index_parameters_.gd_use_unbinarized = GD_USE_UNBINARIZED_DEFAULT;
     // -- Query parameters
     query_parameters_.min_number_words_selected = MIN_NUMBER_WORDS_SELECTED_DEFAULT;
     query_parameters_.asym_scoring_mode = ASYM_SCORING_MODE_DEFAULT;
@@ -73,6 +75,7 @@ GDIndex::~GDIndex() {
     // Clearing and deleting vectors/pointers
     // -- Index
     index_.word_descriptor.clear();
+    index_.fv.clear();
     index_.word_l1_norms.clear();
     index_.word_total_soft_assignment.clear();
     index_.frame_numbers_in_db.clear();
@@ -290,6 +293,7 @@ void GDIndex::write_frame_list(const string file_path) {
 
 void GDIndex::clean_index() {
     index_.word_descriptor.clear();
+    index_.fv.clear();
     index_.word_l1_norms.clear();
     index_.word_total_soft_assignment.clear();
     index_.frame_numbers_in_db.clear();
@@ -766,6 +770,7 @@ void GDIndex::set_index_parameters(const uint ld_length, const uint ld_frame_len
                                    const uint ld_pca_dim, const float ld_pre_pca_power,
                                    const uint gd_number_gaussians, const float gd_power,
                                    const bool gd_intra_normalization,
+                                   const bool gd_use_unbinarized,
                                    const string trained_parameters_path,
                                    const int verbose_level) {
     // Local descriptor information
@@ -798,6 +803,7 @@ void GDIndex::set_index_parameters(const uint ld_length, const uint ld_frame_len
     index_parameters_.gd_number_gaussians = gd_number_gaussians;
     index_parameters_.gd_power = gd_power;
     index_parameters_.gd_intra_normalization = gd_intra_normalization;
+    index_parameters_.gd_use_unbinarized = gd_use_unbinarized;
 
     char aux_gd_gmm[1024];
     sprintf(aux_gd_gmm, "%s/%s.pre_alpha.%.2f.pca.%d.gmm.%d",

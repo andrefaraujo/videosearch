@@ -41,6 +41,7 @@ void usage(char** argv)
   printf("--centroids[-c] ARG: Number of centroids/Gaussians to use in global descriptor (default: 512)\n");
   printf("--ld_mode[-l] ARG: Local descriptor mode to use. 0=SIFT; 1=SIFTGeo (default: 0)\n");
   printf("--gd_intra_normalization: Boolean that sets usage of intra-normalization mode for FVs (default: false)\n");
+  printf("--gd_unbinarized: Boolean that sets usage of standard FVs, without binarization (default: false)\n");
   printf("--shot_file_path[-s] ARG: Path to shot file. (default: not using it) \n");
   printf("--single_shot[-g]: Flag that sets the mode of using a single shot in entire database. This is equivalent to passing as shot_file_path a file that contains only one line with '0'. (default: not using it). This is used when aggregating over entire video clip. \n");
   printf("--shot_mode[-m] ARG: Mode to use when using shots: 0 = indep. keyframes per shot; 1 = feature aggregation in shot; (default = 0, used only if shot_file_path is passed or single_shot is set) \n");
@@ -71,6 +72,7 @@ int main(int argc, char** argv)
     string gdindex_parameters_path = "trained_parameters";
     bool single_shot = false;
     bool gd_intra_normalization = false;
+    bool gd_unbinarized = false;
 
     if (argc < 3) {
         cout << "Wrong usage!!!" << endl;
@@ -113,6 +115,8 @@ int main(int argc, char** argv)
                 single_shot = true;
             } else if ((!strcmp(argv[count_arg], "--gd_intra_normalization"))) {
                 gd_intra_normalization = true;
+            } else if ((!strcmp(argv[count_arg], "--gd_unbinarized"))) {
+                gd_unbinarized = true;
             } else {
                 cout << "Incorrect argument!" << endl;
                 cout << "See usage below:" << endl;
@@ -142,6 +146,7 @@ int main(int argc, char** argv)
         cout << "------>number_gaussians = " << number_gaussians << endl;
         cout << "------>ld_mode = " << ld_mode << endl;
         cout << "------>gd_intra_normalization = " << gd_intra_normalization << endl;
+        cout << "------>gd_unbinarized = " << gd_unbinarized << endl;
         cout << "------>shot_file_path = " << shot_file_path << endl;
         cout << "------>single_shot = " << single_shot << endl;
         cout << "------>shot_mode = " << shot_mode << endl;
@@ -175,6 +180,7 @@ int main(int argc, char** argv)
                                  number_gaussians,
                                  GD_POWER_DEFAULT,
                                  gd_intra_normalization,
+                                 gd_unbinarized,
                                  gdindex_parameters_path,
                                  verbose_level);
     gdindex.set_query_parameters(0, 0, 0, 0, 0, gdindex_parameters_path, verbose_level);

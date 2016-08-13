@@ -41,6 +41,7 @@ const float LD_PRE_PCA_POWER_DEFAULT = 0.5;
 const uint GD_NUMBER_GAUSSIANS_DEFAULT = 512;
 const float GD_POWER_DEFAULT = 0.5;
 const bool GD_INTRA_NORMALIZATION_DEFAULT = false;
+const bool GD_USE_UNBINARIZED_DEFAULT = false;
 const uint MIN_NUMBER_WORDS_SELECTED_DEFAULT = 20;
 const int ASYM_SCORING_MODE_DEFAULT = 1; // default is ASYM_QAGS
 const float SCORE_DEN_POWER_NORM_DEFAULT = 0.5;
@@ -120,6 +121,7 @@ class GDIndex
                             const uint ld_pca_dim, const float ld_pre_pca_power,
                             const uint gd_number_gaussians, const float gd_power,
                             const bool gd_intra_normalization,
+                            const bool gd_use_unbinarized,
                             const string trained_parameters_path,
                             const int verbose_level = 1);
 
@@ -163,7 +165,14 @@ class GDIndex
   /************ Variable  *************/  
   // Variables that will hold the index and number of signatures stored
   struct struct_index {
-      vector < vector < uint > > word_descriptor;
+      // The index will contain, at any point, either Binarized FVs or FVs,
+      // so only one of the two following variables will be used at a given
+      // point, depending on index_parameters_.gd_use_unbinarized
+      // By default, Binarized FVs are used
+      vector < vector < uint > > word_descriptor; // Binarized FV
+      vector < vector < float > > fv; // FV
+
+      // Auxiliary word selection information
       vector < vector < float > > word_l1_norms;
       vector < vector < float > > word_total_soft_assignment;
 
@@ -205,6 +214,8 @@ class GDIndex
       bool gd_intra_normalization; // flag that sets IN normalization (instead
                                    // of SSR) -- in this case, gd_power is
                                    // unused
+      bool gd_use_unbinarized; // flag that decides if using FV (true) or
+                               // BFV (false). Default is false.
   };
   struct_index_parameters index_parameters_;
 
