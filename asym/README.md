@@ -3,12 +3,13 @@
 This directory contains code for setting up asymmetric image comparison 
 datasets (Asym-QCD and Asym-DCQ), and for using them in retrieval experiments.
 
-Please follow the instructions below -- if any questions/issues arise, please contact Andre at afaraujo@alumni.stanford.edu
+Please follow the instructions below -- if any questions/issues arise, feel free to reach out.
 
 ## Pre-requisites
 
 The main portion of this github repository must be working.
-Please follow the instructions outlined in https://github.com/andrefaraujo/videosearch/blob/master/README.md#quick-start
+Please follow the instructions outlined [here](https://github.com/andrefaraujo/videosearch/blob/master/README.md#quick-start).
+We're using the Hessian-Affine detector for these experiments, so please make sure to have the pipeline using it working (see instructions [here](https://github.com/andrefaraujo/videosearch#indexingretrievingscoring-using-hessian-affine-detector)).
 
 ## Download of relevant data
 
@@ -64,85 +65,53 @@ In the following, "mypath" refers to the path you downloaded the repository to.
     $   unzip images${i}.zip
     $ done
 
+**Hessian-Affine descriptor extraction executable**
+
+If you followed the instructions for Hessian-Affine keypoint detection in the main part of this codebase, you've already installed the necessary executable.
+If you have not done it, please follow the instructions found [here](https://github.com/andrefaraujo/videosearch#indexingretrievingscoring-using-hessian-affine-detector) to download it and place it in the directory as instructed in the link.
+
 ## Asym-QCD
 
 Here, we illustrate an example using 5 clutter images per database image (ie, C=5).
 This choice is reflected in the parameters of the files used below.
 One can repeat this procedure to generate results with different choices of C.
-Note that the paper's results use SIFT descriptors extracted from Hessian-Affine keypoints, while the results generated below use the Difference-of-Gaussians detector.
 
 In the following, "mypath" refers to the path you downloaded the repository to.
 
-**Extract query features, using 10 threads:**
+**Extract query features:**
 
     $ cd $mypath/videosearch/asym/asym_qcd
-    $ ./run_sift_extraction_query.sh
+    $ ./run_siftHesAff_extraction_query.sh
 
 **Extract database features:** 
 
 (this can take some time)
 
-(note: This extracts features for images from the set of images with C=5, using 10 threads.
+(note: This extracts features for images from the set of images with C=5, with parallelization.
 For other values of C, you can edit the following scripts.)
 
-    $ ./run_sift_extraction_database.sh
+    $ ./run_siftHesAff_extraction_database.sh
 
-**Extract global descriptors of database using simple parameters:**
+**Extract global descriptors of database:**
 
-    $ ./run_gd_index.sh
+    $ ./run_siftgeo_gd_index_unbinarized.sh
 
-**Retrieve using simple parameters:**
+**Extract global descriptors of query:**
 
-    $ ./run_retriever_asym.sh
+    $ ./run_siftgeo_query_index_unbinarized.sh
+
+**Perform retrieval:**
+
+    $ ./run_siftgeo_retriever_unbinarized_asym.sh
 
 **Scoring results:**
 
-    $ ./run_evaluate_results.sh
+    $ ./run_siftgeo_evaluate_results.sh
 
-This last step gives the results: "Total Results: mAP = 0.456296, mP@1 = 0.410000".
+This last step gives the results: "Total Results: mAP = 0.666739, mP@1 = 0.615000".
 This illustrates the usage of this dataset.
-Note that these results are different from the paper's, due to the different keypoint detector and different parameters (the paper's results can be reproduced in a straightforward manner by using the settings described therein).
 
-## Asym-DCQ
+## TODO
 
-Here, we illustrate an example using 5 clutter images per query image (ie, C=5).
-This choice is reflected in the parameters of the files used below.
-One can repeat this procedure to generate results with different choices of C.
-Note that the paper's results use SIFT descriptors extracted from Hessian-Affine keypoints, while the results generated below use the Difference-of-Gaussians detector.
-
-In the following, "mypath" refers to the path you downloaded the repository to.
-
-**Extract query features, using 10 threads:**
-
-(this can take some time)
-
-(note: This extracts features for images from the set of images with C=5, using 10 threads.
-For other values of C, you can edit the following scripts.)
-
-    $ cd $mypath/videosearch/asym/asym_dcq
-    $ ./run_sift_extraction_query.sh
-
-**Extract database features:** 
-
-    $ ./run_sift_extraction_database.sh
-
-**Extract global descriptors of database using simple parameters:**
-
-    $ ./run_gd_index.sh
-
-**Extract global descriptors of query using simple parameters:**
-
-    $ ./run_query_index.sh
-
-**Retrieve using simple parameters:**
-
-    $ ./run_retriever_asym.sh
-
-**Scoring results:**
-
-    $ ./run_evaluate_results.sh
-
-This last step gives the results: "Total Results: mAP = 0.417802, mP@1 = 0.370000".
-This illustrates the usage of this dataset.
-Note that these results are different from the paper's, due to the different keypoint detector and different parameters (the paper's results can be reproduced in a straightforward manner by using the settings described therein).
+Instructions for Asym-DCQ using Hessian-Affine detector.
 
