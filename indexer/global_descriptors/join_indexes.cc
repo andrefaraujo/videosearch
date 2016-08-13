@@ -35,7 +35,9 @@ void join_indexes(const vector<string>& index_files,
     }
     for (int count_i = start_ind; count_i < end_ind; count_i++) {
         string this_index = index_files.at(count_i);
-        gdindex.read_all(this_index);
+        // Second argument is true because we want to read both
+        // types of auxiliary information
+        gdindex.read(this_index, true);
     }
 }
 

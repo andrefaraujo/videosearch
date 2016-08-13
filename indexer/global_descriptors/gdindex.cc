@@ -167,134 +167,50 @@ void GDIndex::write(const string index_path) {
     fclose(index_file);
 }
 
-void GDIndex::read_all(const string index_path) {
-    int n_read; // aux. variable for reading
-
-    // Open file for reading
-    FILE* index_file = fopen(index_path.c_str(), "rb");
-    if (index_file == NULL) {
-        fprintf(stderr, "GDIndex::read : Cannot open: %s\n", index_path.c_str());
-        exit(EXIT_FAILURE);
-    }
-
-    // Read number of global descriptors
-    int number_gd_to_read = 0;
-    n_read = fread(&number_gd_to_read, sizeof(int), 1, index_file);
-
-    // Size of current index
-    int current_db_size = index_.number_global_descriptors;
-
-    // Allocate helper variables
-    uint* word_descriptor_to_read = 
-        new uint[index_parameters_.gd_number_gaussians];
-    float* word_l1_norms_to_read = 
-        new float[index_parameters_.gd_number_gaussians];
-    float* word_total_soft_assignment_to_read = 
-        new float[index_parameters_.gd_number_gaussians];
-
-    index_.word_descriptor.resize(current_db_size + number_gd_to_read);
-    index_.word_l1_norms.resize(current_db_size + number_gd_to_read);
-    index_.word_total_soft_assignment.resize(current_db_size + number_gd_to_read);
-    
-    // Loop over items, read and insert them into index_
-    for (int count_item = current_db_size; 
-         count_item < current_db_size + number_gd_to_read; 
-         count_item++) {
-        // Read data
-        n_read = fread(word_l1_norms_to_read, sizeof(float), 
-                       index_parameters_.gd_number_gaussians, index_file);
-        n_read = fread(word_total_soft_assignment_to_read, sizeof(float), 
-                       index_parameters_.gd_number_gaussians, index_file);
-        n_read = fread(word_descriptor_to_read, sizeof(uint), 
-                       index_parameters_.gd_number_gaussians, index_file);
-
-        // Insert data into index_
-        index_.word_l1_norms.at(count_item)
-            .resize(index_parameters_.gd_number_gaussians);
-        for (uint count_gaussian = 0; 
-             count_gaussian < index_parameters_.gd_number_gaussians; 
-             count_gaussian++) {
-            index_.word_l1_norms.at(count_item).at(count_gaussian)
-                = word_l1_norms_to_read[count_gaussian];
-        }
-        index_.word_total_soft_assignment.at(count_item)
-            .resize(index_parameters_.gd_number_gaussians);
-        for (uint count_gaussian = 0; 
-             count_gaussian < index_parameters_.gd_number_gaussians; 
-             count_gaussian++) {
-            index_.word_total_soft_assignment.at(count_item).at(count_gaussian)
-                = word_total_soft_assignment_to_read[count_gaussian];
-        }
-        index_.word_descriptor.at(count_item)
-            .resize(index_parameters_.gd_number_gaussians);
-        for (uint count_gaussian = 0; 
-             count_gaussian < index_parameters_.gd_number_gaussians; 
-             count_gaussian++) {
-            index_.word_descriptor.at(count_item).at(count_gaussian)
-                = word_descriptor_to_read[count_gaussian];
-        }
-    }
-
-    // Clean up
-    if (word_l1_norms_to_read != NULL) {
-        delete [] word_l1_norms_to_read;
-        word_l1_norms_to_read = NULL;
-    }
-    if (word_total_soft_assignment_to_read != NULL) {
-        delete [] word_total_soft_assignment_to_read;
-        word_total_soft_assignment_to_read = NULL;
-    }
-    if (word_descriptor_to_read != NULL) {
-        delete [] word_descriptor_to_read;
-        word_descriptor_to_read = NULL;
-    }
-
-    // Close file
-    fclose(index_file);
-
-    // Update other index_ variables, since now index has changed
-    update_index();
-}
-
-void GDIndex::read(const string index_path) {
-    int n_read; // aux. variable for reading
-
-    // Open file for reading
-    FILE* index_file = fopen(index_path.c_str(), "rb");
-    if (index_file == NULL) {
-        fprintf(stderr, "GDIndex::read : Cannot open: %s\n", index_path.c_str());
-        exit(EXIT_FAILURE);
-    }
-
-    // Read number of global descriptors
-    int number_gd_to_read = 0;
-    n_read = fread(&number_gd_to_read, sizeof(int), 1, index_file);
-
-    // Size of current index
-    int current_db_size = index_.number_global_descriptors;
-
-    // Allocate helper variables
-    uint* word_descriptor_to_read = 
-        new uint[index_parameters_.gd_number_gaussians];
-    float* word_l1_norms_to_read = 
-        new float[index_parameters_.gd_number_gaussians];
-    float* word_total_soft_assignment_to_read = 
-        new float[index_parameters_.gd_number_gaussians];
-
-    // Depending on query_parameters_.word_selection_mode, we will load
-    // either l1 norms of total soft assignment information. So the resize
-    // of index_ vectors is done only to one or the other
-    index_.word_descriptor.resize(current_db_size + number_gd_to_read);
-    if (query_parameters_.word_selection_mode == WORD_L1_NORM) {
-        index_.word_l1_norms.resize(current_db_size + number_gd_to_read);
-    } else if (query_parameters_.word_selection_mode == WORD_SOFT_ASSGN) {
-        index_.word_total_soft_assignment.resize(current_db_size + number_gd_to_read);
-    } else {
+void GDIndex::read(const string index_path, const bool both_sel_modes) {
+    // Check that word selection mode is valid
+    if (query_parameters_.word_selection_mode != WORD_L1_NORM &&
+        query_parameters_.word_selection_mode != WORD_SOFT_ASSGN) {
         cout << "Error! Mode " << query_parameters_.word_selection_mode 
              << " is not allowed. Quitting..."
              << endl;
         exit(EXIT_FAILURE);
     }
+
+    int n_read; // aux. variable for reading
+
+    // Open file for reading
+    FILE* index_file = fopen(index_path.c_str(), "rb");
+    if (index_file == NULL) {
+        fprintf(stderr, "GDIndex::read : Cannot open: %s\n", index_path.c_str());
+        exit(EXIT_FAILURE);
+    }
+
+    // Read number of global descriptors
+    int number_gd_to_read = 0;
+    n_read = fread(&number_gd_to_read, sizeof(int), 1, index_file);
+
+    // Size of current index
+    int current_db_size = index_.number_global_descriptors;
+
+    // Allocate helper variables
+    uint* word_descriptor_to_read = 
+        new uint[index_parameters_.gd_number_gaussians];
+    float* word_l1_norms_to_read = 
+        new float[index_parameters_.gd_number_gaussians];
+    float* word_total_soft_assignment_to_read = 
+        new float[index_parameters_.gd_number_gaussians];
+
+    // Depending on both_sel_modes and query_parameters_.word_selection_mode,
+    // we will load either BOTH l1 norms and total soft assignment information,
+    // or only one of them.
+    index_.word_descriptor.resize(current_db_size + number_gd_to_read);
+    if (both_sel_modes || query_parameters_.word_selection_mode == WORD_L1_NORM) {
+        index_.word_l1_norms.resize(current_db_size + number_gd_to_read);
+    }
+    if (both_sel_modes || query_parameters_.word_selection_mode == WORD_SOFT_ASSGN) {
+        index_.word_total_soft_assignment.resize(current_db_size + number_gd_to_read);
+    }
     
     // Loop over items, read and insert them into index_
     for (int count_item = current_db_size; 
@@ -309,7 +225,8 @@ void GDIndex::read(const string index_path) {
                        index_parameters_.gd_number_gaussians, index_file);
 
         // Insert data into index_
-        if (query_parameters_.word_selection_mode == WORD_L1_NORM) {
+        if (both_sel_modes ||
+            query_parameters_.word_selection_mode == WORD_L1_NORM) {
             index_.word_l1_norms.at(count_item)
                 .resize(index_parameters_.gd_number_gaussians);
             for (uint count_gaussian = 0; 
@@ -318,7 +235,9 @@ void GDIndex::read(const string index_path) {
                 index_.word_l1_norms.at(count_item).at(count_gaussian)
                     = word_l1_norms_to_read[count_gaussian];
             }
-        } else {
+        }
+        if (both_sel_modes ||
+            query_parameters_.word_selection_mode == WORD_SOFT_ASSGN) {
             index_.word_total_soft_assignment.at(count_item)
                 .resize(index_parameters_.gd_number_gaussians);
             for (uint count_gaussian = 0; 

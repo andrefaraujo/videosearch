@@ -69,13 +69,13 @@ class GDIndex
   //    per Gaussian
   void write(const string index_path);
   // -- read function that will load index into index_ variables;
-  //    if the index already contains items, it will append items to it
-  void read_all(const string index_path);
-  // -- read function that will load index into index_ variables;
-  //    if the index already contains items, it will append items to it
-  //    Note: this will load either L1 norms OR Total Soft Assignment
-  //    information, depending on query_parameters_.word_selection_mode
-  void read(const string index_path);
+  //    if the index already contains items, it will append items to it.
+  //    If both_sel_modes is false, this will load either L1 norms OR
+  //    Total Soft Assignment information, depending on
+  //    query_parameters_.word_selection_mode
+  //    If both_sel_modes is true, this will load BOTH types of
+  //    information.
+  void read(const string index_path, const bool both_sel_modes = false);
   // -- This function writes a file useful in the case of using shots 
   //    with independent keyframes indexing
   void write_frame_list(const string file_path);
