@@ -437,8 +437,9 @@ void GDIndex::generate_index(const vector<string>& feature_files,
         }
 
         // Clean up feature set
-        if (feature_set == NULL) {
+        if (feature_set != NULL) {
             delete feature_set;
+            feature_set = NULL;
         }
     }
   
@@ -604,8 +605,9 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
                 }
     
                 // Clean up feature set
-                if (feature_set == NULL) {
+                if (feature_set != NULL) {
                     delete feature_set;
+                    feature_set = NULL;
                 }
             }
         } else if (shot_mode == SHOT_MODE_SHOT_AGG) {
@@ -644,8 +646,9 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
                 }
                 if (verbose_level >= 4) cout << "Added these features to shot's features" << endl;
                 // Clean up feature set for this frame
-                if (feature_set_this_frame == NULL) {
+                if (feature_set_this_frame != NULL) {
                     delete feature_set_this_frame;
+                    feature_set_this_frame = NULL;
                 }
             }
 
@@ -675,8 +678,9 @@ void GDIndex::generate_index_shot_based(const vector<string>& feature_files,
             }
     
             // Clean up feature set
-            if (feature_set == NULL) {
+            if (feature_set != NULL) {
                 delete feature_set;
+                feature_set = NULL;
             }
         } 
     }
