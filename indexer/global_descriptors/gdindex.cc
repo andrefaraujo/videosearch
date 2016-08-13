@@ -142,7 +142,7 @@ void GDIndex::write(const string index_path) {
         new float[index_parameters_.gd_number_gaussians];
 
     // Loop over items in index and write them out
-    for (uint count_item = 0; count_item < number_gd_to_write; count_item++) {
+    for (int count_item = 0; count_item < number_gd_to_write; count_item++) {
         // Collect data that will be written
         for (uint count_gaussian = 0; 
              count_gaussian < index_parameters_.gd_number_gaussians; 
