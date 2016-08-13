@@ -14,7 +14,7 @@ if [ $LD_MODE -eq 0 ]; then
 elif [ $LD_MODE -eq 1 ]; then
     LD_NAME=siftgeo
 else
-    echo "Unrecognized LD_NAME"
+    echo "Unrecognized LD_MODE"
     exit
 fi
 
