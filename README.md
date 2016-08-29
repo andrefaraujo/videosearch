@@ -163,7 +163,7 @@ Place the downloaded file under "indexer/local_descriptors".
 Also, make sure netpbm is installed (it's available for Ubuntu/OS X via apt-get/brew).
 
 **Step 1**: Extract HesAff+SIFT descriptors for the test example.
-Edit the "indexer/local_descriptors/run_siftHesAff_extraction_test.sh" and "indexer/local_descriptors/run_siftHesAff_extraction_test_query.sh" by setting the netpbm path to the variable NETPBM_BIN_PATH, and setting the variable MAC to 1 (0) if using OS X (Linux).
+Edit the "indexer/local_descriptors/run_siftHesAff_extraction_test.sh" and "indexer/local_descriptors/run_siftHesAff_extraction_test_query.sh" by setting the netpbm path to the variable NETPBM_BIN_PATH.
 Then, run:
 
     $  cd $mypath/videosearch/indexer/local_descriptors

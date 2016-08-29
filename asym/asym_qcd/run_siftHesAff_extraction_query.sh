@@ -1,13 +1,12 @@
 #!/bin/bash -e
 
-MAC=0 # set this to 1 if using OS X; set it to 0 otherwise
-if [ $MAC -eq 0 ]; then
-    COMPUTE_DESCRIPTORS_CMD=compute_descriptors_linux64
-elif [ $MAC -eq 1 ]; then
+# Check platform in use
+if [ "$(uname)" == "Darwin" ]; then
+    # OS X
     COMPUTE_DESCRIPTORS_CMD=compute_descriptors_mac
 else
-    echo "Invalid MAC option"
-    exit
+    # Linux
+    COMPUTE_DESCRIPTORS_CMD=compute_descriptors_linux64
 fi
 
 CMD_PATH=../../indexer/local_descriptors/
