@@ -37,8 +37,10 @@ or 'brew install' respectively)
 
 **Step 1**: Clone repository (where `mypath` is the path you'll download the repository to):
 
-    $ cd $mypath
-    $ git clone https://github.com/andrefaraujo/videosearch.git
+```bash
+cd $mypath
+git clone https://github.com/andrefaraujo/videosearch.git
+```
 
 **Step 2**: Building VLFEAT library:
 
