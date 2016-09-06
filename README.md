@@ -10,7 +10,7 @@ This project currently contains code for
 - Keyframe extraction from videos
 - Shot boundary detector for videos
 - SIFT descriptor extraction per image/frame
-- Global descriptor (Binarized Fisher vectors) extraction per image/frame, shot or scene
+- Global descriptor extraction (Fisher Vectors) per image/frame, shot or scene
 - Retrieval in image or video databases using image queries
 - Evaluating retrieval results based on Average Precision and Precision at 1
 
