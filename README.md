@@ -254,7 +254,7 @@ A. Araujo, J. Chaves, R. Angst and B. Girod. "Temporal Aggregation for Large-Sca
 
 Bibtex:
 
-```bibtex
+```TeX
 @inproceedings{AraujoICIP2015,
 author = {Araujo, A. and Chaves, J. and Angst, R. and Girod, B.},
 booktitle = {Proc. ICIP},
@@ -269,7 +269,7 @@ A. Araujo, J. Chaves, D. Chen, R. Angst and B. Girod. "Stanford I2V: A News Vide
 
 Bibtex:
 
-```bibtex
+```TeX
 @inproceedings{AraujoMMSYS2015,
 author = {Araujo, A. and Chaves, J. and Chen, D. and Angst, R. and Girod, B.},
 booktitle = {Proc. ACM Multimedia Systems},
