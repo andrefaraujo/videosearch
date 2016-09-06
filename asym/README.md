@@ -82,43 +82,55 @@ If you have not done it, please follow the instructions found [here](https://git
 
 ## Asym-QCD
 
-Here, we illustrate an example using 5 clutter images per database image (ie, C=5).
+Here, we illustrate an example using 5 clutter images per database image (ie, `C=5`).
 This choice is reflected in the parameters of the files used below.
-One can repeat this procedure to generate results with different choices of C.
+One can repeat this procedure to generate results with different choices of `C`.
 
-In the following, "mypath" refers to the path you downloaded the repository to.
+In the following, `mypath` refers to the path you downloaded the repository to.
 
 **Extract query features:**
 
-    $ cd $mypath/videosearch/asym/asym_qcd
-    $ ./run_siftHesAff_extraction_query.sh
+```bash
+cd $mypath/videosearch/asym/asym_qcd
+./run_siftHesAff_extraction_query.sh
+```
 
 **Extract database features:** 
 
 (this can take some time)
 
-(note: This extracts features for images from the set of images with C=5, with parallelization.
-For other values of C, you can edit the following scripts.)
+(note: This extracts features for images from the set of images with `C=5`, with parallelization.
+For other values of `C`, you can edit the following scripts.)
 
-    $ ./run_siftHesAff_extraction_database.sh
+```bash
+./run_siftHesAff_extraction_database.sh
+```
 
 **Extract global descriptors of database:**
 
-    $ ./run_siftgeo_gd_index_unbinarized.sh
+```bash
+./run_siftgeo_gd_index_unbinarized.sh
+```
 
 **Extract global descriptors of query:**
 
-    $ ./run_siftgeo_query_index_unbinarized.sh
+```bash
+./run_siftgeo_query_index_unbinarized.sh
+```
 
 **Perform retrieval:**
 
-    $ ./run_siftgeo_retriever_unbinarized_asym.sh
+```bash
+./run_siftgeo_retriever_unbinarized_asym.sh
+```
 
 **Scoring results:**
 
-    $ ./run_siftgeo_evaluate_results.sh
+```bash
+./run_siftgeo_evaluate_results.sh
+```
 
-This last step gives the results: "Total Results: mAP = 0.666739, mP@1 = 0.615000".
+This last step gives the results: `Total Results: mAP = 0.666739, mP@1 = 0.615000`.
 This illustrates the usage of this dataset.
 
 ## TODO
