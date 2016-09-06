@@ -183,38 +183,46 @@ Place the downloaded file under `indexer/local_descriptors`.
 Also, make sure netpbm is installed (see instructions [here](http://netpbm.sourceforge.net/getting_netpbm.php)).
 
 **Step 1**: Extract HesAff+SIFT descriptors for the test example.
-Edit the "indexer/local_descriptors/run_siftHesAff_extraction_test.sh" and "indexer/local_descriptors/run_siftHesAff_extraction_test_query.sh" by setting the netpbm path to the variable NETPBM_BIN_PATH.
+Edit the files `indexer/local_descriptors/run_siftHesAff_extraction_test.sh` and `indexer/local_descriptors/run_siftHesAff_extraction_test_query.sh` by setting the netpbm path to the variable `NETPBM_BIN_PATH`.
 Then, run:
 
-    $  cd $mypath/videosearch/indexer/local_descriptors
-    $ ./run_siftHesAff_extraction_test.sh
-    $ ./run_siftHesAff_extraction_test_query.sh
+```bash
+cd $mypath/videosearch/indexer/local_descriptors
+./run_siftHesAff_extraction_test.sh
+./run_siftHesAff_extraction_test_query.sh
+```
 
 **Step 2**: Build global descriptors for database frames and query images.
-Edit the files "indexer/global_descriptors/run_frame_based_index_test.sh", "indexer/global_descriptors/run_join_frame_based_index_test.sh" and "indexer/global_descriptors/run_query_index_test.sh" by setting the variable LD_MODE to 1.
+Edit the files `indexer/global_descriptors/run_frame_based_index_test.sh`, `indexer/global_descriptors/run_join_frame_based_index_test.sh` and `indexer/global_descriptors/run_query_index_test.sh` by setting the variable `LD_MODE` to 1.
 Then, run:
 
-    $ cd $mypath/videosearch/indexer/global_descriptors
-    $ ./run_frame_based_index_test.sh
-    $ ./run_join_frame_based_index_test.sh
-    $ ./run_query_index_test.sh
+```bash
+cd $mypath/videosearch/indexer/global_descriptors
+./run_frame_based_index_test.sh
+./run_join_frame_based_index_test.sh
+./run_query_index_test.sh
+```
 
 **Step 3**: Run retriever.
-Edit the file "retriever/run_frame_test_with_query_index.sh" by setting the variable FEAT_MODE to 1.
+Edit the file `retriever/run_frame_test_with_query_index.sh` by setting the variable `FEAT_MODE` to 1.
 Then, run:
 
-    $ cd $mypath/videosearch/retriever/
-    $ ./run_frame_test_with_query_index.sh
+```bash
+cd $mypath/videosearch/retriever/
+./run_frame_test_with_query_index.sh
+```
 
 **Step 4**: Evaluate retrieval results.
-Edit the files "scoring/run_convert_frame_based_results_test_query_index.sh" and "scoring/run_evaluate_frame_based_test_query_index.sh" by setting the variable FEAT_MODE to 1.
+Edit the files `scoring/run_convert_frame_based_results_test_query_index.sh` and `scoring/run_evaluate_frame_based_test_query_index.sh` by setting the variable `FEAT_MODE` to 1.
 Then, run:
 
-    $ cd $mypath/videosearch/scoring/
-    $ ./run_convert_frame_based_results_test_query_index.sh
-    $ ./run_evaluate_frame_based_test_query_index.sh
+```bash
+cd $mypath/videosearch/scoring/
+./run_convert_frame_based_results_test_query_index.sh
+./run_evaluate_frame_based_test_query_index.sh
+```
 
-You should obtain "Total Results: mAP = 1.000000, mP@1 = 1.000000".
+You should obtain: `Total Results: mAP = 1.000000, mP@1 = 1.000000`.
 
 ## Performing retrieval on the Stanford I2V dataset
 
