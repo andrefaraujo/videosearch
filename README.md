@@ -44,110 +44,128 @@ git clone https://github.com/andrefaraujo/videosearch.git
 
 **Step 2**: Building VLFEAT library:
 
-    $ cd $mypath/videosearch/common/vlfeat-0.9.18/
-    $ make
+```bash
+cd $mypath/videosearch/common/vlfeat-0.9.18/
+make
+```
 
 **Step 3**: Building YAEL library:
 
-    $ cd $mypath/videosearch/common/yael_v260_modif/
-    $ ./configure.sh
-    $ cd yael
-    $ make
+```bash
+cd $mypath/videosearch/common/yael_v260_modif/
+./configure.sh
+cd yael
+make
+```
 
 **Step 4**: Extract keyframes from test database videos:
 
-    $ cd $mypath/videosearch/indexer/keyframes
-    $ ./run_keyframe_extraction_test.sh
+```bash
+cd $mypath/videosearch/indexer/keyframes
+./run_keyframe_extraction_test.sh
+```
 
 **Step 5**: Build shot boundary detector and extract shot boundaries for test database videos:
 
-    $ cd $mypath/videosearch/indexer/shot_detector
-    $ make
-    $ ./run_shot_detector_test.sh
+```bash
+cd $mypath/videosearch/indexer/shot_detector
+make
+./run_shot_detector_test.sh
+```
 
 **Step 6**: Build SIFT extractor and extract SIFT for each keyframe in database:
 
-    $ cd $mypath/videosearch/indexer/local_descriptors/
-    $ make
-    $ ./run_sift_extraction_test.sh
+```bash
+cd $mypath/videosearch/indexer/local_descriptors/
+make
+./run_sift_extraction_test.sh
+```
 
 **Step 7**: Build global descriptor extractors and extract global descriptors per frame, shot and scene:
 
-    $ cd $mypath/videosearch/indexer/global_descriptors/
-    $ make
+```bash
+cd $mypath/videosearch/indexer/global_descriptors/
+make
     
-    $ # Extract frame-based global descriptors (GD)
-    $ ./run_frame_based_index_test.sh # extract GDs for each clip
-    $ ./run_join_frame_based_index_test.sh # join all GDs in one index
+# Extract frame-based global descriptors (GD)
+./run_frame_based_index_test.sh # extract GDs for each clip
+./run_join_frame_based_index_test.sh # join all GDs in one index
     
-    $ # Extract shot-based global descriptors (GD) with mode LOC
-    $ ./run_shot_based_index_mode_1_test.sh # extract GDs for each clip
-    $ ./run_join_shot_based_index_mode_1_test.sh # join all GDs in one index
-    $ ./run_process_shot_files_mode_1_test.sh # process auxiliary shot files for this mode
+# Extract shot-based global descriptors (GD) with mode LOC
+./run_shot_based_index_mode_1_test.sh # extract GDs for each clip
+./run_join_shot_based_index_mode_1_test.sh # join all GDs in one index
+./run_process_shot_files_mode_1_test.sh # process auxiliary shot files for this mode
 
-    $ # Extract shot-based global descriptors (GD) with mode INDEP
-    $ ./run_shot_based_index_mode_0_test.sh # extract GDs for each clip
-    $ ./run_join_shot_based_index_mode_0_test.sh # join all GDs in one index
-    $ ./run_process_shot_files_mode_0_test.sh # process auxiliary shot files for this mode
+# Extract shot-based global descriptors (GD) with mode INDEP
+./run_shot_based_index_mode_0_test.sh # extract GDs for each clip
+./run_join_shot_based_index_mode_0_test.sh # join all GDs in one index
+./run_process_shot_files_mode_0_test.sh # process auxiliary shot files for this mode
     
-    $ # Extract scene-based global descriptors (GD)
-    $ ./run_scene_based_index_test.sh # extract GD for each clip
-    $ ./run_join_scene_based_index_test.sh # join all GDs in one index
-    $ ./run_process_scene_files_test.sh # process auxiliary scene files
-    $ ./run_process_scene_rerank_files_test.sh # process auxiliary file for scene reranking
+# Extract scene-based global descriptors (GD)
+./run_scene_based_index_test.sh # extract GD for each clip
+./run_join_scene_based_index_test.sh # join all GDs in one index
+./run_process_scene_files_test.sh # process auxiliary scene files
+./run_process_scene_rerank_files_test.sh # process auxiliary file for scene reranking
+```
 
 **Step 8**: Extract local descriptors (and optionally global descriptors) for query images (you need to do this before running retriever, which is the next step):
 
-    $ cd $mypath/videosearch/indexer/local_descriptors/
-    $ ./run_sift_extraction_test_query.sh
-    $ # Optional: extract global descriptors
-    $ cd $mypath/videosearch/indexer/global_descriptors/
-    $ ./run_query_index_test.sh
+```bash
+cd $mypath/videosearch/indexer/local_descriptors/
+./run_sift_extraction_test_query.sh
+# Optional: extract global descriptors
+cd $mypath/videosearch/indexer/global_descriptors/
+./run_query_index_test.sh
+```
 
 **Step 9**: Build retriever and run it for frame-, shot- and scene-based indexes:
 
-    $ cd $mypath/videosearch/retriever/
-    $ make
+```bash
+cd $mypath/videosearch/retriever/
+make
 
-    $ # Retrieve using frame-based global descriptors
-    $ ./run_frame_test.sh
+# Retrieve using frame-based global descriptors
+./run_frame_test.sh
 
-    $ # Optional: Retrieve using frame-based global descriptors, using pre-computed query global descriptors
-    $ ./run_frame_test_with_query_index.sh
+# Optional: Retrieve using frame-based global descriptors, using pre-computed query global descriptors
+./run_frame_test_with_query_index.sh
 
-    $ # Retrieve using shot-based global descriptors, mode LOC
-    $ ./run_shot_mode_1_test.sh
+# Retrieve using shot-based global descriptors, mode LOC
+./run_shot_mode_1_test.sh
 
-    $ # Retrieve using shot-based global descriptors, mode INDEP
-    $ ./run_shot_mode_0_test.sh
+# Retrieve using shot-based global descriptors, mode INDEP
+./run_shot_mode_0_test.sh
 
-    $ # Retrieve using scene-based global descriptors in first stage,
-    $ # then shot-based global descriptors in second stage
-    $ ./run_scene_test.sh
+# Retrieve using scene-based global descriptors in first stage,
+# then shot-based global descriptors in second stage
+./run_scene_test.sh
+```
 
 **Step 10**: Evaluate retrieval results (calculate AP and p@1):
 
-    $ cd $mypath/videosearch/scoring/
+```bash
+cd $mypath/videosearch/scoring/
 
-    $ # Evaluate frame-based results
-    $ ./run_convert_frame_based_results_test.sh # converting results to scoreable format
-    $ ./run_evaluate_frame_based_test.sh # calculating AP and p@1
+# Evaluate frame-based results
+./run_convert_frame_based_results_test.sh # converting results to scoreable format
+./run_evaluate_frame_based_test.sh # calculating AP and p@1
 
-    $ # Optional: Evaluate frame-based results which used pre-computed query global descriptors
-    $ ./run_convert_frame_based_results_test_query_index.sh # converting results to scoreable format
-    $ ./run_evaluate_frame_based_test_query_index.sh # calculating AP and p@1
+# Optional: Evaluate frame-based results which used pre-computed query global descriptors
+./run_convert_frame_based_results_test_query_index.sh # converting results to scoreable format
+./run_evaluate_frame_based_test_query_index.sh # calculating AP and p@1
 
-    $ # Evaluate shot-based results, mode LOC
-    $ ./run_convert_shot_based_mode_1_results_test.sh # converting results to scoreable format
-    $ ./run_evaluate_shot_based_mode_1_test.sh # calculating AP and p@1
+# Evaluate shot-based results, mode LOC
+./run_convert_shot_based_mode_1_results_test.sh # converting results to scoreable format
+./run_evaluate_shot_based_mode_1_test.sh # calculating AP and p@1
 
-    $ # Evaluate shot-based results, mode INDEP
-    $ ./run_convert_shot_based_mode_0_results_test.sh # converting results to scoreable format
-    $ ./run_evaluate_shot_based_mode_0_test.sh # calculating AP and p@1
+# Evaluate shot-based results, mode INDEP
+./run_convert_shot_based_mode_0_results_test.sh # converting results to scoreable format
+./run_evaluate_shot_based_mode_0_test.sh # calculating AP and p@1
 
-    $ # Evaluate scene-based results
-    $ ./run_convert_scene_based_results_test.sh # converting results to scoreable format
-    $ ./run_evaluate_scene_based_test.sh # calculating AP and p@1
+# Evaluate scene-based results
+./run_convert_scene_based_results_test.sh # converting results to scoreable format
+./run_evaluate_scene_based_test.sh # calculating AP and p@1
+```
 
 After running the "run_evaluate_*" scripts, you should see the scores for each query and at the end the mean scores (mAP, mP@1). 
 For this small example dataset, we get mAP = 1 and mP@1 = 1 for all of the cases illustrated above. 
