@@ -250,7 +250,7 @@ Most often, when using this dataset, one is interested in Scene Retrieval result
 ## Citation
 If you use this code, please cite:
 
-`A. Araujo, J. Chaves, R. Angst and B. Girod. "Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval", in Proc. ICIP, 2015 ([Paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_ICIP15_v12.pdf)) ([Poster](http://web.stanford.edu/~afaraujo/2015_09_28_ICIP_poster_v3.pdf))`
+A. Araujo, J. Chaves, R. Angst and B. Girod. "Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval", in Proc. ICIP, 2015 ([Paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_ICIP15_v12.pdf)) ([Poster](http://web.stanford.edu/~afaraujo/2015_09_28_ICIP_poster_v3.pdf))
 
 Bibtex:
 
