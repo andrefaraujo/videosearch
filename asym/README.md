@@ -13,43 +13,51 @@ We're using the Hessian-Affine detector for these experiments, so please make su
 
 ## Download of relevant data
 
-In the following, "mypath" refers to the path you downloaded the repository to.
+In the following, `mypath` refers to the path you downloaded the repository to.
 
 **Download configuration files:**
 
-    $ cd $mypath/videosearch/asym/asym_qcd
-    $ wget https://stacks.stanford.edu/file/druid:hg081bj1051/asym_qcd.zip
-    $ unzip -j asym_qcd.zip
-    $ cd ../asym_dcq
-    $ wget https://stacks.stanford.edu/file/druid:hg081bj1051/asym_dcq.zip
-    $ unzip -j asym_dcq.zip
+```bash
+cd $mypath/videosearch/asym/asym_qcd
+wget https://stacks.stanford.edu/file/druid:hg081bj1051/asym_qcd.zip
+unzip -j asym_qcd.zip
+cd ../asym_dcq
+wget https://stacks.stanford.edu/file/druid:hg081bj1051/asym_dcq.zip
+unzip -j asym_dcq.zip
+```
 
 **Create data folder:**
 
-    $ cd $mypath/videosearch/asym/
-    $ mkdir data
+```bash
+cd $mypath/videosearch/asym/
+mkdir data
+```
 
 **Download SMVS dataset:**
 
-    $ cd $mypath/videosearch/asym/data
-    $ mkdir smvs
-    $ cd smvs
-    $ wget https://stacks.stanford.edu/file/druid:rb470rw0983/cd_covers.zip # Note: size of this file is 442MB
-    $ unzip cd_covers.zip
-    $ wget https://stacks.stanford.edu/file/druid:rb470rw0983/dvd_covers.zip # Note: size of this file is 439MB
-    $ unzip dvd_covers.zip
+```bash
+cd $mypath/videosearch/asym/data
+mkdir smvs
+cd smvs
+wget https://stacks.stanford.edu/file/druid:rb470rw0983/cd_covers.zip # Note: size of this file is 442MB
+unzip cd_covers.zip
+wget https://stacks.stanford.edu/file/druid:rb470rw0983/dvd_covers.zip # Note: size of this file is 439MB
+unzip dvd_covers.zip
+```
 
 **Download Holidays dataset:** 
 
 (note: this can be slow)
 
-    $ cd $mypath/videosearch/asym/data
-    $ mkdir holidays 
-    $ cd holidays
-    $ wget ftp://ftp.inrialpes.fr/pub/lear/douze/data/jpg1.tar.gz # Note: size of this file is 1.1GB
-    $ tar -zxvf jpg1.tar.gz
-    $ wget ftp://ftp.inrialpes.fr/pub/lear/douze/data/jpg2.tar.gz # Note: size of this file is 1.6GB
-    $ tar -zxvf jpg2.tar.gz
+```bash
+cd $mypath/videosearch/asym/data
+mkdir holidays 
+cd holidays
+wget ftp://ftp.inrialpes.fr/pub/lear/douze/data/jpg1.tar.gz # Note: size of this file is 1.1GB
+tar -zxvf jpg1.tar.gz
+wget ftp://ftp.inrialpes.fr/pub/lear/douze/data/jpg2.tar.gz # Note: size of this file is 1.6GB
+tar -zxvf jpg2.tar.gz
+```
 
 **Download MIR-FLICKR-1M:** 
 
@@ -57,13 +65,15 @@ In the following, "mypath" refers to the path you downloaded the repository to.
 
 (only the required parts for these experiments are downloaded)
 
-    $ cd $mypath/videosearch/asym/data
-    $ mkdir mirflickr1m
-    $ cd mirflickr1m
-    $ for i in 0 1 2 3 4 5; do
-    $   wget http://press.liacs.nl/mirflickr/mirflickr1m/images${i}.zip # Note: size of these files is 12GB each
-    $   unzip images${i}.zip
-    $ done
+```bash
+cd $mypath/videosearch/asym/data
+mkdir mirflickr1m
+cd mirflickr1m
+for i in 0 1 2 3 4 5; do
+   wget http://press.liacs.nl/mirflickr/mirflickr1m/images${i}.zip # Note: size of these files is 12GB each
+   unzip images${i}.zip
+done
+```
 
 **Hessian-Affine descriptor extraction executable**
 
