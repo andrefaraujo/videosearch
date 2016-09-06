@@ -237,7 +237,7 @@ python extract_database_keyframes.py # Look at script for more details and for c
 
 After extracting frames from the dataset, you can run through steps 5 to 10 above to index, retrieve and get results on the Stanford I2V dataset.
 
-To score results obtained with the Stanford I2V dataset, you should use a file with a specific format (as explained in the `scoring/\*format\*.txt` files). We provide examples of such files (`scoring/example\*`) and even helper conversion scripts if your system outputs results based on keyframes (`scoring/convert\*`). To score Scene Retrieval and Temporal Refinement results (refer to our [MMSys'15 paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v14.pdf) for explanation of this terminology), respectively, do:
+To score results obtained with the Stanford I2V dataset, you should use a file with a specific format (as explained in the `scoring/*format*.txt` files). We provide examples of such files (`scoring/example*`) and even helper conversion scripts if your system outputs results based on keyframes (`scoring/convert*`). To score Scene Retrieval and Temporal Refinement results (refer to our [MMSys'15 paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v14.pdf) for explanation of this terminology), respectively, do:
 
 ```bash
 cd $mypath/videosearch/scoring
