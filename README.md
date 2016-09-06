@@ -168,7 +168,7 @@ cd $mypath/videosearch/scoring/
 ```
 
 After running the `run_evaluate_*` scripts, you should see the scores for each query and at the end the mean scores (mAP, mP@1). 
-For this small example dataset, we get `mAP = 1` and `mP@1 = 1` for all of the cases illustrated above. 
+For this small example dataset, we get mAP = 1 and mP@1 = 1 for all of the cases illustrated above. 
 You should obtain the same results if your code is working properly.
 The retrieval results of frame-based experiments using pre-computed query global descriptors (the "optional" commands above) should be exactly the same as those without pre-computation.
 
@@ -178,8 +178,8 @@ The example above uses SIFT (DoG) detector + SIFT descriptor.
 Usually, the Hessian-Affine (HA) detector provides better retrieval performance, compared to the SIFT detector.
 In this section, we walk through an example using the HA detector (for the frame-based pipeline, but shot/scene-based results can also be obtained in a straightforward manner).
 
-We'll use the HA detector from INRIA; the detector can be found [here](http://lear.inrialpes.fr/~jegou/data.php) -- download the program named "compute_descriptors_linux64" or "compute_descriptors_mac", depending on your platform.
-Place the downloaded file under "indexer/local_descriptors".
+We'll use the HA detector from INRIA; the detector can be found [here](http://lear.inrialpes.fr/~jegou/data.php) -- download the program named `compute_descriptors_linux64` or `compute_descriptors_mac`, depending on your platform.
+Place the downloaded file under `indexer/local_descriptors`.
 Also, make sure netpbm is installed (see instructions [here](http://netpbm.sourceforge.net/getting_netpbm.php)).
 
 **Step 1**: Extract HesAff+SIFT descriptors for the test example.
