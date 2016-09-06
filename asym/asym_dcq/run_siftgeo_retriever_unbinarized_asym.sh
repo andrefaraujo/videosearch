@@ -20,14 +20,14 @@ MIN_NUM_WORDS_SELECTED=0
 # Word selection mode: (0=L1 norm), (1=soft assgn)
 WORD_SELECTION_MODE=1
 # Word selection thresh
-WORD_SELECTION_THRESH=0.0008
+WORD_SELECTION_THRESH=0.0016
 # "Shot" parameters
 SHOT_MODE=1
 FPSHOT=-1
 # Asym. scoring mode
-ASYM_SCORING_MODE=3
+ASYM_SCORING_MODE=2
 # Score denominator power
-SCORE_DEN_POWER_NORM=0
+SCORE_DEN_POWER_NORM=-0.1
 
 if [ $FEAT_MODE -eq 0 ]; then
     FEAT_NAME=sift

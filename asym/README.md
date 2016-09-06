@@ -183,6 +183,6 @@ For other values of `C`, you can edit the following scripts.)
 ./run_siftgeo_evaluate_results.sh
 ```
 
-This last step gives the results: `Total Results: mAP = 0.718903, mP@1 = 0.695000`.
+This last step gives the results: `Total Results: mAP = 0.739234, mP@1 = 0.710000`.
 This illustrates the usage of this dataset.
 
