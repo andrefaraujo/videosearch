@@ -160,7 +160,7 @@ In this section, we walk through an example using the HA detector (for the frame
 
 We'll use the HA detector from INRIA; the detector can be found [here](http://lear.inrialpes.fr/~jegou/data.php) -- download the program named "compute_descriptors_linux64" or "compute_descriptors_mac", depending on your platform.
 Place the downloaded file under "indexer/local_descriptors".
-Also, make sure netpbm is installed (it's available for Ubuntu/OS X via apt-get/brew).
+Also, make sure netpbm is installed (see instructions [here](http://netpbm.sourceforge.net/getting_netpbm.php)).
 
 **Step 1**: Extract HesAff+SIFT descriptors for the test example.
 Edit the "indexer/local_descriptors/run_siftHesAff_extraction_test.sh" and "indexer/local_descriptors/run_siftHesAff_extraction_test_query.sh" by setting the netpbm path to the variable NETPBM_BIN_PATH.
