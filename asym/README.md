@@ -133,7 +133,56 @@ For other values of `C`, you can edit the following scripts.)
 This last step gives the results: `Total Results: mAP = 0.666739, mP@1 = 0.615000`.
 This illustrates the usage of this dataset.
 
-## TODO
+## Asym-DCQ
 
-Instructions for Asym-DCQ using Hessian-Affine detector.
+Here, we illustrate an example using 5 clutter images per query image (ie, `C=5`).
+This choice is reflected in the parameters of the files used below.
+One can repeat this procedure to generate results with different choices of `C`.
+
+In the following, `mypath` refers to the path you downloaded the repository to.
+
+**Extract query features:**
+
+```bash
+cd $mypath/videosearch/asym/asym_dcq
+./run_siftHesAff_extraction_query.sh
+```
+
+**Extract database features:** 
+
+(this can take some time)
+
+(note: This extracts features for images from the set of images with `C=5`, with parallelization.
+For other values of `C`, you can edit the following scripts.)
+
+```bash
+./run_siftHesAff_extraction_database.sh
+```
+
+**Extract global descriptors of database:**
+
+```bash
+./run_siftgeo_gd_index_unbinarized.sh
+```
+
+**Extract global descriptors of query:**
+
+```bash
+./run_siftgeo_query_index_unbinarized.sh
+```
+
+**Perform retrieval:**
+
+```bash
+./run_siftgeo_retriever_unbinarized_asym.sh
+```
+
+**Scoring results:**
+
+```bash
+./run_siftgeo_evaluate_results.sh
+```
+
+This last step gives the results: `Total Results: mAP = 0.701352, mP@1 = 0.670000`.
+This illustrates the usage of this dataset.
 
