@@ -35,7 +35,7 @@ or 'brew install' respectively)
 - ffmpeg (tested with version git-2012-08-24-fef9e84 on Ubuntu, and version 2.6.1 on OS X)
 - pkg-config (tested with version 0.25 on Ubuntu, and version 0.28 on OS X)
 
-**Step 1**: Clone repository (where "mypath" is the path you'll download the repository to):
+**Step 1**: Clone repository (where `mypath` is the path you'll download the repository to):
 
     $ cd $mypath
     $ git clone https://github.com/andrefaraujo/videosearch.git
