@@ -230,23 +230,27 @@ Here we provide some scripts to use our programs and obtain results on the Stanf
 
 Extracting keyframes from entire Stanford I2V dataset:
 
-    $ cd $mypath/videosearch/stanford_i2v/indexer/
-    $ python extract_database_keyframes.py # Look at script for more details and for changing parameters
+```bash
+cd $mypath/videosearch/stanford_i2v/indexer/
+python extract_database_keyframes.py # Look at script for more details and for changing parameters
+```
 
 After extracting frames from the dataset, you can run through steps 5 to 10 above to index, retrieve and get results on the Stanford I2V dataset.
 
-To score results obtained with the Stanford I2V dataset, you should use a file with a specific format (as explained in the scoring/\*format\*.txt files). We provide examples of such files (scoring/example\*) and even helper conversion scripts if your system outputs results based on keyframes (scoring/convert\*). To score Scene Retrieval and Temporal Refinement results (refer to our [MMSys'15 paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v14.pdf) for explanation of this terminology), respectively, do:
+To score results obtained with the Stanford I2V dataset, you should use a file with a specific format (as explained in the `scoring/\*format\*.txt` files). We provide examples of such files (`scoring/example\*`) and even helper conversion scripts if your system outputs results based on keyframes (`scoring/convert\*`). To score Scene Retrieval and Temporal Refinement results (refer to our [MMSys'15 paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_MMSys_v14.pdf) for explanation of this terminology), respectively, do:
 
-    $ cd $mypath/videosearch/scoring
-    $ python evaluate_scene_retrieval.py example_scene_retrieval_results_file.txt light_dataset_public.txt 100
-    $ python evaluate_temporal_refinement.py example_temporal_refinement_results_file_frames.txt light_dataset_public.txt frames
+```bash
+cd $mypath/videosearch/scoring
+python evaluate_scene_retrieval.py example_scene_retrieval_results_file.txt light_dataset_public.txt 100
+python evaluate_temporal_refinement.py example_temporal_refinement_results_file_frames.txt light_dataset_public.txt frames
+```
 
 Most often, when using this dataset, one is interested in Scene Retrieval results (i.e., retrieving the correct video clips), as in the ICIP'15 paper mentioned below.
 
 ## Citation
 If you use this code, please cite:
 
-A. Araujo, J. Chaves, R. Angst and B. Girod. "Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval", in Proc. ICIP, 2015 ([Paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_ICIP15_v12.pdf)) ([Poster](http://web.stanford.edu/~afaraujo/2015_09_28_ICIP_poster_v3.pdf))
+`A. Araujo, J. Chaves, R. Angst and B. Girod. "Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval", in Proc. ICIP, 2015 ([Paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_ICIP15_v12.pdf)) ([Poster](http://web.stanford.edu/~afaraujo/2015_09_28_ICIP_poster_v3.pdf))`
 
 Bibtex:
 
