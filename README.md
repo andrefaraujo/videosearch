@@ -167,8 +167,8 @@ cd $mypath/videosearch/scoring/
 ./run_evaluate_scene_based_test.sh # calculating AP and p@1
 ```
 
-After running the "run_evaluate_*" scripts, you should see the scores for each query and at the end the mean scores (mAP, mP@1). 
-For this small example dataset, we get mAP = 1 and mP@1 = 1 for all of the cases illustrated above. 
+After running the `run_evaluate_*` scripts, you should see the scores for each query and at the end the mean scores (mAP, mP@1). 
+For this small example dataset, we get `mAP = 1` and `mP@1 = 1` for all of the cases illustrated above. 
 You should obtain the same results if your code is working properly.
 The retrieval results of frame-based experiments using pre-computed query global descriptors (the "optional" commands above) should be exactly the same as those without pre-computation.
 
