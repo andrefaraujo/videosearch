@@ -2,6 +2,9 @@
 
 This directory contains code for setting up asymmetric image comparison 
 datasets (Asym-QCD and Asym-DCQ), and for using them in retrieval experiments.
+The numerical results presented below are slightly different from the published ones
+(less than 0.25p.p. different), due to running the system in different machines with
+slightly different software.
 
 Please follow the instructions below -- if any questions/issues arise, feel free to reach out.
 
