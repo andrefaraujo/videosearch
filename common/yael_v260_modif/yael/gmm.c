@@ -737,7 +737,48 @@ void gmm_fisher_save_soft_assgn(int n, const float *v, const gmm_t * g, int flag
   free(vp);
 }
 
+void gmm_fisher_point_indexed(int n, const float *v, const gmm_t * g,
+                              int flags, unsigned int* pi_assgns,
+                              float* pi_assgn_weights,
+                              float* pi_residuals) {
+  long d=g->d, k=g->k;
+  float *p = fvec_new(n * k);
+  long i,j,l;
 
+  gmm_compute_p(n,v,g,p,flags | GMM_FLAGS_W);
+
+#define P(j,i) p[(i)*k+(j)]
+#define V(l,i) v[(i)*d+(l)]
+#define MU(l,j) g->mu[(j)*d+(l)]
+#define SIGMA(l,j) g->sigma[(j)*d+(l)]
+
+  /*Loop over input vectors and populate information to be returned*/
+  for (i=0;i<n;i++) {
+    /*Find Gaussian with largest soft assignment*/
+    int largest_ind = 0;
+    float largest_p = 0;
+    for (j=0;j<k;j++) {
+        if (P(j,i) > largest_p) {
+            largest_ind = j;
+            largest_p = P(j,i);
+        }
+    }
+
+    /*Set pi_assgns for this item*/
+    pi_assgns[i] = largest_ind;
+
+    /*Set pi_assgn_weights for this item*/
+    pi_assgn_weights[i] = largest_p/sqrt(g->w[largest_ind]);
+
+    /*Set pi_residuals for this item*/
+    for (l=0;l<d;l++) {
+        pi_residuals[i*d + l] = (V(l,i) - MU(l,largest_ind))/SIGMA(l,largest_ind);
+    }
+
+  }
+
+  free(p);
+}
 
 void gmm_print(const gmm_t *g) {
   printf("gmm (%d gaussians in %d dim)=[\n",g->k,g->d);

@@ -103,6 +103,20 @@ class GDIndex
                                   vector<float>& gd_word_l1_norm, 
                                   vector<float>& gd_word_total_soft_assignment);
 
+  // Functions to generate point-indexed FV, index will be returned
+  // by value
+  void generate_point_index(const vector<string>& feature_files,
+                            const int verbose_level,
+                            vector < vector < uint > >& vec_feat_assgns,
+                            vector < vector < float > >& vec_feat_assgn_weights,
+                            vector < vector < vector < float > > >& vec_feat_residuals);
+  // -- generate one point-indexed descriptor from features
+  void generate_point_indexed_descriptor(const FeatureSet* feature_set,
+                                         const int verbose_level,
+                                         vector<uint>& feat_assgns,
+                                         vector<float>& feat_assgn_weights,
+                                         vector < vector < float > >& feat_residuals);
+
   // Query index from query's local descriptor path or pre-computed query global
   // descriptor (if using "query_index_ptr")
   void perform_query(const string local_descriptors_path, 

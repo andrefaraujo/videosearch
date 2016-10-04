@@ -139,7 +139,12 @@ void gmm_fisher (int n, const float *v, const gmm_t * g,
 
 size_t gmm_fisher_sizeof (const gmm_t * g, int flags);
 
-
+/* function that gets point-indexed FV
+*/
+void gmm_fisher_point_indexed(int n, const float *v, const gmm_t * g,
+                              int flags, unsigned int* pi_assgns,
+                              float* pi_assgn_weights,
+                              float* pi_residuals);
 
 /*! write the GMM structure parameter into a file */
 void gmm_write(const gmm_t *g, FILE *f); 

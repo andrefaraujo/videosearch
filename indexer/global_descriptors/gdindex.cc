@@ -803,6 +803,123 @@ void GDIndex::generate_global_descriptor(const FeatureSet* feature_set,
     sign_binarize(gd_fv, gd_word_descriptor);
 }
 
+void GDIndex::generate_point_index(const vector<string>& feature_files,
+                                   const int verbose_level,
+                                   vector < vector < uint > >& vec_feat_assgns,
+                                   vector < vector < float > >& vec_feat_assgn_weights,
+                                   vector < vector < vector < float > > >& vec_feat_residuals) {
+    uint number_files_to_process = feature_files.size();
+
+    vec_feat_assgns.resize(number_files_to_process);
+    vec_feat_assgn_weights.resize(number_files_to_process);
+    vec_feat_residuals.resize(number_files_to_process);
+
+    uint number_files_processed = 0;
+#pragma omp parallel for
+    for (uint count_file = 0; count_file < number_files_to_process; count_file++) {
+        // Load feature set
+        if (!file_exists(feature_files.at(count_file))) {
+            fprintf(stderr, "Missing feature file: %s\n",
+                    feature_files.at(count_file).c_str());
+            exit(EXIT_FAILURE);
+        }
+        FeatureSet* feature_set = NULL;
+        if (index_parameters_.ld_name == SIFT_NAME) {
+            feature_set = readSIFTFile(feature_files.at(count_file),
+                                       index_parameters_.ld_frame_length,
+                                       index_parameters_.ld_length);
+        } else if (index_parameters_.ld_name == SIFTGEO_NAME) {
+            feature_set = readSIFTGeoFile(feature_files.at(count_file),
+                                          index_parameters_.ld_frame_length,
+                                          index_parameters_.ld_length);
+        } else {
+            cout << "Local feature " << index_parameters_.ld_name
+                 << " is not supported" << endl;
+        }
+
+        generate_point_indexed_descriptor(feature_set,
+                                          verbose_level,
+                                          vec_feat_assgns.at(count_file),
+                                          vec_feat_assgn_weights.at(count_file),
+                                          vec_feat_residuals.at(count_file));
+
+        // Report status
+#pragma omp critical
+        {
+            number_files_processed++;
+        }
+        if (verbose_level >= 2) {
+            printf("[%06d, %06d] %04d features \n",
+                   count_file, number_files_processed, feature_set->m_nNumFeatures);
+        }
+
+        // Clean up feature set
+        if (feature_set != NULL) {
+            delete feature_set;
+            feature_set = NULL;
+        }
+    }
+}
+
+void GDIndex::generate_point_indexed_descriptor(const FeatureSet* feature_set,
+                                                const int verbose_level,
+                                                vector<uint>& feat_assgns,
+                                                vector<float>& feat_assgn_weights,
+                                                vector < vector < float > >& feat_residuals) {
+    unsigned long num_features = feature_set->m_nNumFeatures;
+    float* all_pca_desc = new float[num_features
+                                    * index_parameters_.ld_pca_dim];
+    // Project SIFT using PCA
+    for (uint count_feat = 0; count_feat < num_features; count_feat++) {
+        project_local_descriptor_pca(feature_set->m_vDescriptors[count_feat],
+                                     all_pca_desc + count_feat*index_parameters_.ld_pca_dim);
+    }
+
+    // Compute point-indexed Fisher vector
+    int gmm_flags = GMM_FLAGS_MU;
+    uint* p_feat_assgns = new uint[num_features];
+    float* p_feat_assgn_weights = new float[num_features];
+    float* p_feat_residuals = new float[num_features * LD_PCA_DIM];
+    if (verbose_level >= 4) cout << "generate_point_indexed_descriptor: Starting gmm_fisher_point_indexed" << endl;
+    gmm_fisher_point_indexed(num_features, all_pca_desc,
+                             index_parameters_.gd_gmm,
+                             gmm_flags, p_feat_assgns,
+                             p_feat_assgn_weights,
+                             p_feat_residuals);
+    if (verbose_level >= 4) cout << "done!" << endl;
+
+    // --> Transfer values to output vectors
+    feat_assgns.resize(num_features);
+    feat_assgn_weights.resize(num_features);
+    feat_residuals.resize(num_features);
+    for (uint i = 0; i < num_features; i++) {
+        feat_assgns.at(i) = p_feat_assgns[i];
+        feat_assgn_weights.at(i) = p_feat_assgn_weights[i];
+        feat_residuals.at(i).resize(LD_PCA_DIM);
+        for (uint j = 0; j < LD_PCA_DIM; j++) {
+            feat_residuals.at(i).at(j) = p_feat_residuals[i*LD_PCA_DIM + j];
+        }
+    }
+
+  // Clean up
+    if (all_pca_desc != NULL) {
+        delete [] all_pca_desc;
+        all_pca_desc = NULL;
+    }
+    if (p_feat_assgns != NULL) {
+        delete [] p_feat_assgns;
+        p_feat_assgns = NULL;
+    }
+    if (p_feat_assgn_weights != NULL) {
+        delete [] p_feat_assgn_weights;
+        p_feat_assgn_weights = NULL;
+    }
+    if (p_feat_residuals != NULL) {
+        delete [] p_feat_residuals;
+        p_feat_residuals = NULL;
+    }
+}
+
 void GDIndex::perform_query(const string local_descriptors_path, 
                             const GDIndex* query_index_ptr,
                             const uint query_number,
