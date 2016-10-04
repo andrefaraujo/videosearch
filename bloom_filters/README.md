@@ -28,6 +28,7 @@ In the following, `mypath` refers to the path you downloaded the repository to.
 
 ```bash
 cd $mypath/bloom_filters/point_indexed/
+make
 ./run_extract_pi_descriptors.sh
 ./run_binarize_pi_descriptors.sh
 ```
