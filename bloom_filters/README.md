@@ -2,7 +2,7 @@
 
 # Query-by-Image Video Retrieval Using Bloom Filters
 
-This directory contain code for the Bloom Filter technique developed in our
+This directory contains code for the Bloom Filter technique developed in our
 paper ["Large-Scale Query-by-Image Video Retrieval Using Bloom Filters"](https://arxiv.org/abs/1604.07939).
 
 Please follow the instructions below -- if any questions/issues arise, feel free to reach out.
@@ -17,26 +17,22 @@ We're using the Hessian-Affine detector for these experiments, so please make su
 
 We'll use the same images and videos from the example in the main portion of this repo.
 Make sure that the Hessian-Affine+SIFT descriptors have been extracted, instructions
-[here](https://github.com/andrefaraujo/videosearch#indexingretrievingscoring-using-hessian-affine-detector)
+[here](https://github.com/andrefaraujo/videosearch#indexingretrievingscoring-using-hessian-affine-detector).
 
 Here, we present the usage of BF-PI with LSH-B hashes (please refer to the [paper](https://arxiv.org/abs/1604.07939) for a description of
 the terminology).
 
 In the following, `mypath` refers to the path you downloaded the repository to.
 
-**Extract Fisher point-indexed descriptors for database frames, and their binarized versions**
+**Extract Fisher point-indexed descriptors, and their binarized versions**
 
 ```bash
 cd $mypath/bloom_filters/point_indexed/
 make
+# Database descriptors
 ./run_extract_pi_descriptors.sh
 ./run_binarize_pi_descriptors.sh
-```
-
-**Extract Fisher point-indexed descriptors for query images, and their binarized versions**
-
-```bash
-cd $mypath/bloom_filters/point_indexed/
+# Query descriptors
 ./run_extract_pi_descriptors_query.sh
 ./run_binarize_pi_descriptors_query.sh
 ```
