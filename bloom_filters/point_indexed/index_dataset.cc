@@ -163,14 +163,14 @@ int main(int argc, char** argv)
                                  vec_feat_assgns, vec_feat_assgn_weights,
                                  vec_feat_residuals);
 
-	// Save index to file
-	if (verbose_level)
+    // Save index to file
+    if (verbose_level)
         printf("Saving point index to:\n%s\n", out_file_path.c_str());
 
     write_fv_point_index(vec_feat_assgns, vec_feat_assgn_weights,
                          vec_feat_residuals, GDIndex::LD_PCA_DIM,
                          out_file_path);
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 
