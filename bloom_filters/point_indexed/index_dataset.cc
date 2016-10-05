@@ -22,8 +22,7 @@ string get_local_descriptor_filename(const string image_path,
 }
 
 // Usage of this program
-void usage(char** argv)
-{
+void usage(char** argv) {
   printf("usage: %s [options] --image_list[-i] image_list_file_path --out_index[-o] index_file_path \n", argv[0]);
   printf("Example:\n");
   printf("./index_dataset -i test_db_all_keyframes.txt -o test_db_all_keyframes.fv_point_idx_k512\n");
@@ -34,8 +33,7 @@ void usage(char** argv)
   printf("--verbose_level[-v] ARG (default: 1) \n");
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     // Mandatory arguments
     string image_list_file_path = "";
     string out_file_path = "";
