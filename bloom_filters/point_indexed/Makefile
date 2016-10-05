@@ -16,8 +16,9 @@ else # Linux options
 endif
 
 INDEX_DATASET = index_dataset
+BINARIZE_INDEX = binarize_index
 
-all: $(INDEX_DATASET)
+all: $(INDEX_DATASET) $(BINARIZE_INDEX)
 
 $(FILEIO_DIR)/file_io.o: $(FILEIO_DIR)/file_io.cc $(FILEIO_DIR)/file_io.h
 	$(CXX) $(CXXFLAGS) -c $(FILEIO_DIR)/file_io.cc \
@@ -42,5 +43,17 @@ $(INDEX_DATASET): $(INDEX_DATASET).o ${GDINDEX_DIR}/gdindex.o $(FILEIO_DIR)/file
 	-o $(INDEX_DATASET) $(INDEX_DATASET).o ${GDINDEX_DIR}/gdindex.o point_index_io.o \
 	$(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o $(LIBS_INDEXER)
 
+binarize_residuals.o: binarize_residuals.h binarize_residuals.cc
+	$(CXX) $(CXXFLAGS) -c binarize_residuals.cc -o binarize_residuals.o
+
+$(BINARIZE_INDEX).o: $(BINARIZE_INDEX).cc
+	$(CXX) $(CXXFLAGS) -c $(BINARIZE_INDEX).cc \
+	-o $(BINARIZE_INDEX).o
+
+$(BINARIZE_INDEX): $(BINARIZE_INDEX).o point_index_io.o binarize_residuals.o
+	$(CXX) $(CXXFLAGS) $(EXEFLAGS) \
+	-o $(BINARIZE_INDEX) $(BINARIZE_INDEX).o point_index_io.o \
+	binarize_residuals.o $(LIBS_INDEXER)
+
 clean:
-	rm -f $(INDEX_DATASET) $(INDEX_DATASET).o $(JOIN_INDEXES) $(JOIN_INDEXES).o ${GDINDEX_DIR}/gdindex.o $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o point_index_io.o
+	rm -f $(INDEX_DATASET) $(INDEX_DATASET).o $(JOIN_INDEXES) $(JOIN_INDEXES).o ${GDINDEX_DIR}/gdindex.o $(FILEIO_DIR)/file_io.o $(FEATURESET_DIR)/feature_set.o point_index_io.o binarize_residuals.o $(BINARIZE_INDEX) $(BINARIZE_INDEX).o

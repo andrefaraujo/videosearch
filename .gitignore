@@ -10,3 +10,4 @@ test_video_out/
 indexer/shot_detector/shot_detector
 retriever/retrieve_on_dataset
 bloom_filters/point_indexed/index_dataset
+bloom_filters/point_indexed/binarize_index
