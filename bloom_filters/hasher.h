@@ -7,33 +7,13 @@ using namespace std;
 
 typedef unsigned int uint;
 
-class HashFn {
+class GBHHasher {
  public:
-    virtual ~HashFn() {}
-    virtual size_t hash(const vector<uint>& item) = 0;
-};
-
-class VBHHasher: public HashFn {
- public:
-    VBHHasher(size_t num_bits, size_t item_length);
-    size_t hash(const vector<uint>& item);
+    GBHHasher(size_t num_bits, size_t residual_length);
+    size_t hash(const uint item);
 
  private:
     vector<size_t> indices_to_sample_;
-    uint bits_in_uint_;
-};
-
-class GBHHasher: public HashFn {
- public:
-    GBHHasher(size_t num_bits, size_t residual_length,
-              size_t first_residual_ind);
-    size_t hash(const vector<uint>& item);
-    
- private:
-    size_t hash(const vector<uint>& item, uint ind);
-
-    vector<size_t> indices_to_sample_;
-    size_t first_ind_;
     uint bits_in_uint_;
 };
 
