@@ -10,7 +10,7 @@ typedef unsigned int uint;
 class GBHHasher {
  public:
     GBHHasher(size_t num_bits, size_t residual_length);
-    size_t hash(const uint item);
+    uint hash(const uint item);
 
  private:
     vector<size_t> indices_to_sample_;

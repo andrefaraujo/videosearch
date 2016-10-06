@@ -22,8 +22,8 @@ GBHHasher::GBHHasher(size_t num_bits, size_t residual_length) {
     bits_in_uint_ = sizeof(uint) * BITS_IN_BYTE;
 }
 
-size_t GBHHasher::hash(const uint item) {
-    size_t output = 0;
+uint GBHHasher::hash(const uint item) {
+    uint output = 0;
     for (size_t i = 0; i < indices_to_sample_.size(); i++)
         output = (output << 1) | ( (item >> indices_to_sample_.at(i)) & 1 );
     return output;
