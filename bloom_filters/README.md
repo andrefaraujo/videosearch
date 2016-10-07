@@ -1,5 +1,3 @@
-# THIS IS ACTIVELY BEING EDITED, please wait until we're finished before using this
-
 # Query-by-Image Video Retrieval Using Bloom Filters
 
 This directory contains code for the Bloom Filter technique developed in our
@@ -51,6 +49,7 @@ cd $mypath/bloom_filters/scoring/
 ./run_evaluate_results.sh
 ```
 
-This last step gives the results: `Total Results: mAP = XXX, mP@1 = XXX`.
+This last step gives the results: `Total Results: mAP = 1.000000, mP@1 = 1.000000`.
 This illustrates the usage of this technique.
+Using this code and small modifications of it, you should be able to reproduce the results in the aforementioned paper.
 
