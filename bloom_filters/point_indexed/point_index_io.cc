@@ -15,8 +15,8 @@ void write_fv_point_index(const vector < vector < uint > >& vec_feat_assgns,
     int num_items = vec_feat_assgns.size();
 
     // Make sure data makes sense
-    assert(num_items == vec_feat_assgn_weights.size());
-    assert(num_items == vec_feat_residuals.size());
+    assert(static_cast<size_t>(num_items) == vec_feat_assgn_weights.size());
+    assert(static_cast<size_t>(num_items) == vec_feat_residuals.size());
 
     // Open file
     FILE* p_index_file = fopen(file_path.c_str(), "wb");
@@ -32,15 +32,15 @@ void write_fv_point_index(const vector < vector < uint > >& vec_feat_assgns,
     n_write = fwrite(&residual_length, sizeof(int), 1, p_index_file);    
 
     // Loop and write data for each item
-    for (uint i = 0; i < num_items; i++) {
+    for (int i = 0; i < num_items; i++) {
         int num_feats_this_item = vec_feat_assgns.at(i).size();
 
         // Write number of features for this item
         n_write = fwrite(&num_feats_this_item, sizeof(int), 1, p_index_file);    
 
         // Make sure data for this item makes sense
-        assert(num_feats_this_item == vec_feat_assgn_weights.at(i).size());
-        assert(num_feats_this_item == vec_feat_residuals.at(i).size());
+        assert(static_cast<size_t>(num_feats_this_item) == vec_feat_assgn_weights.at(i).size());
+        assert(static_cast<size_t>(num_feats_this_item) == vec_feat_residuals.at(i).size());
 
         // Write feat_assgns for this item
         n_write = fwrite(vec_feat_assgns.at(i).data(), sizeof(uint), 
@@ -51,8 +51,8 @@ void write_fv_point_index(const vector < vector < uint > >& vec_feat_assgns,
                          num_feats_this_item, p_index_file);
 
         // Write feat_residuals for this item
-        for (uint j = 0; j < num_feats_this_item; j++) {
-            assert(residual_length == vec_feat_residuals.at(i).at(j).size());
+        for (int j = 0; j < num_feats_this_item; j++) {
+            assert(static_cast<size_t>(residual_length) == vec_feat_residuals.at(i).at(j).size());
             n_write = fwrite(vec_feat_residuals.at(i).at(j).data(), sizeof(float),
                              residual_length, p_index_file);            
         }
@@ -96,7 +96,7 @@ void read_fv_point_index(const string file_path,
     vector<float> vec_feat_residuals_aux(residual_length);
 
     // Loop and read data for each item
-    for (uint i = 0; i < num_items; i++) {
+    for (int i = 0; i < num_items; i++) {
         // Read number of features in this item
         int num_feats_this_item = 0;    
         n_read = fread(&num_feats_this_item, sizeof(int), 1, p_index_file);
@@ -133,7 +133,7 @@ void read_fv_point_index(const string file_path,
 
         // Read feat_residuals for this item
         vec_feat_residuals.at(i).resize(num_feats_to_use);
-        for (uint j = 0; j < num_feats_this_item; j++) {
+        for (int j = 0; j < num_feats_this_item; j++) {
             n_read = fread(vec_feat_residuals_aux.data(), sizeof(float),
                            residual_length, p_index_file);
             if (j < num_feats_to_use) {
@@ -154,8 +154,8 @@ void write_bfv_point_index(const vector < vector < uint > >& vec_feat_assgns,
     int num_items = vec_feat_assgns.size();
 
     // Make sure data makes sense
-    assert(num_items == vec_feat_assgn_weights.size());
-    assert(num_items == vec_feat_residuals_binarized.size());
+    assert(static_cast<size_t>(num_items) == vec_feat_assgn_weights.size());
+    assert(static_cast<size_t>(num_items) == vec_feat_residuals_binarized.size());
 
     // Open file
     FILE* p_index_file = fopen(file_path.c_str(), "wb");
@@ -168,12 +168,12 @@ void write_bfv_point_index(const vector < vector < uint > >& vec_feat_assgns,
     int n_write = fwrite(&num_items, sizeof(int), 1, p_index_file);    
 
     // Loop and write data for each item
-    for (uint i = 0; i < num_items; i++) {
+    for (int i = 0; i < num_items; i++) {
         int num_feats_this_item = vec_feat_assgns.at(i).size();
 
         // Make sure data for this item makes sense
-        assert(num_feats_this_item == vec_feat_assgn_weights.at(i).size());
-        assert(num_feats_this_item == vec_feat_residuals_binarized.at(i).size());
+        assert(static_cast<size_t>(num_feats_this_item) == vec_feat_assgn_weights.at(i).size());
+        assert(static_cast<size_t>(num_feats_this_item) == vec_feat_residuals_binarized.at(i).size());
 
         // Write number of features for this item
         n_write = fwrite(&num_feats_this_item, sizeof(int), 1, p_index_file);    
@@ -227,7 +227,7 @@ void read_bfv_point_index(const string file_path,
     vector<uint> vec_feat_residuals_binarized_aux(LARGE_NUM_FEATS);
 
     // Loop and read data for each item
-    for (uint i = 0; i < num_items; i++) {
+    for (int i = 0; i < num_items; i++) {
         // Read number of features in this item
         int num_feats_this_item = 0;    
         n_read = fread(&num_feats_this_item, sizeof(int), 1, p_index_file);

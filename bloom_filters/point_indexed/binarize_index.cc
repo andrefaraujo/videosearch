@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
         usage();
         exit(EXIT_FAILURE);
     } else {
-        for (uint count_arg = 1; count_arg < argc; count_arg++) {
+        for (int count_arg = 1; count_arg < argc; count_arg++) {
             if ((!strcmp(argv[count_arg], "--input")) || (!strcmp(argv[count_arg], "-i"))) {
                 input_path = string(argv[count_arg + 1]);
                 count_arg++;
