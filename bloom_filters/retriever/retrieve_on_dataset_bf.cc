@@ -232,8 +232,8 @@ int main(int argc, char* * argv) {
 
             // -- results file
             results_file << clip_paths.at(results.at(r).second) << endl;
-            log_file << "main: Finished query " << count_query << "! (0-indexed)" << endl;
         }
+        log_file << "main: Finished query " << count_query << "! (0-indexed)" << endl;
     }
 
     // Close files
