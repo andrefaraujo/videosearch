@@ -67,7 +67,7 @@ void BFIndex::initialize(size_t n_bits, size_t n_hashers,
 
 void BFIndex::insert_from_indexes(const vector<string>& index_paths) {
     if (verbose_) cout << "Inserting point-indexed FVs into BFs" << endl;
-    size_t num_bloom_filters_ = index_paths.size();
+    num_bloom_filters_ = index_paths.size();
 
     // Vectors that collect Fisher-embedded features for each clip 
     vector< vector< vector<uint> > > emb_features(num_bloom_filters_);
@@ -151,6 +151,7 @@ void BFIndex::get_number_indices(size_t& number_indices) {
 
 void BFIndex::idf_processing() {
     // First, obtain idfs
+    if (verbose_) cout << "Computing idfs..." << endl;
     idfs_.clear();
     idfs_.resize(num_hashers_);
     size_t num_buckets = pow(2, num_bits_);
@@ -168,10 +169,13 @@ void BFIndex::idf_processing() {
             }
         }
     }
+    if (verbose_) cout << "done!" << endl;
 
     // Then, obtain idf_norms
+    if (verbose_) cout << "Computing idf norms..." << endl;
     idf_norms_.clear();
     idf_norms_.resize(num_bloom_filters_);
     inverted_index_bloom_ptr_->get_idf_norm(idfs_, alpha_,
                                             num_bloom_filters_, idf_norms_);
+    if (verbose_) cout << "done!" << endl;
 }
