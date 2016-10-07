@@ -5,7 +5,7 @@
 CLIP_LIST_PATH=clip_list_path.txt
 ls ../../indexer/test_db/*.mp4 > $CLIP_LIST_PATH
 # Path to file with list of queries
-QUERY_LIST_PATH=../../indexer/global_descriptors/test_query_list.txt
+QUERY_LIST_PATH=../point_indexed/test_query_list.txt
 # Number of bits per hash
 NUM_BITS=16
 # Number of hashers
