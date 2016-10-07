@@ -39,6 +39,7 @@ make
 
 ```bash
 cd $mypath/bloom_filters/retriever/
+make
 ./run_retrieve_bf.sh
 ```
 
