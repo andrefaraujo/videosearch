@@ -19,9 +19,8 @@ class InvertedIndexBloom {
     void insert(const uint hash_ind, const uint hash_number,
                 const uint item_number);
 
-    // Function to get number of items and number of indices
-    // stored in the database
-    void get_properties(size_t& number_items, size_t& number_indices);
+    // Function to get number of indices stored in the database
+    void get_number_indices(size_t& number_indices);
 
     // Function to get number of times each bucket is set over the index,
     // for a given hash function
@@ -47,8 +46,6 @@ class InvertedIndexBloom {
     // Parameters
     size_t num_bits_;
     size_t num_hashers_;
-    size_t num_items_; // total number of items, of all indices,
-                       // that were added to inv. index
 };
 
 #endif
