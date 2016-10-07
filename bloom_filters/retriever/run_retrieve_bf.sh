@@ -7,7 +7,7 @@ ls ../../indexer/test_db/*.mp4 > $CLIP_LIST_PATH
 # Path to file with list of queries
 QUERY_LIST_PATH=../point_indexed/test_query_list.txt
 # Number of bits per hash
-NUM_BITS=16
+NUM_BITS=20
 # Number of hashers
 NUM_HASHERS=512
 
@@ -19,7 +19,7 @@ FEAT_MODE=1
 # Number of results to output
 RESULTS_PER_QUERY=100
 # TF-IDF power normalization
-ALPHA=0.75
+ALPHA=0.5
 # Verbose level
 VERBOSE=4
 
