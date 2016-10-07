@@ -11,6 +11,7 @@ This project currently contains code for
 - Shot boundary detector for videos
 - SIFT descriptor extraction per image/frame
 - Global descriptor extraction (Fisher Vectors) per image/frame, shot or scene
+- Bloom filter indexing per scene (video clip) -- see [here](https://github.com/andrefaraujo/videosearch/tree/master/bloom_filters)
 - Retrieval in image or video databases using image queries
 - Evaluating retrieval results based on Average Precision and Precision at 1
 
