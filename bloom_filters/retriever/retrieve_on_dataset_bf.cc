@@ -5,6 +5,7 @@ dataset, with a specified set of parameters
 
 #include <cassert>
 #include <cstdlib>
+#include <cstring>
 #include <iomanip>
 #include <fstream>
 #include <iostream>
