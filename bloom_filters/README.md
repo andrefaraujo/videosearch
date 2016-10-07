@@ -47,7 +47,7 @@ make
 
 ```bash
 cd $mypath/bloom_filters/scoring/
-./run_evaluate_results.sh
+./run_evaluate_bf.sh
 ```
 
 This last step gives the results: `Total Results: mAP = 1.000000, mP@1 = 1.000000`.
