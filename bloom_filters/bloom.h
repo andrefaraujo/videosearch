@@ -37,6 +37,7 @@ class InvertedIndexBloom {
                        const vector<uint>& query_hash_numbers,
                        const vector< vector<float> >& idfs,
                        const vector<float>& idf_norms,
+                       const size_t num_bloom_filters,
                        vector< pair<float,uint> >& results);
     
  private:

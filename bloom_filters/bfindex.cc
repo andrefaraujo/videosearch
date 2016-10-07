@@ -134,6 +134,7 @@ void BFIndex::perform_query(const vector<uint>& query_emb_features,
     inverted_index_bloom_ptr_->perform_query(query_hash_indices,
                                              query_hash_numbers,
                                              idfs_, idf_norms_,
+                                             num_bloom_filters_,
                                              results);
     // Sorting results
     sort(results.begin(), results.end(), cmp_float_uint_ascend); 
