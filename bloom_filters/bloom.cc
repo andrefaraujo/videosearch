@@ -1,3 +1,4 @@
+#include <cassert>
 #include <cmath>
 #include <vector>
 
@@ -108,5 +109,34 @@ void InvertedIndexBloom::perform_query(const vector<uint>& query_hash_indices,
                                        const vector<uint>& query_hash_numbers,
                                        const vector< vector<float> >& idfs,
                                        const vector<float>& idf_norms,
+                                       const size_t num_bloom_filters,
                                        vector< pair<float,uint> >& results) {
+    // results: first item is score (smaller is better)
+    //          second item is group number
+
+    // Initialize results
+    results.clear();
+    results.resize(num_bloom_filters);
+    for (size_t n = 0; n < num_bloom_filters; n++) {
+        results.at(n).first = 0;
+        results.at(n).second = n;
+    }
+
+    // Loop over obtained hashes, increment score for each encountered BF
+    uint num_hash_inds = query_hash_indices.size();
+    assert(query_hash_numbers.size() == num_hash_inds);
+    size_t i = 0; // Hash number (ie, which hash is being used)
+    for (size_t count_hash_ind = 0; count_hash_ind < num_hash_inds;
+         count_hash_ind++) {
+        i = query_hash_numbers.at(count_hash_ind);
+        uint hash_ind = query_hash_indices.at(count_hash_ind);
+        size_t list_size = partitioned_index_.at(i).at(hash_ind).size();
+        float partial_idf_score = pow(idfs.at(i).at(hash_ind), 2);
+        for (size_t j = 0; j < list_size; j++) {
+            // Negative to follow score ordering convention
+            results.at(partitioned_index_.at(i).at(hash_ind).at(j)).first
+                -= partial_idf_score
+                /idf_norms.at(partitioned_index_.at(i).at(hash_ind).at(j));
+        }
+    }
 }
