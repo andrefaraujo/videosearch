@@ -221,7 +221,9 @@ int main(int argc, char* * argv) {
 
         // Write results to output files
         results_file << "Query " << count_query << endl;
-        for (size_t r = 0; r < results_per_query; r++) {
+        uint number_to_write = 
+            min(results_per_query, static_cast<uint>(results.size()));
+        for (size_t r = 0; r < number_to_write; r++) {
             // -- log file
             log_file << "#" << r+1 << ": "
                      << clip_paths.at(results.at(r).second)
