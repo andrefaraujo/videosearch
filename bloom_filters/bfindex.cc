@@ -80,6 +80,7 @@ void BFIndex::insert_from_indexes(const vector<string>& index_paths) {
     }
     if (verbose_) cout << "All features were read..." << endl;
 
+    size_t number_items = 0;
     for (size_t c = 0; c < num_bloom_filters_; c++) {
         if (verbose_ >= 2) {
             if (c % 100 == 0) {
@@ -94,13 +95,14 @@ void BFIndex::insert_from_indexes(const vector<string>& index_paths) {
                                                   hash_numbers.at(c).at(f).at(i),
                                                   c);
             }
+            number_items++;
         }
         emb_features.at(c).clear();
     }
     if (verbose_) cout << "done inserting!" << endl;
 
-    size_t number_items, number_indices;
-    get_properties(number_items, number_indices);
+    size_t number_indices;
+    get_number_indices(number_indices);
     if (verbose_) cout << "Total number_items = " << number_items
                        << ", number_indices = "
                        << number_indices << endl;
@@ -141,12 +143,9 @@ void BFIndex::perform_query(const vector<uint>& query_emb_features,
 PRIVATE FUNCTIONS
  ***********************************************/
 
-void BFIndex::get_properties(size_t& number_items,
-                             size_t& number_indices) {
-    number_items = 0;
+void BFIndex::get_number_indices(size_t& number_indices) {
     number_indices = 0;
-    inverted_index_bloom_ptr_->get_properties(number_items,
-                                              number_indices);
+    inverted_index_bloom_ptr_->get_number_indices(number_indices);
 }
 
 void BFIndex::idf_processing() {

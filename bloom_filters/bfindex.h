@@ -48,7 +48,7 @@ class BFIndex {
     vector < float > idf_norms_;
 
     // Function to get number of items/indices
-    void get_properties(size_t& number_items, size_t& number_indices);
+    void get_number_indices(size_t& number_indices);
 
     // Function to pre-process idf weights
     void idf_processing();
