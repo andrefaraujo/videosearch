@@ -4,6 +4,7 @@ dataset, with a specified set of parameters
 **********************************************************/
 
 #include <cassert>
+#include <cstdlib>
 #include <iomanip>
 #include <fstream>
 #include <iostream>
@@ -52,6 +53,9 @@ void usage() {
 }
 
 int main(int argc, char* * argv) {
+    // Seeding random number generator
+    srand(static_cast<uint>(time(0)));
+
     // Mandatory arguments
     string clip_list_path = "";
     string query_list_path = "";
