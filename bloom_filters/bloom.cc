@@ -54,12 +54,54 @@ void InvertedIndexBloom::get_number_indices(size_t& number_indices) {
 
 void InvertedIndexBloom::get_counts_per_hash(const uint hash_number,
                                              vector<uint>& counts) {
+    for (uint count_ind = 0;
+         count_ind < partitioned_index_.at(hash_number).size();
+         count_ind++) {
+        counts.at(count_ind) = partitioned_index_.at(hash_number)
+            .at(count_ind).size();
+    }
 }
 
 void InvertedIndexBloom::get_idf_norm(const vector< vector<float> >& idfs,
                                       const float alpha,
                                       const size_t num_bloom_filters,
                                       vector<float>& idf_norms) {
+    // Initialize norms to 0
+    for (uint count_bf = 0; count_bf < num_bloom_filters; count_bf++) {
+        idf_norms.at(count_bf) = 0;
+    }
+
+    // Loop over index and construct partial BFs, so that we'll be able to
+    // get their IDF norms
+    for (uint count_hasher = 0; count_hasher < num_hashers_;
+         count_hasher++) {
+        vector < vector < uint > >
+            bf_partitioned_indices_per_hash(num_bloom_filters);
+        for (uint count_ind = 0;
+             count_ind < partitioned_index_.at(count_hasher).size();
+             count_ind++) {
+            size_t list_size = partitioned_index_.at(count_hasher).at(count_ind).size();
+            for (size_t count_l = 0; count_l < list_size; count_l++) {
+                bf_partitioned_indices_per_hash
+                    .at(partitioned_index_.at(count_hasher).at(count_ind).at(count_l))
+                    .push_back(count_ind);
+            }
+        }
+
+        for (uint count_bf = 0; count_bf < num_bloom_filters; count_bf++) {
+            for (uint count_ind = 0;
+                 count_ind < bf_partitioned_indices_per_hash.at(count_bf).size();
+                 count_ind++) {
+                idf_norms.at(count_bf) +=
+                    pow(idfs.at(count_hasher).
+                        at(bf_partitioned_indices_per_hash.at(count_bf).at(count_ind)), 2);
+            }
+        }
+    }
+
+    for (uint count_bf = 0; count_bf < num_bloom_filters; count_bf++) {
+        idf_norms.at(count_bf) = pow(idf_norms.at(count_bf), alpha);
+    }
 }
 
 void InvertedIndexBloom::perform_query(const vector<uint>& query_hash_indices,
