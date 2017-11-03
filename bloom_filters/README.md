@@ -1,7 +1,7 @@
 # Query-by-Image Video Retrieval Using Bloom Filters
 
 This directory contains code for the Bloom Filter technique developed in our
-paper ["Large-Scale Query-by-Image Video Retrieval Using Bloom Filters"](https://arxiv.org/abs/1604.07939).
+paper ["Large-Scale Video Retrieval Using Image Queries"](https://andrefaraujo.github.io/files/papers/2017-02-13-tcsvt-phd-thesis.pdf), TCSVT'17.
 
 Please follow the instructions below -- if any questions/issues arise, feel free to reach out.
 
