@@ -251,16 +251,17 @@ Most often, when using this dataset, one is interested in Scene Retrieval result
 ## Citation
 If you use this code, please cite:
 
-A. Araujo, J. Chaves, R. Angst and B. Girod. "Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval", in Proc. ICIP, 2015 ([Paper](http://web.stanford.edu/~afaraujo/Araujo_et_al_ICIP15_v12.pdf)) ([Poster](http://web.stanford.edu/~afaraujo/2015_09_28_ICIP_poster_v3.pdf))
+A. Araujo and B. Girod. "Large-Scale Video Retrieval Using Image Queries", in Transactions on Circuits and Systems for Video Technology, 2017 ([Paper](https://andrefaraujo.github.io/files/papers/2017-02-13-tcsvt-phd-thesis.pdf))
 
 Bibtex:
 
 ```
-@inproceedings{AraujoICIP2015,
-author = {Araujo, A. and Chaves, J. and Angst, R. and Girod, B.},
-booktitle = {Proc. ICIP},
-title = {{Temporal Aggregation for Large-Scale Query-by-Image Video Retrieval}},
-year = {2015}
+@article{AraujoTCSVT2017,
+author = {Araujo, A. and Girod, B.},
+journal = {Transactions on Circuits and Systems for Video Technology},
+number = {99},
+title = {{Large-Scale Video Retrieval Using Image Queries}},
+year = {2017}
 }
 ```
 
